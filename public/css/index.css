@@ -1,0 +1,142 @@
+:root {
+  --font-color: #333333;
+  --bg-color: #fbfbfc;
+  --bg-like: #fafafc;
+  --bg-grey: #eaeaea;
+  --shadow-color: #d9d9d9;
+}
+
+svg {
+  fill: var(--font-color);
+  cursor: pointer;
+}
+
+#app {
+  height: 100vh;
+}
+
+*:not(body, div.hljs, div.hljs *) {
+  color: var(--font-color);
+  transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+    background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+    border 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+body {
+  background: var(--bg-color);
+}
+
+
+/* markdown 编辑器 */
+.shadow.v-note-wrapper.markdown-body,
+.shadow.v-note-wrapper.markdown-body * {
+  box-shadow: none !important;
+}
+
+.shadow.v-note-wrapper.markdown-body {
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 1px 1px 5px var(--shadow-color) !important;
+  max-width: 1350px !important;
+}
+
+.editor-container .markdown-body {
+  /* height: 70% !important; */
+  border-radius: 20px !important;
+}
+
+.v-note-op {
+  border-bottom: 1px solid var(--bg-grey) !important;
+}
+
+.auto-textarea-wrapper.content-input,
+.markdown-body .v-note-op,
+.v-note-edit,
+.content-input-wrapper,
+.no-border.no-resize.auto-textarea-input,
+.scroll-style.scroll-style-border-radius.v-show-content {
+  background: var(--bg-like) !important;
+}
+
+.auto-textarea-wrapper .auto-textarea-input:not(code) {
+  color: var(--font-color) !important;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  background: #282c34 !important;
+}
+
+.markdown-body table,
+.markdown-body table * {
+  background: transparent !important;
+}
+
+.hljs,
+.hljs *,
+code {
+  /* background: transparent !important; */
+  font-size: 14px !important;
+  font-family: Monaco, Menlo, Consolas, sans-serif !important;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  color: var(--font-color) !important;
+}
+
+.markdown-body ol,
+.markdown-body ol li {
+  list-style: decimal;
+}
+
+.markdown-body ul,
+.markdown-body ul li {
+  list-style: disc;
+}
+
+.markdown-body ins {
+  text-decoration: underline;
+}
+
+.markdown-body s {
+  text-decoration: line-through;
+}
+
+.markdown-body img {
+  width: 20%;
+  margin: 0 auto;
+}
+
+pre,
+pre * {
+  scrollbar-width: 0 !important;
+}
+
+pre::-webkit-scrollbar,
+pre *::-webkit-scrollbar {
+  display: none !important;
+}
+
+
+/* naive 消息样式 */
+.n-message {
+  background: var(--bg-grey) !important;
+  border-radius: 5px !important;
+}
+
+.n-message,
+.n-message * {
+  color: var(--font-color) !important;
+}
+
+.n-message svg {
+  /* background: var(--theme-color) !important; */
+  fill: var(--theme-color) !important;
+}

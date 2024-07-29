@@ -1,0 +1,78 @@
+* {
+    padding: 0;
+    margin: 0;
+    scroll-behavior: smooth;
+  }
+  
+  ol, ul, li {
+    list-style: none;
+  }
+  
+  img {
+    border: 0;
+  }
+  
+  b, strong {
+    font-weight: normal;
+  }
+  
+  i, em {
+    font-style: normal;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: normal;
+  }
+  
+  u, s, ins, del {
+    text-decoration: none;
+  }
+  
+  table {
+    border: 1px solid #000;
+    border-spacing: 9;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #000;
+  }
+  
+  input, button {
+    outline: none;
+    border: none;
+  }
+  
+  button, select {
+    cursor: pointer;
+  }
+  
+  input:focus-visible, textarea:focus-visible {
+    outline: 0;
+  }
+  
+  textarea {
+    border: none;
+    resize: none;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .leftfix {
+    float: left;
+  }
+  
+  .rightfix {
+    float: right;
+  }
+  
+  .clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+  
