@@ -30,7 +30,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "target/*.jar"
+          source: "dist/"
           target: ${{ secrets.DEPLOY_PATH }}
 
   deploy:
@@ -39,9 +39,6 @@ jobs:
     needs: build
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Run deploy script
         uses: appleboy/ssh-action@v0.1.1
         with:
