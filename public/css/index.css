@@ -1,4 +1,14 @@
 :root {
+  --default-red: #ea2d2e;
+
+  --default-blue: rgb(0, 116, 189);
+  --default-blue-transparent: rgb(0, 116, 189, .1);
+  --default-blue-light: rgb(0, 116, 189, .2);
+
+  --default-grey: rgb(128, 128, 128);
+  --default-grey-transparent: rgb(128, 128, 128, .1);
+  --default-grey-light: rgb(128, 128, 128, .2);
+
   --font-color: #333333;
   --bg-color: #fbfbfc;
   --bg-like: #fafafc;
@@ -11,8 +21,26 @@ svg {
   cursor: pointer;
 }
 
+svg path {
+  color: var(--font-color) !important;
+}
+
+svg.default {
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+}
+
+svg.default:hover {
+  background: var(--default-grey-light);
+}
+
 #app {
   height: 100vh;
+}
+
+* {
+  font-size: 16px;
 }
 
 *:not(body, div.hljs, div.hljs *) {
@@ -26,23 +54,75 @@ body {
   background: var(--bg-color);
 }
 
-
-/* markdown 编辑器 */
-.shadow.v-note-wrapper.markdown-body,
-.shadow.v-note-wrapper.markdown-body * {
-  box-shadow: none !important;
+button {
+  font-weight: bold;
+  height: 35px;
+  padding: 0 20px;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: var(--default-grey) !important;
+  background: var(--default-grey-transparent);
+  transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+              background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+              border 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+              transform .5s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  cursor: pointer;
 }
 
-.shadow.v-note-wrapper.markdown-body {
+button:hover {
+  transform: scale(1.05);
+  background: var(--default-grey-light);
+}
+
+button.styled {
+  color: var(--default-blue) !important;
+  background: var(--default-blue-transparent);
+  border: 0;
+}
+
+button.styled:hover {
+  background: var(--default-blue-light);
+}
+
+input {
+  width: 400px;
+  height: 40px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: 1px solid var(--default-blue);
+  background: transparent;
+  font-size: 16px;
+  caret-color: var(--default-blue);
+}
+
+div.empty-hint {
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--default-blue);
+  margin: 20px auto;
+}
+
+/* markdown 编辑器 */
+/* .shadow.v-note-wrapper.markdown-body,
+.shadow.v-note-wrapper.markdown-body * {
+  box-shadow: none !important;
+} */
+
+.shadow.markdown-body {
   border-radius: 10px !important;
   overflow: hidden !important;
-  box-shadow: 1px 1px 5px var(--shadow-color) !important;
+  box-shadow: 0px 0px 5px var(--shadow-color) !important;
   max-width: 1350px !important;
 }
 
-.editor-container .markdown-body {
-  /* height: 70% !important; */
-  border-radius: 20px !important;
+/* 公告中、lab 详情页的 markdown 不展示边框 */
+.notice-wrapper .shadow.markdown-body,
+.lab-container .shadow.markdown-body {
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 .v-note-op {
@@ -55,7 +135,7 @@ body {
 .content-input-wrapper,
 .no-border.no-resize.auto-textarea-input,
 .scroll-style.scroll-style-border-radius.v-show-content {
-  background: var(--bg-like) !important;
+  background: var(--bg-color) !important;
 }
 
 .auto-textarea-wrapper .auto-textarea-input:not(code) {
@@ -91,6 +171,10 @@ code {
   color: var(--font-color) !important;
 }
 
+.markdown-body em {
+  font-style: italic;
+}
+
 .markdown-body ol,
 .markdown-body ol li {
   list-style: decimal;
@@ -114,16 +198,47 @@ code {
   margin: 0 auto;
 }
 
+.markdown-body p:last-child {
+  margin-bottom: 0 !important;
+}
+/* markdown 代码块删除横向滚动条 */
 pre,
 pre * {
   scrollbar-width: 0 !important;
 }
-
+/* markdown 代码块删除横向滚动条 */
 pre::-webkit-scrollbar,
 pre *::-webkit-scrollbar {
   display: none !important;
 }
-
+/* markdown 的添加图片只需要选择本地文件即可 */
+div.op-image div.dropdown-item:first-child {
+  display: none !important;
+}
+div.op-image div.dropdown-item:last-child {
+  font-size: 16px !important;
+  cursor: pointer !important;
+}
+/* markdown 底部一处过渡样式不对 */
+div.v-note-edit.divarea-wrapper.scroll-style.transition {
+  transition: 1s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+}
+/* markdown dropdown 颜色 */
+.markdown-body .popup-dropdown {
+  background: var(--bg-color) !important;
+  border: 0 !important;
+}
+.markdown-body .popup-dropdown:hover {
+  background: var(--bg-grey) !important;
+}
+.markdown-body .dropdown-item {
+  border-radius: 3px !important;
+  color: var(--font-color) !important;
+  background: var(--bg-color) !important;
+}
+.dropdown-item:hover {
+  background: var(--bg-grey) !important;
+}
 
 /* naive 消息样式 */
 .n-message {
@@ -139,4 +254,165 @@ pre *::-webkit-scrollbar {
 .n-message svg {
   /* background: var(--theme-color) !important; */
   fill: var(--theme-color) !important;
+}
+
+i.n-icon,
+i.n-icon svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+div.n-layout,
+aside.n-layout-sider,
+div.n-layout-sider-scroll-container,
+div.n-menu.n-menu--vertical,
+div.n-menu-item,
+div.n-menu-item-content,
+/* .n-menu .n-menu-item-content::before, */
+div.n-menu-item-content__icon,
+div.n-menu-item-content-header {
+  background: transparent !important;
+}
+
+div.n-menu {
+  --n-item-text-color: var(--font-color) !important;
+  --n-item-text-color-hover: var(--font-color) !important;
+  --n-item-text-color-active: var(--default-blue) !important;
+  --n-item-text-color-active-hover: var(--default-blue) !important;
+  --n-item-text-color-child-active-hover: var(--default-blue) !important;
+  --n-item-text-color-child-active: var(--default-blue) !important;
+  --n-item-icon-color-active: var(--default-blue) !important;
+  --n-item-icon-color-active-hover: var(--default-blue) !important;
+  --n-item-icon-color-child-active: var(--default-blue) !important;
+  --n-item-icon-color-child-active-hover: var(--default-blue) !important;
+  --n-item-color-hover: var(--default-grey-transparent) !important;
+  --n-item-color-active: var(--default-blue-transparent) !important;
+  --n-item-color-active-hover: var(--default-blue-transparent) !important;
+  --n-item-color-active-collapsed: var(--default-blue-transparent) !important;
+}
+/* 菜单右侧分割线 */
+div.n-layout-sider__border {
+  background: var(--bg-grey) !important;
+  transition: background-color 1s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+}
+
+.v-binder-follower-container div.n-popover {
+  background: var(--bg-like) !important;
+  max-width: 400px !important;
+  border-radius: 5px;
+}
+
+.v-binder-follower-container div.n-popover-arrow {
+  background: var(--bg-like) !important;
+}
+
+/* 公告折叠菜单的标题样式 */
+div.n-collapse-item__header {
+  transition: none !important;
+}
+div.n-collapse-item__header-main {
+  color: var(--default-blue) !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+}
+/* 公告折叠菜单的箭头样式（1） */
+div.n-collapse-item-arrow i,
+div.n-collapse-item-arrow svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+/* 公告折叠菜单的箭头样式（2） */
+div.n-collapse-item-arrow svg,
+div.n-collapse-item-arrow svg path {
+  fill: var(--default-blue) !important;
+}
+
+/* 弹出确认背景颜色 */
+div.n-popover.n-popover-shared.n-popconfirm.n-popover-shared--show-arrow {
+  background: var(--bg-like) !important;
+}
+/* 弹出确认文字 */
+div.n-popconfirm__body {
+  color: var(--font-color) !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+/* 弹出确认按钮（取消） */
+button.n-button.n-button--small-type {
+  --n-border: none !important;
+  --n-border-hover: none !important;
+  --n-border-pressed: none !important;
+  --n-border-focus: none !important;
+  --n-color: var(--default-grey-transparent) !important;
+  --n-color-hover: var(--default-grey-light) !important;
+  --n-color-pressed: var(--default-grey-light) !important;
+  --n-color-focus: var(--default-grey-light) !important;
+  --n-ripple-color: transparent !important;
+}
+/* 弹出确认按钮文字（取消和确认） */
+button.n-button.n-button--small-type .n-button__content {
+  color: var(--default-grey) !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+/* 弹出确认按钮（确认） */
+button.n-button.n-button--primary-type.n-button--small-type {
+  --n-border: none !important;
+  --n-border-hover: none !important;
+  --n-border-pressed: none !important;
+  --n-border-focus: none !important;
+  --n-color: var(--default-blue-transparent) !important;
+  --n-color-hover: var(--default-blue-light) !important;
+  --n-color-pressed: var(--default-blue-light) !important;
+  --n-color-focus: var(--default-blue-light) !important;
+}
+button.n-button.n-button--primary-type.n-button--small-type .n-button__content {
+  color: var(--default-blue) !important;
+}
+
+/* date picker 相关样式 */
+div.dp__input_wrap,
+div.dp__input_wrap * {
+  font-size: 12px !important;
+}
+input.dp__pointer.dp__input_readonly.dp__input.dp__input_icon_pad.dp__input_reg,
+div.dp__outer_menu_wrap.dp--menu-wrapper,
+div.dp__outer_menu_wrap.dp--menu-wrapper *:not(button, .dp__active_date) {
+  background: var(--bg-color) !important;
+  color: var(--font-color) !important;
+}
+button.dp__btn.dp__button {
+  background: transparent !important;
+}
+button.dp__time_display.dp__time_display_block.dp--time-overlay-btn {
+  color: var(--font-color) !important;
+  background: transparent !important;
+}
+button.dp__btn.dp__inc_dec_button {
+  background: transparent !important;
+}
+button.dp__btn.dp__month_year_select {
+  background: transparent !important;
+}
+button.dp__btn.dp__month_year_select:hover,
+div.dp__outer_menu_wrap.dp--menu-wrapper div.dp__cell_inner:hover,
+button.dp__btn.dp__button:hover {
+  background: var(--bg-grey) !important;
+}
+/* div.dp--tp-wrap {
+  overflow: hidden !important;
+} */
+button.dp__btn.dp__button[aria-label="Open time picker"] {
+  width: 104% !important;
+}
+
+div.dp--menu-wrapper, div.dp--menu-wrapper * {
+  scrollbar-width: 0 !important;
+}
+div.dp--menu-wrapper::-webkit-scrollbar, 
+div.dp--menu-wrapper *::-webkit-scrollbar {
+  display: none !important;
+}
+div.dp__menu.dp__menu_index.dp__theme_light {
+  overflow: hidden !important;
 }
