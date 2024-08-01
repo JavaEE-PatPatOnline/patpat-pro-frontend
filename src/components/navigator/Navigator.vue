@@ -93,15 +93,15 @@ export default {
       } else {
         // 设置颜色为深色
         document.documentElement.style.setProperty('--font-color', '#eaeaea')
-        document.documentElement.style.setProperty('--bg-color', '#0d1116')
+        document.documentElement.style.setProperty('--bg-color', '#181818')
         document.documentElement.style.setProperty('--bg-like', '#161619')
         document.documentElement.style.setProperty('--bg-grey', '#464649')
         document.documentElement.style.setProperty('--shadow-color', '#2f2f33')
 
         // 修改主题蓝色
-        document.documentElement.style.setProperty('--default-blue', 'rgb(31, 111, 235)')
-        document.documentElement.style.setProperty('--default-blue-transparent', 'rgba(31, 111, 235, .1)')
-        document.documentElement.style.setProperty('--default-blue-light', 'rgba(31, 111, 235, .2)')
+        document.documentElement.style.setProperty('--default-blue', 'rgb(3, 122, 255)')
+        document.documentElement.style.setProperty('--default-blue-transparent', 'rgba(3, 122, 255, .1)')
+        document.documentElement.style.setProperty('--default-blue-light', 'rgba(3, 122, 255, .2)')
 
         localStorage.setItem('color-mode', 'dark')
       }
