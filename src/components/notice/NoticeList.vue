@@ -1,15 +1,12 @@
 <template>
   <NCollapse
     :trigger-areas="['main', 'arrow']"
+    display-directive="show"
     v-if="notices.length > 0"
+    :default-expanded-names="['0']"
   >
-    <NoticeListItem v-for="notice in notices"
-      :key="notice.id"
-      :id="notice.id"
-      :title="notice.title"
-      :content="notice.content"
-      :time="notice.time"
-      :isTopped="notice.isTopped"
+    <NoticeListItem v-for="(notice, index) in notices"
+      :key="notice.id" :notice="notice" :index="index"
     />
   </NCollapse>
   <div class="empty-hint" v-else>
