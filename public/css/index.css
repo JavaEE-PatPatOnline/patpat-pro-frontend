@@ -2,12 +2,12 @@
   --default-red: #ea2d2e;
 
   --default-blue: rgb(0, 116, 189);
-  --default-blue-transparent: rgb(0, 116, 189, .1);
-  --default-blue-light: rgb(0, 116, 189, .2);
+  --default-blue-transparent: rgba(0, 116, 189, .1);
+  --default-blue-light: rgba(0, 116, 189, .2);
 
   --default-grey: rgb(128, 128, 128);
-  --default-grey-transparent: rgb(128, 128, 128, .1);
-  --default-grey-light: rgb(128, 128, 128, .2);
+  --default-grey-transparent: rgba(128, 128, 128, .1);
+  --default-grey-light: rgba(68, 44, 44, 0.2);
 
   --default-green: #64ba44;
   --default-orange: #f7821a;

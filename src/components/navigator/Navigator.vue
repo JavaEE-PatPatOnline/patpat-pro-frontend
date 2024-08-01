@@ -83,14 +83,26 @@ export default {
         document.documentElement.style.setProperty('--bg-like', '#fafafc')
         document.documentElement.style.setProperty('--bg-grey', '#eaeaea')
         document.documentElement.style.setProperty('--shadow-color', '#d9d9d9')
+
+        // 修改主题蓝色
+        document.documentElement.style.setProperty('--default-blue', 'rgb(0, 116, 189)')
+        document.documentElement.style.setProperty('--default-blue-transparent', 'rgba(0, 116, 189, .1)')
+        document.documentElement.style.setProperty('--default-blue-light', 'rgb(0, 116, 189, .2)')
+
         localStorage.setItem('color-mode', 'light')
       } else {
         // 设置颜色为深色
         document.documentElement.style.setProperty('--font-color', '#eaeaea')
-        document.documentElement.style.setProperty('--bg-color', '#18181c')
+        document.documentElement.style.setProperty('--bg-color', '#0d1116')
         document.documentElement.style.setProperty('--bg-like', '#161619')
         document.documentElement.style.setProperty('--bg-grey', '#464649')
         document.documentElement.style.setProperty('--shadow-color', '#2f2f33')
+
+        // 修改主题蓝色
+        document.documentElement.style.setProperty('--default-blue', 'rgb(31, 111, 235)')
+        document.documentElement.style.setProperty('--default-blue-transparent', 'rgba(31, 111, 235, .1)')
+        document.documentElement.style.setProperty('--default-blue-light', 'rgba(31, 111, 235, .2)')
+
         localStorage.setItem('color-mode', 'dark')
       }
     }
