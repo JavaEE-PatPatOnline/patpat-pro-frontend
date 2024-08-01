@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      avatar: null,
+      avatar: 'http://8.130.103.241/public/boy.svg',
       javaIcon
     }
   },
@@ -48,7 +48,9 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.$refs.java.pause()
+      if (this.$refs.java) {
+        this.$refs.java.pause()
+      }
     }, 1)
   },
   methods: {
@@ -56,7 +58,7 @@ export default {
       this.$router.push('/')
     },
     jumpToUser() {
-      // todo
+      this.$router.push('/user')
     },
     changeColorMode() {
       const colorMode = localStorage.getItem('color-mode')

@@ -1,31 +1,38 @@
 <template>
   <NMessageProvider>
     <Navigator />
-    <NLayout has-sider>
-      <NLayoutSider
-        bordered
-        collapse-mode="width"
-        :collapsed-width="64"
-        :width="250"
-        :collapsed="false"
-      >
-        <NMenu
-          v-model:value="activeKey"
-          :collapsed="false"
+    <template 
+      v-if="!(instance.proxy.$route.path.includes('user') || instance.proxy.$route.path.includes('login'))" 
+    >
+      <NLayout has-sider>
+        <NLayoutSider
+          bordered
+          collapse-mode="width"
           :collapsed-width="64"
-          :icon-size="40"
-          :collapsed-icon-size="22"
-          :options="menuOptions"
-          :indent="48"
-          :root-indent="12"
-        />
-      </NLayoutSider>
-      <NLayoutContent>
-        <main>
-          <RouterView/>
-        </main>
-      </NLayoutContent>
-    </NLayout>
+          :width="250"
+          :collapsed="false"
+        >
+          <NMenu
+            v-model:value="activeKey"
+            :collapsed="false"
+            :collapsed-width="64"
+            :icon-size="40"
+            :collapsed-icon-size="22"
+            :options="menuOptions"
+            :indent="48"
+            :root-indent="12"
+          />
+        </NLayoutSider>
+        <NLayoutContent>
+          <main>
+            <RouterView />
+          </main>
+        </NLayoutContent>
+      </NLayout>
+    </template>
+    <template v-else>
+      <RouterView />
+    </template>
   </NMessageProvider>
 </template>
 
@@ -40,7 +47,7 @@ import {
   CodeWorkingOutline as IterIcon,
   ChatbubbleEllipsesOutline as ChatIcon,
   PeopleOutline as TeamIcon,
-  InformationCircleOutline as InfoIcon
+  InformationCircleOutline as InfoIcon,
 } from '@vicons/ionicons5'
 
 const instance = getCurrentInstance()
@@ -130,7 +137,13 @@ let menuOptions = ref([
     ]
   },
   {
-    label: '讨论中心',
+    label: () => h(
+      RouterLink,
+      {
+        to: '/discussion',
+      },
+      { default: () => '讨论中心' }
+    ),
     key: 'discussion',
     icon: renderIcon(ChatIcon)
   },
@@ -159,6 +172,9 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
     // 实验详情
     const id = instance.proxy.$route.params.id
     activeKey.value = id
+  } else if (newPath.includes('discussion')) {
+    // 讨论区
+    activeKey.value = 'discussion'
   }
 }, {
   immediate: true

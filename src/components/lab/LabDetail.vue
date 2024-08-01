@@ -123,7 +123,7 @@ h3 {
   font-size: 30px;
   font-weight: bold;
   color: var(--default-blue);
-  margin-left: 20px;
+  margin-left: 25px;
 }
 
 .lab-btn {
@@ -131,7 +131,7 @@ h3 {
 }
 
 .times {
-  margin-left: 20px;
+  margin-left: 25px;
   width: 60%;
 }
 

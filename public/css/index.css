@@ -9,6 +9,10 @@
   --default-grey-transparent: rgb(128, 128, 128, .1);
   --default-grey-light: rgb(128, 128, 128, .2);
 
+  --default-green: #64ba44;
+  --default-orange: #f7821a;
+  --default-purple: #a550a7;
+
   --font-color: #333333;
   --bg-color: #fbfbfc;
   --bg-like: #fafafc;
@@ -105,12 +109,6 @@ div.empty-hint {
   margin: 20px auto;
 }
 
-/* markdown 编辑器 */
-/* .shadow.v-note-wrapper.markdown-body,
-.shadow.v-note-wrapper.markdown-body * {
-  box-shadow: none !important;
-} */
-
 .shadow.markdown-body {
   border-radius: 10px !important;
   overflow: hidden !important;
@@ -118,9 +116,10 @@ div.empty-hint {
   max-width: 1350px !important;
 }
 
-/* 公告中、lab 详情页的 markdown 不展示边框 */
+/* 公告中、lab 详情页、讨论详情页的 markdown 不展示边框 */
 .notice-wrapper .shadow.markdown-body,
-.lab-container .shadow.markdown-body {
+.lab-container .shadow.markdown-body,
+.discussion-detail .shadow.markdown-body {
   box-shadow: none !important;
   border-radius: 0 !important;
 }
@@ -326,10 +325,15 @@ div.n-collapse-item-arrow svg,
 div.n-collapse-item-arrow svg path {
   fill: var(--default-blue) !important;
 }
+/* 公告折叠菜单折叠部分 padding */
+div.n-collapse-item__content-inner {
+  padding-top: 0 !important;
+}
 
 /* 弹出确认背景颜色 */
 div.n-popover.n-popover-shared.n-popconfirm.n-popover-shared--show-arrow {
   background: var(--bg-like) !important;
+  box-shadow: 0 0 5px var(--shadow-color) !important;
 }
 /* 弹出确认文字 */
 div.n-popconfirm__body {
@@ -368,6 +372,20 @@ button.n-button.n-button--primary-type.n-button--small-type {
 }
 button.n-button.n-button--primary-type.n-button--small-type .n-button__content {
   color: var(--default-blue) !important;
+}
+
+/* 模态框样式 */
+div.n-card.n-modal {
+  --n-close-icon-size: 25px !important;
+  --n-color-modal: var(--bg-like) !important;
+  --n-border-radius: 10px !important;
+  --n-padding-bottom: 5px !important;
+}
+
+div.n-card-header i,
+div.n-card-header svg {
+  width: 25px !important;
+  height: 25px !important;
 }
 
 /* date picker 相关样式 */

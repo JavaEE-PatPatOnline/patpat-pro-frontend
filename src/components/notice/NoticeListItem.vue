@@ -1,7 +1,10 @@
 <template>
   <div class="notice-wrapper">
     <NCollapseItem 
-    :title="title">
+      display-directive="show"
+      :title="notice.title"
+      :name="String(index)"
+    >
       <template #header-extra>
         <div>
           <!-- 功能按钮 -->
@@ -10,14 +13,14 @@
             <span 
               class="top-state" 
               :class="{ 'clickable': isAdmin }" 
-              v-if="isTopped"
+              v-if="notice.isTopped"
               @click="handleTop"
             >
               已置顶
             </span>
             <span 
               class="top-state clickable" 
-              v-else-if="!isTopped && isAdmin"
+              v-else-if="!notice.isTopped && isAdmin"
               @click="handleTop"
             >
               置顶
@@ -39,11 +42,11 @@
           </NFlex>
           <!-- 公告时间 -->
           <div class="time">
-            {{ time }}
+            {{ notice.time }}
           </div>
         </div>
       </template>
-      <MarkdownDisplayer :content="content" />
+      <MarkdownDisplayer :content="notice.content" />
     </NCollapseItem>
   </div>
 </template>
@@ -58,25 +61,13 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'NoticeListItem',
   props: {
-    id: {
-      type: String,
+    notice: {
+      type: Object,
       default: null
     },
-    title: {
-      type: String,
-      default: '标题'
-    },
-    content: {
-      type: String,
-      default: '内容'
-    },
-    time: {
-      type: String,
-      default: '2024-07-29 18:21:34'
-    },
-    isTopped: {
-      type: Boolean,
-      default: false
+    index: {
+      type: Number,
+      default: null
     }
   },
   components: {
@@ -107,10 +98,6 @@ export default {
 <style scoped>
 .notice-wrapper {
   padding: 10px;
-  border-radius: 5px;
-  position: relative;
-  margin-bottom: 20px;
-  box-sizing: border-box;
   transition: .5s cubic-bezier(0.075, 0.82, 0.165, 1);
   border-bottom: 1px solid var(--bg-grey);
 }
