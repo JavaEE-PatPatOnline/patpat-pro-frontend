@@ -3,8 +3,8 @@ import service from '../http'
 const url = {
   all: '/announcement/query',
   create: '/admin/announcement/create',
-  delete: '/announcement/delete/',
-  setTopState: '/announcement/top/',
+  delete: '/admin/announcement/delete/',
+  setTopState: '/admin/announcement/update/',
   update: '/admin/announcement/update/',
 }
 
@@ -29,17 +29,17 @@ export default class Notice {
     })
   }
 
-  static async setTopState(id, state) {
-    return service(url.setTopState + id, {
-      method: 'put',
-      params: {
-        isTopped: state,
-      },
-    })
-  }
+  // static async setTopState(id, state) {
+  //   return service(url.setTopState + id, {
+  //     method: 'put',
+  //     params: {
+  //       isTopped: state,
+  //     },
+  //   })
+  // }
 
-  static async updateNotice(id, title, content) {
-    const data = { title, content }
+  static async updateNotice(id, title, content, topped) {
+    const data = { title, content, topped }
     return service(url.update + id, {
       method: 'put',
       data,

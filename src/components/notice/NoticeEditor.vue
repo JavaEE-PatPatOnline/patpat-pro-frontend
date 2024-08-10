@@ -27,12 +27,13 @@ export default {
   data() {
     return {
       title: '',
-      content: '111'
+      content: '111',
+      state: false
     }
   },
   mounted() {
     if (this.id !== '') {
-
+      //todo：后端还没写，获取单个notice
     }
   },
   methods: {
@@ -68,7 +69,8 @@ export default {
       else {
         Notice.updateNotice(id,
           this.title,
-          this.content)
+          this.content,
+          this.state)
           .then(
             (response) => {
               this.title = ''

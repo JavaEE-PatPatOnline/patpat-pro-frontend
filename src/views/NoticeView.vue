@@ -21,39 +21,10 @@ export default {
   },
   data() {
     return {
-      // notices: [
-      //   {
-      //     id: '1',
-      //     title: '哈佛i奥纳影城',
-      //     content: '方便发 阿红的豪华房i啊部分i啊部分iu奥和',
-      //     time: '2024.07.23 10:21:08',
-      //     isTopped: false
-      //   },
-      //   {
-      //     id: '2',
-      //     title: '的红安 掉 阿绿咖啡等你按烂哦',
-      //     content: '# 一级标题\n## Hello \n **这是加粗吗**，我猜这是 *斜体*',
-      //     time: '2024.07.23 10:21:08',
-      //     isTopped: false
-      //   },
-      //   {
-      //     id: '3',
-      //     title: 'biahfnoda oafnan qn oan lak',
-      //     content: '符号烦\n恼\n啊\n啊\n看\n见\n你\n发了呢烂啊',
-      //     time: '2024.07.23 10:21:08',
-      //     isTopped: false
-      //   },
-      //   {
-      //     id: '4',
-      //     title: '佛难哦 按佛呢啊',
-      //     content: '发不发闹你发吧 ',
-      //     time: '2024.07.23 10:21:08',
-      //     isTopped: false
-      //   },
-      // ],
       editingNoticeId: null,
       isEditingNotice: false,
-      notices: []
+      notices: [],
+      triggerAreas: [],
     }
   },
   mounted() {
@@ -72,7 +43,7 @@ export default {
           time: notice.createdAt,
           title: notice.title,
           content: notice.content,
-          isTopped: notice.topped
+          isTopped: notice.topped//为什么这里返回的是topped
         }))
         for (let i = 0; i < this.notices.length; i++) {
           this.triggerAreas.push('main')
