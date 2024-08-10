@@ -1,18 +1,18 @@
 <template>
-    <NFlex justify="space-between" align="center" class="editor-top">
-      <input type="text" placeholder="公告标题" v-model="title"/>
-      <NFlex justify="flex-end" align="center">
-        <button @click="goBack">取消</button>
-        <button class="styled" @click="publishNotice">发布</button>
-      </NFlex>
+  <NFlex justify="space-between" align="center" class="editor-top">
+    <input type="text" placeholder="公告标题" v-model="title" />
+    <NFlex justify="flex-end" align="center">
+      <button @click="goBack">取消</button>
+      <button class="styled" @click="publishNotice">发布</button>
     </NFlex>
-    <MarkdownEditor v-model:value="content" />
+  </NFlex>
+  <MarkdownEditor v-model:value="content" />
 </template>
 
 <script>
 import MarkdownEditor from '../markdown/MarkdownEditor.vue'
 import { NFlex } from 'naive-ui'
-
+import Notice from '../../api/Notice.js'
 export default {
   name: 'NoticeEditor',
   components: {
@@ -26,19 +26,61 @@ export default {
   },
   data() {
     return {
-      title: '这是公告标题｜Lab02 学习 OOP 的基本思想吧！',
-      content: '# 一级标题 \n### 看看小标题 \n- 列表项 1 \n- 列表项 2 \n- 列表项 3 \n看看文本效果： **加粗** 、 *斜体* 、 ~~删除线~~  \n'
+      title: '',
+      content: '111'
+    }
+  },
+  mounted() {
+    if (this.id !== '') {
+
     }
   },
   methods: {
+
     goBack() {
       this.$bus.emit('endNoticeEditing')
     },
     publishNotice() {
-      // todo
-      // 注意区分发布新公告和修改现有公告的不同
-      // 区别在于 id 不同
-
+      console.log(this.content)
+      if (this.title === '') {
+        alert("公告标题不得为空")
+        //this.$bus.emit('message', { title: '公告标题不得为空', ok: false })
+        return
+      }
+      if (this.content === '') {
+        alert("公告内容不得为空")
+        //this.$bus.emit('message', { title: '公告内容不得为空', ok: false })
+        return
+      }
+      if (this.id === '') {
+        Notice.createNotice(this.title, this.content).then(
+          (response) => {
+            this.$bus.emit('message', { title: '发布公告成功', ok: true })
+            this.title = ''
+            this.content = ''
+          },
+          (error) => {
+            this.$bus.emit('message', { title: '发布公告失败', ok: false })
+            console.error(error)
+          }
+        )
+      }
+      else {
+        Notice.updateNotice(id,
+          this.title,
+          this.content)
+          .then(
+            (response) => {
+              this.title = ''
+              this.content = ''
+              this.$bus.emit('message', { title: '更新公告成功', ok: true })
+            },
+            (error) => {
+              this.$bus.emit('message', { title: '更新公告失败', ok: false })
+              console.error(error)
+            }
+          )
+      }
       this.goBack()
     }
   }
