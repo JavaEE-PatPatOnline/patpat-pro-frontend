@@ -4,7 +4,7 @@
 
 <script>
 import DiscussionList from '../components/discussion/DiscussionList.vue'
-
+import Discussion from '../api/Discussion.js'
 export default {
   name: 'DiscussionView',
   components: {
@@ -67,6 +67,16 @@ export default {
         },
       ]
     }
+  },
+  mounted() {
+    Discussion.getDiscussionList().then(
+      (response) => {
+        this.discussions = response.data.data.items
+      },
+      (error) => {
+        console.log('获取讨论组失败:' + error)
+      }
+    )
   }
 }
 </script>

@@ -53,14 +53,11 @@ export default {
             if (response.data.status === 200) {
               User.getUserInfo().then(
                 (response) => {
-                  // 利用全局消息总线设置导航栏的头像
-                  //this.$bus.emit('updateAvatar', response.data.data.account.avatar)
                   this.setIsAdmin(response.data.data.account.ta | response.data.data.account.teacher)
                   this.setUserId(response.data.data.account.id)
                 },
                 (error) => {
                   alert("获取用户头像失败")
-                  //this.$bus.emit('message', { title: '获取用户头像失败', ok: false })
                   console.error(error)
                 }
               )

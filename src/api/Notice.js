@@ -2,6 +2,7 @@ import service from '../http'
 
 const url = {
   all: '/announcement/query',
+  one: '/announcement/query/',
   create: '/admin/announcement/create',
   delete: '/admin/announcement/delete/',
   setTopState: '/admin/announcement/update/',
@@ -9,6 +10,11 @@ const url = {
 }
 
 export default class Notice {
+  static async getOneNotice(id) {
+    return service(url.one + id, {
+      method: 'get',
+    })
+  }
   static async getNoticeList() {
     return service(url.all, {
       method: 'get',

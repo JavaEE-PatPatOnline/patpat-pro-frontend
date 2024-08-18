@@ -1,18 +1,14 @@
 <template>
   <NFlex justify="space-between" align="center" class="header">
-    <NFlex justify="center" align="center" 
-      class="banner" 
-      @click="jumpToHome" 
-      @mouseenter="$refs.java.play()" 
-      @mouseleave="$refs.java.pause()"
-    >
+    <NFlex justify="center" align="center" class="banner" @click="jumpToHome" @mouseenter="$refs.java.play()"
+      @mouseleave="$refs.java.pause()">
       <Vue3Lottie ref="java" :animationData="javaIcon" :height="50" :width="50" />
       <h1>Patpat Online</h1>
     </NFlex>
     <NFlex justify="flex-end" align="center">
-        <ColorModeIcon @click="changeColorMode" />
-        <div @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
-        </div>
+      <ColorModeIcon @click="changeColorMode" />
+      <div @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
+      </div>
     </NFlex>
   </NFlex>
 </template>
@@ -32,7 +28,8 @@ export default {
   },
   data() {
     return {
-      avatar: 'http://8.130.103.241/public/boy.svg',
+      // avatar: 'http://8.130.103.241/public/boy.svg',
+      avatar: '',
       javaIcon
     }
   },
@@ -52,6 +49,9 @@ export default {
         this.$refs.java.pause()
       }
     }, 1)
+    this.$bus.on('updateAvatar', (newAvatar) => {
+      this.avatar = newAvatar
+    })
   },
   methods: {
     jumpToHome() {
