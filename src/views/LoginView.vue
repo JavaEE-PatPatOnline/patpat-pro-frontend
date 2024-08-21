@@ -29,7 +29,8 @@
 
 <script>
 import { NFlex, useMessage } from 'naive-ui'
-
+import Account from '../api/Account.js'
+import User from '../api/User.js'
 export default {
   name: 'LoginView',
   components: {
@@ -44,7 +45,43 @@ export default {
   },
   methods: {
     login() {
-      // todo
+      if (this.username === '' || this.password === '') {
+        alert("用户名和密码不得为空")
+      } else {
+        Account.login(this.username, this.password).then(
+          (response) => {
+            if (response.data.status === 200) {
+              User.getUserInfo().then(
+                (response) => {
+                  // 利用全局消息总线设置导航栏的头像
+                  //this.$bus.emit('updateAvatar', response.data.data.account.avatar)
+                  this.setIsAdmin(response.data.data.account.ta | response.data.data.account.teacher)
+                  this.setUserId(response.data.data.account.id)
+                },
+                (error) => {
+                  alert("获取用户头像失败")
+                  //this.$bus.emit('message', { title: '获取用户头像失败', ok: false })
+                  console.error(error)
+                }
+              )
+              console.log("登录成功")
+              let courseId = response.data.data.courses[0].id
+              //Todo:选择课程页面
+              Account.selectCourse(courseId).then(
+                (response) => {
+                  console.log("默认选择最新课程")
+                }
+              )
+              this.$router.push('main')
+            }
+          },
+          (error) => {
+            alert("登录失败")
+            //this.$bus.emit('message', { title: '登录失败', ok: false })
+            console.error(error)
+          }
+        )
+      }
     }
   }
 }

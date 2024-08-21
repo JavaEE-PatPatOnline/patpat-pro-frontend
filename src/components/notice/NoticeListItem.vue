@@ -1,41 +1,23 @@
 <template>
   <div class="notice-wrapper">
-    <NCollapseItem 
-      display-directive="show"
-      :title="notice.title"
-      :name="String(index)"
-    >
+    <NCollapseItem display-directive="show" :title="notice.title" :name="String(index)">
       <template #header-extra>
         <div>
           <!-- 功能按钮 -->
           <NFlex justify="flex-end" align="center">
             <!-- 是否置顶 -->
-            <span 
-              class="top-state" 
-              :class="{ 'clickable': isAdmin }" 
-              v-if="notice.isTopped"
-              @click="handleTop"
-            >
+            <span class="top-state" :class="{ 'clickable': isAdmin }" v-if="notice.isTopped" @click="handleTop">
               已置顶
             </span>
-            <span 
-              class="top-state clickable" 
-              v-else-if="!notice.isTopped && isAdmin"
-              @click="handleTop"
-            >
+            <span class="top-state clickable" v-else-if="!notice.isTopped && isAdmin" @click="handleTop">
               置顶
             </span>
             <!-- 编辑按钮 -->
-            <EditIcon @click="jumpToEdit" />
+            <EditIcon @click="jumpToEdit" class="icon-size" />
             <!-- 删除按钮 -->
-            <NPopconfirm
-              positive-text="确认"
-              negative-text="取消"
-              :show-icon="false"
-              @positive-click="deleteNotice"
-            >
+            <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice">
               <template #trigger>
-                <DeleteIcon />
+                <DeleteIcon class="icon-size" />
               </template>
               确认删除公告？
             </NPopconfirm>
@@ -57,7 +39,7 @@ import DeleteIcon from '../svg/DeleteIcon.vue'
 import EditIcon from '../svg/EditIcon.vue'
 import { NFlex, NCollapseItem, NPopconfirm } from 'naive-ui'
 import { mapGetters } from 'vuex'
-
+import Notice from '../../api/Notice.js'
 export default {
   name: 'NoticeListItem',
   props: {
@@ -84,12 +66,43 @@ export default {
   methods: {
     handleTop() {
       // todo
+      if (this.isAdmin) {
+        const newTopState = !this.notice.isTopped
+        Notice.updateNotice(this.notice.id,
+          this.notice.title,
+          this.notice.content,
+          !this.notice.isTopped).then(
+            (response) => {
+              this.$emit('updateState', {
+                index: this.index,
+                isTopped: newTopState
+              })
+              alert(newTopState ? "置顶成功" : "取消置顶成功")
+            },
+            (error) => {
+              alert("操作失败")
+              console.error(error)
+            }
+          )
+      }
     },
     jumpToEdit() {
       this.$bus.emit('startNoticeEditing', this.id)
     },
     deleteNotice() {
-      // todo
+      Notice.deleteNotice(this.notice.id).then(
+        (response) => {
+          this.$emit('updateState', {
+            index: this.index,
+            deleted: true
+          })
+          //this.$bus.emit('message', { title: '删除公告成功', ok: true })
+        },
+        (error) => {
+          //this.$bus.emit('message', { title: '删除公告失败', ok: false })
+          console.error(error)
+        }
+      )
     }
   }
 }
@@ -104,7 +117,7 @@ export default {
 
 .notice-wrapper:hover {
   transform: scale(1.01);
-} 
+}
 
 .time {
   font-size: 14px;
@@ -115,12 +128,18 @@ export default {
 .top-state {
   color: var(--default-blue);
   font-weight: bold;
-} 
+}
 
 .clickable {
   cursor: pointer;
 }
+
 .clickable:hover {
   text-decoration: underline;
+}
+
+.icon-size {
+  width: 10%;
+  height: 10%;
 }
 </style>
