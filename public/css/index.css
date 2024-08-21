@@ -12,6 +12,8 @@
   --default-green: #64ba44;
   --default-orange: #f7821a;
   --default-purple: #a550a7;
+  --default-cyan: #008080;
+  --default-pink: #f84e9e;
 
   --font-color: #333333;
   --bg-color: #fbfbfc;
@@ -105,7 +107,6 @@ div.empty-hint {
   text-align: center;
   font-style: italic;
   font-size: 18px;
-  color: var(--default-blue);
   margin: 20px auto;
 }
 
@@ -116,12 +117,21 @@ div.empty-hint {
   max-width: 1350px !important;
 }
 
-/* 公告中、lab 详情页、讨论详情页的 markdown 不展示边框 */
+div.v-note-wrapper {
+  background: transparent !important;
+}
+
+/* 公告中、lab 详情页、讨论详情页、讨论回复的 markdown 不展示边框 */
 .notice-wrapper .shadow.markdown-body,
 .lab-container .shadow.markdown-body,
-.discussion-detail .shadow.markdown-body {
+.discussion-detail .shadow.markdown-body,
+.reply .shadow.markdown-body:not(.reply-input *) {
   box-shadow: none !important;
   border-radius: 0 !important;
+}
+/* 讨论回复的 markdown 底部不要 padding */
+.reply .v-show-content {
+  padding-bottom: 0 !important;
 }
 
 .v-note-op {

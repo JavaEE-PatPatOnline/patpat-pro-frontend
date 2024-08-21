@@ -92,7 +92,7 @@ export default {
         localStorage.setItem('color-mode', 'light')
       } else {
         // 设置颜色为深色
-        document.documentElement.style.setProperty('--font-color', '#eaeaea')
+        document.documentElement.style.setProperty('--font-color', '#d6d6d6')
         document.documentElement.style.setProperty('--bg-color', '#181818')
         document.documentElement.style.setProperty('--bg-like', '#161619')
         document.documentElement.style.setProperty('--bg-grey', '#464649')

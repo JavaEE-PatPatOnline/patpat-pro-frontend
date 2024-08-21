@@ -15,22 +15,54 @@
             'discussion-type-1': discussion.type === 1,
             'discussion-type-2': discussion.type === 2,
             'discussion-type-3': discussion.type === 3,
-            'discussion-type-4': discussion.type === 4
+            'discussion-type-4': discussion.type === 4,
+            'discussion-type-5': discussion.type === 5
           }"
         >
           {{ discussionType[discussion.type] }}
         </div>
-        <div class="star" v-if="discussion.isStarred">已加精</div>
-        <div class="top" v-if="discussion.isTopped">已置顶</div>
-        <NFlex align="center" class="like-count" v-if="discussion.likeCount > 0">
-          <LikeIcon forShow />
-          {{ discussion.likeCount }}
+
+        <div 
+          class="star starred" :class="{ 'clickable': isAdmin }" 
+          v-if="discussion.isStarred" @click="handleStar"
+        >
+          已加精
+        </div>
+        <div 
+          class="star" v-else-if="!discussion.isStarred && showState"
+          :class="{ 'clickable': isAdmin }" @click="handleStar"
+        >
+          未加精
+        </div>
+
+        <div 
+          class="top topped" :class="{ 'clickable': isAdmin }" 
+          v-if="discussion.isTopped" @click="handleTop"
+        >
+          已置顶
+        </div>
+        <div 
+          class="top" :class="{ 'clickable': isAdmin }" 
+          v-else-if="!discussion.isTopped && showState" @click="handleTop"
+        >
+          未置顶
+        </div>
+
+        <NFlex 
+          align="center" class="like-wrapper" 
+          :class="{ 'liked-wrapper': discussion.isLiked, 'clickable': editable }"
+          @click="handleLike"
+        >
+          <LikeIcon v-if="!discussion.isLiked" />
+          <LikedIcon v-else />
+          点赞
+          <template v-if="discussion.likeCount > 0">{{ discussion.likeCount }}</template>
         </NFlex>
       </NFlex>
       <!-- 左侧下部：头像，用户名 -->
       <NFlex align="center" class="left-bottom">
-        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.userAvatar}')` }"></div>
-        <span>{{ discussion.username }}</span>
+        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.authorAvatar}')` }"></div>
+        <span>{{ discussion.authorName }}</span>
         <NEllipsis :tooltip="false" style="max-width: 80%" v-if="showContent">
           <span class="content">
             {{ discussion.content }}
@@ -52,6 +84,8 @@
 
 <script>
 import LikeIcon from '../svg/LikeIcon.vue'
+import LikedIcon from '../svg/LikedIcon.vue'
+import { mapGetters } from 'vuex'
 import { NFlex, NEllipsis } from 'naive-ui'
 
 export default {
@@ -70,12 +104,26 @@ export default {
     discussion: {
       type: Object,
       default: null
+    },
+    // 是否能执行加精、置顶操作
+    editable: {
+      type: Boolean,
+      default: false
+    },
+    // 是否展示“未加精”、“未置顶”
+    showState: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
     LikeIcon,
+    LikedIcon,
     NFlex,
     NEllipsis
+  },
+  computed: {
+    ...mapGetters(['isAdmin'])
   },
   data() {
     return {
@@ -83,7 +131,25 @@ export default {
         1: '问题求助',
         2: '交流分享',
         3: '学习打卡',
-        4: '其他'
+        4: '课程反馈',
+        5: '其他方面'
+      }
+    }
+  },
+  methods: {
+    handleStar() {
+      if (this.editable) {
+        // todo
+      }
+    },
+    handleTop() {
+      if (this.editable) {
+        // todo
+      }
+    },
+    handleLike() {
+      if (this.editable) {
+        // todo
       }
     }
   }
@@ -105,14 +171,38 @@ span.title {
   font-weight: bold;
 }
 
+.clickable {
+  cursor: pointer;
+  transition: .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.clickable:hover {
+  scale: 1.02;
+}
+
 .discussion-type,
-.star,
-.top {
-  color: #fbfbfc;
+.top,
+.star {
   font-weight: bold;
   font-size: 12px;
   border-radius: 3px;
-  padding: 3px 5px;
+  padding: 5px;
+}
+
+.top {
+  color: var(--default-blue);
+  border: 1px solid var(--default-blue);
+}
+
+.star {
+  color: var(--default-red);
+  border: 1px solid var(--default-red);
+}
+
+.discussion-type,
+.starred,
+.topped {
+  color: #fafafc;
 }
 
 .discussion-type-1 {
@@ -128,21 +218,33 @@ span.title {
 }
 
 .discussion-type-4 {
+  background: var(--default-cyan)
+}
+
+.discussion-type-5 {
   background: var(--default-grey);
 }
 
-.star {
+.starred {
   background: var(--default-red);
 }
 
-.top {
+.topped {
   background: var(--default-blue);
 }
 
-.like-count {
-  font-size: 14px;
+.like-wrapper {
+  border-radius: 3px;
+  border: 1px solid var(--default-grey);
+  color: var(--default-grey);
+  padding: 5px 10px;
+  font-size: 12px;
   font-weight: bold;
-  gap: 3px !important;
+}
+
+.liked-wrapper {
+  border: 1px solid var(--default-pink);
+  color: var(--default-pink);
 }
 
 .avatar {
