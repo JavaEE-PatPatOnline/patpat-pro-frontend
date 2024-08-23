@@ -1,11 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import LoginView from '../views/LoginView.vue'
+import SelectCourseView from '../views/SelectCourseView.vue'
 import NoticeView from '../views/NoticeView.vue'
 import LabView from '../views/LabView.vue'
+import IterView from '../views/IterView.vue'
 import UserView from '../views/UserView.vue'
 import DiscussionView from '../views/DiscussionView.vue'
 import DiscussionDetailView from '../views/DiscussionDetailView.vue'
+import ProblemView from '../views/ProblemView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +20,10 @@ const router = createRouter({
     {
       path: '/login',
       component: LoginView
+    },
+    {
+      path: '/select-course',
+      component: SelectCourseView
     },
     {
       path: '/notice',
@@ -35,6 +42,18 @@ const router = createRouter({
       component: LabView
     },
     {
+      path: '/iter/:id',
+      component: IterView
+    },
+    {
+      path: '/iter/:id/edit',
+      component: IterView
+    },
+    {
+      path: '/iter/create',
+      component: IterView
+    },
+    {
       path: '/user',
       component: UserView
     },
@@ -45,6 +64,10 @@ const router = createRouter({
     {
       path: '/discussion/:id',
       component: DiscussionDetailView
+    },
+    {
+      path: '/problem',
+      component: ProblemView
     }
   ]
 })

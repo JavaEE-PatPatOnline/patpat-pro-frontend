@@ -11,12 +11,8 @@
 <script>
 export default {
   name: 'MarkdownEditor',
-  props: {
-    value: {
-      type: String,
-      required: true
-    }
-  },
+  props: ['value'],
+  emits: ['update:value'],
   data () {
     return {
       content: this.value,
@@ -46,13 +42,11 @@ export default {
     }
   },
   watch: {
-    value: function (updated) {
+    value(updated) {
       this.content = updated
     },
-    content: function (old, updated) {
-      if (old !== updated) {
-        this.$emit('input', this.content)
-      }
+    content(updated) {
+      this.$emit('update:value', updated)
     }
   },
   methods: {

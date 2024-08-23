@@ -1,4 +1,5 @@
 <template>
+<!-- 下面这个 lab-container 不能删去 -->
   <div class="lab-container">
     <NFlex justify="space-between">
       <h3>{{ title }}</h3>
@@ -46,36 +47,13 @@ import EditIcon from '../svg/EditIcon.vue'
 import DeleteIcon from '../svg/DeleteIcon.vue'
 import UploadIcon from '../svg/UploadIcon.vue'
 import CrossIcon from '../svg/CrossIcon.vue'
+
+import Lab from '../../api/Lab.js'
+
 import { NFlex, NPopconfirm } from 'naive-ui'
 
 export default {
   name: 'LabDetail',
-  props: {
-    id: {
-      type: String,
-      default: '1'
-    },
-    title: {
-      type: String,
-      default: '这是 Lab 标题｜Lab01：面向对象程序设计'
-    },
-    content: {
-      type: String,
-      default: '# 测试一下 lab 详情\n### 三级标题\n各种格式： **加粗** 、 *斜体* 、 ~~删除线~~ 。\n- 列表1\n- 列表2\n- 列表3\n1. 数字1\n2. 数字2\n3. 数字3\n4. 数字4\n'
-    },
-    startTime: {
-      type: String,
-      default: '2024.07.30 15:49:23'
-    },
-    ddlTime: {
-      type: String,
-      default: '2024.07.30 15:49:24'
-    },
-    endTime: {
-      type: String,
-      default: '2024.07.30 15:49:25'
-    }
-  },
   components: {
     MarkdownDisplayer,
     EditIcon,
@@ -89,15 +67,57 @@ export default {
     return {
       fileToSubmit: null,
       filename: '',
-      fileURL: ''
+      fileURL: '',
+      id: '',
+      title: '',
+      content: 'hhs',
+      startTime: '',
+      ddlTime: '',
+      endTime: ''
     }
   },
+  watch: {
+    '$route'(to, from) {
+      if (to.params.id !== from.params.id) {
+        this.id = to.params.id
+        this.getLabDetail()
+      }
+    }
+  },
+  mounted() {
+    this.id = this.$route.params.id
+    this.getLabDetail()
+  },
   methods: {
+    getLabDetail() {
+      Lab.getLabDetail(this.id).then(
+        (response) => {
+          const lab = response.data.data
+          this.title = lab.title
+          this.content = lab.content
+          this.startTime = lab.startTime
+          this.ddlTime = lab.deadlineTime
+          this.endTime = lab.endTime
+        },
+        (error) => {
+          alert('获取实验详情失败')
+        }
+      )
+    },
     startEditingLab() {
       this.$router.push('/lab/' + this.id + '/edit')
     },
     deleteLab() {
-      // todo
+      Lab.deleteLab(this.id).then(
+        (response) => {
+          alert('删除实验成功')
+          this.$bus.emit('update-lab')
+          this.$router.go(-1)
+        },
+        (error) => {
+          alert('删除实验失败')
+        }
+      )
     },
     selectFile() {
       this.$refs.fileInput.click()
@@ -107,6 +127,7 @@ export default {
         this.fileToSubmit = event.target.files[0]
         this.filename = this.fileToSubmit.name
         this.fileURL = URL.createObjectURL(this.fileToSubmit)
+        // todo： 提交
       }
     },
     removeFile() {

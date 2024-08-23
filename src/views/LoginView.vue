@@ -55,8 +55,9 @@ export default {
                 (response) => {
                   // 利用全局消息总线设置导航栏的头像
                   //this.$bus.emit('updateAvatar', response.data.data.account.avatar)
-                  this.setIsAdmin(response.data.data.account.ta | response.data.data.account.teacher)
-                  this.setUserId(response.data.data.account.id)
+                  console.log(response.data)
+                  this.setIsAdmin(response.data.data.ta | response.data.data.teacher)
+                  this.setUserId(response.data.data.id)
                 },
                 (error) => {
                   alert("获取用户头像失败")
@@ -72,7 +73,7 @@ export default {
                   console.log("默认选择最新课程")
                 }
               )
-              this.$router.push('main')
+              this.$router.push('/select-course')
             }
           },
           (error) => {
@@ -89,7 +90,7 @@ export default {
 
 <style scoped>
 .container {
-  height: 100%;
+  height: calc(100% - 60px);
 }
 
 h2 {
