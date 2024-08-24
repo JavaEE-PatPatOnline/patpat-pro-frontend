@@ -1,7 +1,7 @@
 <template>
   <!-- Discussion Header -->
   <section class="header-container">
-    <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis />
+    <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis showState editable />
   </section>
   <!-- 详情 -->
   <!-- 外包一层 div 是为了在 index.css 中清除 markdown 的部分样式 -->
@@ -27,27 +27,12 @@
       </NFlex>
     </template>
   </section>
-
   <!-- 评论区 -->
-  <section v-if="comments" class="comments-section">
-    <h3>评论 ({{ comments.length }})</h3>
-    <div v-for="comment in comments" :key="comment.id" class="comment">
-      <div class="comment-header">
-        <!-- 头像 -->
-        <span class="comment-author">{{ comment.author.name }}</span>
-        <span class="comment-date">{{ comment.createdAt }}</span>
-      </div>
-      <MarkdownDisplayer :content="comment.content" />
-      <div class="comment-actions">
-        <button @click="likeComment(comment)">
-          {{ comment.liked ? "已赞" : "点赞" }}
-        </button>
-        <button @click="replyToComment(comment)">回复</button>
-        <button v-if="canDeleteComment(comment)" @click="deleteComment(comment)">删除</button>
-      </div>
-    </div>
+  <section class="reply">
+    <h4>全部回复</h4>
+    <ReplyList v-if="replies.length > 0" :replies="replies" />
+    <div class="empty-hint" v-else>暂无回复</div>
   </section>
-
 </template>
 <script>
 import { useRoute, useRouter } from 'vue-router'
@@ -55,6 +40,7 @@ import { useStore } from 'vuex'
 import DiscussionHeader from '../components/discussion/DiscussionHeader.vue'
 import MarkdownDisplayer from '../components/markdown/MarkdownDisplayer.vue'
 import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
+import ReplyList from '../components/discussion/reply/ReplyList.vue'
 import { NFlex } from 'naive-ui'
 import Discussion from '../api/Discussion.js'
 
@@ -64,6 +50,7 @@ export default {
     DiscussionHeader,
     MarkdownDisplayer,
     MarkdownEditor,
+    ReplyList,
     NFlex,
   },
   data() {
@@ -190,12 +177,7 @@ export default {
 }
 
 .discussion-reply {
-  margin-bottom: 30px;
-}
-
-.comments-section {
-  border-top: 1px solid #eee;
-  padding-top: 20px;
+  margin-left: 25px;
 }
 
 .comment {
@@ -235,5 +217,18 @@ export default {
 .styled {
   background-color: #1890ff;
   color: white;
+}
+
+.reply {
+  margin-left: 25px;
+  /* DO NOT MODIFY: */
+  padding-bottom: 1px;
+}
+
+h4 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--default-blue);
+  margin-bottom: 10px;
 }
 </style>

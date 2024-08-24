@@ -12,6 +12,8 @@
   --default-green: #64ba44;
   --default-orange: #f7821a;
   --default-purple: #a550a7;
+  --default-cyan: #008080;
+  --default-pink: #f84e9e;
 
   --font-color: #333333;
   --bg-color: #fbfbfc;
@@ -105,7 +107,6 @@ div.empty-hint {
   text-align: center;
   font-style: italic;
   font-size: 18px;
-  color: var(--default-blue);
   margin: 20px auto;
 }
 
@@ -116,12 +117,23 @@ div.empty-hint {
   max-width: 1350px !important;
 }
 
-/* 公告中、lab 详情页、讨论详情页的 markdown 不展示边框 */
+div.v-note-wrapper {
+  background: transparent !important;
+}
+
+/* 公告中、lab 详情页、迭代详情页、评测结果、讨论详情页、讨论回复的 markdown 不展示边框 */
 .notice-wrapper .shadow.markdown-body,
 .lab-container .shadow.markdown-body,
-.discussion-detail .shadow.markdown-body {
+.iter-container .shadow.markdown-body,
+.result-wrapper .shadow.markdown-body,
+.discussion-detail .shadow.markdown-body,
+.reply .shadow.markdown-body:not(.reply-input *) {
   box-shadow: none !important;
   border-radius: 0 !important;
+}
+/* 讨论回复的 markdown 底部不要 padding */
+.reply .v-show-content {
+  padding-bottom: 0 !important;
 }
 
 .v-note-op {
@@ -388,6 +400,20 @@ div.n-card-header svg {
   height: 25px !important;
 }
 
+/* n-pagination 相关样式 */
+.n-pagination {
+  --n-item-text-color: var(--font-color) !important;
+  --n-item-text-color-hover: var(--default-blue) !important;
+  --n-item-text-color-active: var(--default-blue) !important;
+  --n-item-text-color-pressed: var(--default-blue) !important;
+  --n-item-border-active: 1px solid var(--default-blue) !important;
+  --n-item-color-disabled: transparent !important;
+}
+/* 设置不可点击 svg 的鼠标样式 */
+.n-pagination-item--disabled svg {
+  cursor: not-allowed !important;
+}
+
 /* date picker 相关样式 */
 div.dp__input_wrap,
 div.dp__input_wrap * {
@@ -433,4 +459,9 @@ div.dp--menu-wrapper *::-webkit-scrollbar {
 }
 div.dp__menu.dp__menu_index.dp__theme_light {
   overflow: hidden !important;
+}
+
+/* 等待评测 Vue3Lottie 中的 svg cursor 不应为 pointer */
+.test-result .lottie-animation-container svg {
+  cursor: default !important;
 }

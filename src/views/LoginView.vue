@@ -69,7 +69,7 @@ export default {
                   console.log("默认选择最新课程")
                 }
               )
-              this.$router.push('main')
+              this.$router.push('/select-course')
             }
           },
           (error) => {
@@ -86,7 +86,7 @@ export default {
 
 <style scoped>
 .container {
-  height: 100%;
+  height: calc(100% - 60px);
 }
 
 h2 {

@@ -4,6 +4,7 @@ const url = {
   login: '/auth/login',
   selectCourse: '/course/select/',
 }
+
 export default class Account {
   static async login(id, pwd) {
     const data = {

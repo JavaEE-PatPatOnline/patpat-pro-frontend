@@ -13,11 +13,11 @@
               置顶
             </span>
             <!-- 编辑按钮 -->
-            <EditIcon @click="jumpToEdit" class="icon-size" />
+            <EditIcon @click="jumpToEdit" />
             <!-- 删除按钮 -->
             <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice">
               <template #trigger>
-                <DeleteIcon class="icon-size" />
+                <DeleteIcon />
               </template>
               确认删除公告？
             </NPopconfirm>
@@ -136,10 +136,5 @@ export default {
 
 .clickable:hover {
   text-decoration: underline;
-}
-
-.icon-size {
-  width: 10%;
-  height: 10%;
 }
 </style>

@@ -2,7 +2,9 @@
   <NMessageProvider>
     <Navigator />
     <template 
-      v-if="!(instance.proxy.$route.path.includes('user') || instance.proxy.$route.path.includes('login'))" 
+      v-if="!(instance.proxy.$route.path.includes('user') || 
+      instance.proxy.$route.path.includes('login') || 
+      instance.proxy.$route.path.includes('select-course'))" 
     >
       <NLayout has-sider>
         <NLayoutSider
@@ -48,7 +50,13 @@ import {
   ChatbubbleEllipsesOutline as ChatIcon,
   PeopleOutline as TeamIcon,
   InformationCircleOutline as InfoIcon,
+  HelpCircleOutline as ProblemIcon,
 } from '@vicons/ionicons5'
+
+// 访问 store 中的 isAdmin
+import { useStore } from 'vuex'
+const store = useStore()
+const isAdmin = store.state.isAdmin
 
 const instance = getCurrentInstance()
 
@@ -60,46 +68,97 @@ function renderIcon(icon) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-// labs 存储通过 API 获取的实验列表
-let labs = ref([
-  {
-    id: '1',
-    title: 'Lab01：初识 Java 如果名字很长怎么办呀！！！',
-    content: '# 测试一下'
-  },
-  {
-    id: '2',
-    title: 'Lab02：OOP 基本思想',
-    content: '## 测试一下'
-  }
-])
-// labMenuOptions 存储用于菜单渲染和路由跳转的数据
-let labMenuOptions = labs.value.map(lab => ({
-  label: () => h(
-    RouterLink,
-    {
-      to: {
-        path: '/lab/' + lab.id
+import Lab from './api/Lab.js'
+let labs = ref([])
+let labMenuOptions = ref([])
+
+function getAllLabs() {
+  Lab.getLabs(isAdmin).then(
+    (response) => {
+      labs.value = response.data.data
+      console.log(labs.value)
+      labMenuOptions.value = labs.value.map(lab => ({
+        label: () => h(
+          RouterLink,
+          {
+            to: {
+              path: '/lab/' + lab.id
+            }
+          },
+          { default: () => lab.title }
+        ),
+        key: 'lab' + lab.id
+      }))
+      // 如果是助教，labMenuOptions 的第一项是新建 lab
+      if (isAdmin) {
+        labMenuOptions.value.unshift({
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: '/lab/create'
+              }
+            },
+            { default: () => '新建实验' }
+          ),
+          key: 'creating-lab'
+        })
       }
     },
-    { default: () => lab.title }
-  ),
-  key: lab.id
-}))
-// 如果是助教，labMenuOptions 的第一项是新建 lab
-labMenuOptions.unshift({
-  label: () => h(
-    RouterLink,
-    {
-      to: {
-        path: '/lab/create'
-      }
-    },
-    { default: () => '新建实验' }
-  ),
-  key: 'creating-lab'
+    (error) => {
+      alert('获取实验列表失败')
+    }
+  )
+}
+
+getAllLabs()
+// 如果收到更新通知，重新获取 lab 列表
+instance.proxy.$bus.on('update-lab', () => {
+  getAllLabs()
 })
 
+import Iter from './api/Iter.js'
+let iters = ref([])
+let iterMenuOptions = ref([])
+
+function getAllIters() {
+  Iter.getAllIters(isAdmin).then(
+    (response) => {
+      iters.value = response.data.data
+      iterMenuOptions.value = iters.value.map(iter => ({
+        label: () => h(
+          RouterLink,
+          {
+            to: {
+              path: '/iter/' + iter.id
+            }
+          },
+          { default: () => iter.title }
+        ),
+        key: 'iter' + iter.id
+      }))
+      if (isAdmin) {
+        iterMenuOptions.value.unshift({
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: '/iter/create'
+              }
+            },
+            { default: () => '新建迭代' }
+          ),
+          key: 'creating-iter'
+        })
+      }
+    }
+  )
+}
+
+getAllIters()
+instance.proxy.$bus.on('update-iter', () => {
+  getAllIters()
+})
 
 let menuOptions = ref([
   {
@@ -125,16 +184,7 @@ let menuOptions = ref([
     label: '迭代作业',
     key: 'iteration',
     icon: renderIcon(IterIcon),
-    children: [
-      {
-        label: '迭代一',
-        key: 'iter1'
-      },
-      {
-        label: '迭代二',
-        key: 'iter2'
-      }
-    ]
+    children: iterMenuOptions
   },
   {
     label: () => h(
@@ -157,6 +207,17 @@ let menuOptions = ref([
     key: 'information',
     icon: renderIcon(InfoIcon)
   },
+  {
+    label: () => h(
+      RouterLink,
+      {
+        to: '/problem',
+      },
+      { default: () => '题目列表' }
+    ),
+    key: 'problem',
+    icon: renderIcon(ProblemIcon)
+  },
 ])
 
 // 监听路由变化，设置 activeKey 控制菜单样式
@@ -171,10 +232,20 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('lab')) {
     // 实验详情
     const id = instance.proxy.$route.params.id
-    activeKey.value = id
+    activeKey.value = 'lab' + id
+  } else if (newPath === '/iter/create') {
+    // 创建迭代
+    activeKey.value = 'creating-iter'
+  } else if (newPath.includes('iter')) {
+    // 实验详情
+    const id = instance.proxy.$route.params.id
+    activeKey.value = 'iter' + id
   } else if (newPath.includes('discussion')) {
     // 讨论区
     activeKey.value = 'discussion'
+  } else if (newPath.includes('problem')) {
+    // 题目库
+    activeKey.value = 'problem'
   }
 }, {
   immediate: true
