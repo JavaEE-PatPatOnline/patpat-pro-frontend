@@ -5,12 +5,12 @@ const url = {
   create: '/discussion/create',
   delete: '/discussion/delete',
   setTopState: '/discussion/top',
-  update: '/discussion/update',
+  // update: '/discussion/update',
   detail: '/discussion/',
   like: '/discussion/like',
-  createComment: '/discussion/comments/create',
-  deleteComment: '/discussion/comments/delete',
-  likeComment: '/discussion/comments/like',
+  createComment: '/discussion/reply/create',
+  deleteComment: '/discussion/reply/delete',
+  likeComment: '/discussion/reply/like',
 }
 
 export default class Discussion {
@@ -25,8 +25,8 @@ export default class Discussion {
       method: 'POST',
     })
   }
-  static async createComment(discussionId, content, parentId) {
-    const data = { discussionId, content, parentId }
+  static async createComment(discussionId, content, toId) {
+    const data = { discussionId, content, toId }
     return service(url.createComment, {
       method: 'POST',
       data,
@@ -73,11 +73,11 @@ export default class Discussion {
     })
   }
 
-  static async updateDiscussion(id, title, content) {
-    const data = { title, content }
-    return service(url.update + '/' + id, {
-      method: 'PUT',
-      data,
-    })
-  }
+  // static async updateDiscussion(id, title, content) {
+  //   const data = { title, content }
+  //   return service(url.update + '/' + id, {
+  //     method: 'PUT',
+  //     data,
+  //   })
+  // }
 }

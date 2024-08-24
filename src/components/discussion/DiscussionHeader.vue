@@ -1,7 +1,5 @@
 <template>
-  <NFlex 
-    justify="space-between" align="center" :wrap="false"
-  >
+  <NFlex justify="space-between" align="center" :wrap="false">
     <!-- 左侧 -->
     <div class="left">
       <!-- 左侧上部：标题和标签 -->
@@ -9,28 +7,25 @@
         <NEllipsis :tooltip="titleEllipsis" style="max-width: calc(100% - 300px); min-width: 250px;">
           <span class="title">{{ discussion.title }}</span>
         </NEllipsis>
-        <div 
-          class="discussion-type"
-          :class="{
-            'discussion-type-1': discussion.type === 1,
-            'discussion-type-2': discussion.type === 2,
-            'discussion-type-3': discussion.type === 3,
-            'discussion-type-4': discussion.type === 4
-          }"
-        >
+        <div class="discussion-type" :class="{
+          'discussion-type-1': discussion.type === 1,
+          'discussion-type-2': discussion.type === 2,
+          'discussion-type-3': discussion.type === 3,
+          'discussion-type-4': discussion.type === 4
+        }">
           {{ discussionType[discussion.type] }}
         </div>
-        <div class="star" v-if="discussion.isStarred">已加精</div>
-        <div class="top" v-if="discussion.isTopped">已置顶</div>
+        <div class="star" v-if="discussion.starred">已加精</div>
+        <div class="top" v-if="discussion.topped">已置顶</div>
         <NFlex align="center" class="like-count" v-if="discussion.likeCount > 0">
           <LikeIcon forShow />
           {{ discussion.likeCount }}
         </NFlex>
       </NFlex>
       <!-- 左侧下部：头像，用户名 -->
-      <NFlex align="center" class="left-bottom">
-        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.userAvatar}')` }"></div>
-        <span>{{ discussion.username }}</span>
+      <NFlex v-if="discussion.author" align="center" class="left-bottom">
+        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.author.avatar}')` }"></div>
+        <span>{{ discussion.author.name }}</span>
         <NEllipsis :tooltip="false" style="max-width: 80%" v-if="showContent">
           <span class="content">
             {{ discussion.content }}
@@ -86,7 +81,8 @@ export default {
         4: '其他'
       }
     }
-  }
+  },
+
 }
 </script>
 

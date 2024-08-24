@@ -8,6 +8,8 @@
   <section class="discussion-detail">
     <MarkdownDisplayer :content="discussion.content" />
   </section>
+  <!-- 删除按钮 -->
+  <button class="delete-btn" @click="deleteDiscussion">删除</button>
   <!-- 回复讨论 -->
   <section class="discussion-reply">
     <!-- 如果未处于 isEditingReply，则显示“回复讨论”按钮 -->
@@ -18,26 +20,46 @@
     </NFlex>
     <!-- 否则显示回复框、“回复”和“取消”按钮 -->
     <template v-else>
-      <MarkdownEditor v-model:value="replyContent"/>
+      <MarkdownEditor v-model:value="replyContent" />
       <NFlex justify="flex-end" align="center" class="reply-btn">
         <button @click="isEditingReply = false">取消</button>
-        <button class="styled" @click="reply">回复</button>
+        <button class="styled" @click="submitReply">回复</button>
       </NFlex>
     </template>
   </section>
 
   <!-- 评论区 -->
+  <section v-if="comments" class="comments-section">
+    <h3>评论 ({{ comments.length }})</h3>
+    <div v-for="comment in comments" :key="comment.id" class="comment">
+      <div class="comment-header">
+        <!-- 头像 -->
+        <span class="comment-author">{{ comment.author.name }}</span>
+        <span class="comment-date">{{ comment.createdAt }}</span>
+      </div>
+      <MarkdownDisplayer :content="comment.content" />
+      <div class="comment-actions">
+        <button @click="likeComment(comment)">
+          {{ comment.liked ? "已赞" : "点赞" }}
+        </button>
+        <button @click="replyToComment(comment)">回复</button>
+        <button v-if="canDeleteComment(comment)" @click="deleteComment(comment)">删除</button>
+      </div>
+    </div>
+  </section>
 
 </template>
-
 <script>
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import DiscussionHeader from '../components/discussion/DiscussionHeader.vue'
 import MarkdownDisplayer from '../components/markdown/MarkdownDisplayer.vue'
 import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
 import { NFlex } from 'naive-ui'
+import Discussion from '../api/Discussion.js'
 
 export default {
-  name: 'DiscussionDetailView.vue',
+  name: 'DiscussionDetail',
   components: {
     DiscussionHeader,
     MarkdownDisplayer,
@@ -46,42 +68,172 @@ export default {
   },
   data() {
     return {
-      discussion: {
-        title: '关于封装思想的再探讨',
-        userAvatar: 'http://8.130.103.241/public/boy.svg',
-        username: '柳政尧',
-        createdAt: '2024.08.01 12:53:36',
-        updatedAt: '2024.08.01 12:53:37',
-        content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-        isStarred: true,
-        isTopped: true
-      },
-      isEditingReply: false, // 是否正在编辑回复
-      replyContent: '' // 回复的字符串内容
-
+      discussion: {},
+      comments: [],
+      isEditingReply: false,
+      replyContent: '',
+      route: useRoute(),
+      router: useRouter(),
+      store: useStore()
     }
   },
+  computed: {
+    userId() {
+      return this.store.getters.getUserId
+    },
+    isAdmin() {
+      return this.store.getters.isAdmin
+    },
+    canDelete() {
+      return this.isAdmin || (this.discussion.author && this.discussion.author.id === this.userId)
+    }
+  },
+  mounted() {
+    const id = this.route.params.id
+    Discussion.getDiscussionDetail(id).then(
+      (response) => {
+        this.discussion = response.data.data.discussion
+        this.comments = response.data.data.replies
+      },
+      (error) => {
+        console.log('获取讨论详情失败' + error)
+      }
+    )
+  },
   methods: {
-    reply() {
-      // todo
+    deleteDiscussion() {
+      if (confirm('确定要删除这个讨论吗？')) {
+        Discussion.deleteDiscussion(this.discussion.id).then(
+          () => {
+            alert("删除成功")
+            this.router.push('/discussions')
+          },
+          (error) => {
+            console.log("删除失败", error)
+          }
+        )
+      }
+    },
+    submitReply() {
+      if (this.replyContent.trim() === '') {
+        this.replyContent = "恢复"
+      }
+      Discussion.createComment(this.discussion.id, this.replyContent, 0).then(
+        (response) => {
+          this.comments.push(response.data.data)
 
+        },
+        (error) => {
+          console.log("回复失败", error)
+        }
+      )
+      this.replyContent = ''
       this.isEditingReply = false
+    },
+    cancelReply() {
+      this.isEditingReply = false
+      this.replyContent = ''
+    },
+    likeComment(comment) {
+      Discussion.likeComment(comment.id, !comment.liked).then(
+        () => {
+          comment.liked = !comment.liked
+        },
+        (error) => {
+          console.log("点赞失败", error)
+        }
+      )
+    },
+    replyToComment(comment) {
+      // 实现回复特定评论的逻辑
+      console.log("回复评论", comment.id)
+    },
+    deleteComment(comment) {
+      if (confirm('确定要删除这条评论吗？')) {
+        Discussion.deleteComment(comment.id).then(
+          () => {
+            const index = this.comments.findIndex(c => c.id === comment.id)
+            if (index !== -1) {
+              this.comments.splice(index, 1)
+            }
+          },
+          (error) => {
+            console.log("删除评论失败", error)
+          }
+        )
+      }
+    },
+    canDeleteComment(comment) {
+      return this.isAdmin || comment.author.id === this.userId
     }
   }
 }
 </script>
 
 <style scoped>
+.discussion-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .header-container {
-  margin-left: 25px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.discussion-detail {
+  margin-bottom: 30px;
+}
+
+.discussion-actions {
+  margin-bottom: 20px;
 }
 
 .discussion-reply {
-  margin-left: 20px;
+  margin-bottom: 30px;
 }
 
-.reply-btn {
+.comments-section {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.comment {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.comment-actions {
   margin-top: 10px;
+}
+
+.comment-actions button {
+  margin-right: 10px;
+}
+
+.delete-btn,
+.styled {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.styled {
+  background-color: #1890ff;
+  color: white;
 }
 </style>
