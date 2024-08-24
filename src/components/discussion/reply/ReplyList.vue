@@ -1,10 +1,17 @@
 <template>
-  <!-- 一级评论列表 -->
-  <div class="reply-container" v-for="reply in replies" :key="reply.id">
-    <!-- 二级评论列表 -->
-    <ReplyListItem :reply="reply" />
-    <div class="second-reply-container" v-for="secondReply in reply.children" :key="secondReply.id">
-      <ReplyListItem :reply="secondReply" isSecond />
+  <div class='reply-container' v-for='reply in replies' :key='reply.id'>
+    <ReplyListItem 
+      :reply='reply' 
+      :discussionId='discussionId'
+       @comment-deleted='handleCommentDeleted(reply)'
+    />
+    <div class='second-reply-container' v-for='secondReply in reply.replies' :key='secondReply.id'>
+      <ReplyListItem 
+        :reply='secondReply' 
+        :discussionId='discussionId'
+        isSecond 
+        @comment-deleted='handleCommentDeleted(reply)'
+      />
     </div>
   </div>
 </template>
@@ -17,12 +24,34 @@ export default {
   props: {
     replies: {
       type: Array,
-      default: []
+      default: () => []
+    },
+    discussionId: {
+      type: Number,
+      required: true
     }
   },
   components: {
     ReplyListItem
-  }
+  },
+  methods: {
+     handleCommentDeleted(reply) {
+      if (reply.toId == 0) {
+        const index = this.replies.findIndex(item => item.id === reply.id);
+        if (index > -1) {
+          this.replies.splice(index, 1);
+        }
+      } else {
+        const parentReply = this.replies.find(item => item.id == reply.toId);
+        if (parentReply) {
+          const index = parentReply.replies.findIndex(item => item.id === reply.id);
+          if (index > -1) {
+            parentReply.replies.splice(index, 1);
+          }
+        }
+      }
+    }
+  },
 }
 </script>
 

@@ -5,12 +5,13 @@ const url = {
   create: '/discussion/create',
   delete: '/discussion/delete',
   setTopState: '/discussion/top',
-  // update: '/discussion/update',
   detail: '/discussion/',
   like: '/discussion/like',
   createComment: '/discussion/reply/create',
   deleteComment: '/discussion/reply/delete',
   likeComment: '/discussion/reply/like',
+  verify: 'admin/reply/verify/',
+  setStarState: 'admin/discussion/star',
 }
 
 export default class Discussion {
@@ -20,9 +21,19 @@ export default class Discussion {
     })
   }
   static async likeDiscussion(id, state) {
-    // console.log('点赞状态:', state)
-    return service(url.like + '/' + id + '?like=' + state, {
-      method: 'POST',
+    console.log('点赞状态:', state)
+    return service(url.like + '/' + id + '?liked=' + state, {
+      method: 'PUT',
+    })
+  }
+  static async setTopState(id, state) {
+    return service(url.setTopState + '/' + id + '?topped=' + state, {
+      method: 'PUT',
+    })
+  }
+  static async setStarState(id, state) {
+    return service(url.setStarState + '/' + id + '?starred=' + state, {
+      method: 'PUT',
     })
   }
   static async createComment(discussionId, content, toId) {
@@ -39,14 +50,13 @@ export default class Discussion {
     })
   }
   static async likeComment(id, state) {
-    console.log('状态' + !state)
-    return service(url.likeComment + '/' + id + '?like=' + !state, {
-      method: 'POST',
+    return service(url.likeComment + '/' + id + '?liked=' + state, {
+      method: 'PUT',
     })
   }
 
-  static async getDiscussionList() {
-    return service(url.all + '?p=1&ps=50', {
+  static async getDiscussionList(page, pageSize) {
+    return service(`${url.all}?p=${page}&ps=${pageSize}`, {
       method: 'GET',
     })
   }
@@ -61,23 +71,14 @@ export default class Discussion {
   }
 
   static async deleteDiscussion(id) {
-    console.log('删除id :', id)
     return service(url.delete + '/' + id, {
       method: 'DELETE',
     })
   }
 
-  static async setTopState(id, state) {
-    return service(url.setTopState + '/' + id + '?top=' + state, {
+  static async verify(id, verified) {
+    return service(`${url.verify}${id}?verified=${verified}`, {
       method: 'PUT',
     })
   }
-
-  // static async updateDiscussion(id, title, content) {
-  //   const data = { title, content }
-  //   return service(url.update + '/' + id, {
-  //     method: 'PUT',
-  //     data,
-  //   })
-  // }
 }

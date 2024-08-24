@@ -1,18 +1,18 @@
 <template>
-    <NFlex justify="space-between" align="center" class="editor-top">
-        <input type="text" placeholder="讨论标题" v-model="title" />
-        <select class="select-type" v-model="discussionType">
+    <NFlex justify='space-between' align='center' class='editor-top'>
+        <input type='text' placeholder='讨论标题' v-model='title' />
+        <select class='select-type' v-model='discussionType'>
             <option value='' disabled selected hidden>讨论帖类型</option>
-            <option value="1">问题求助</option>
-            <option value="2">交流分享</option>
-            <option value="3">学习打卡</option>
+            <option value='1'>问题求助</option>
+            <option value='2'>交流分享</option>
+            <option value='3'>学习打卡</option>
         </select>
-        <NFlex justify="flex-end" align="center">
-            <button @click="goBack">取消</button>
-            <button class="styled" @click="publishDiscussion">发布</button>
+        <NFlex justify='flex-end' align='center'>
+            <button @click='goBack'>取消</button>
+            <button class='styled' @click='publishDiscussion'>发布</button>
         </NFlex>
     </NFlex>
-    <MarkdownEditor v-model:value="content" />
+    <MarkdownEditor v-model:value='content' />
 </template>
 
 <script>
@@ -39,16 +39,15 @@ export default {
         },
         publishDiscussion() {
             if (this.title === '') {
-                alert("讨论标题不得为空")
+                alert('讨论标题不得为空')
                 return
             }
             if (this.content === '') {
-                // alert("讨论内容不得为空")
-                // return
-                this.content = "讨论内容"
+                alert('讨论内容不得为空')
+                return
             }
             if (this.discussionType === '') {
-                alert("请选择讨论帖类型")
+                alert('请选择讨论帖类型')
                 return
             }
 

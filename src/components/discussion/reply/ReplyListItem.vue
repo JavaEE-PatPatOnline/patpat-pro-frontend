@@ -4,10 +4,10 @@
     <NFlex justify="space-between" align="center">
       <!-- 头像、名称、时间 -->
       <NFlex align="center">
-        <div class="avatar" :style="{ 'background-image': `url('${reply.authorAvatar}')` }"></div>
+        <div class="avatar" :style="{ 'background-image': `url('${reply.author.avatar}')` }"></div>
         <div>
           <div>
-            {{ reply.authorName }}
+            {{ reply.author.name }}
             <template v-if="isSecond">@ {{ reply.to }}</template>
           </div>
           <div class="time">{{ reply.createdAt }}</div>
@@ -17,19 +17,19 @@
       <NFlex align="center">
         <NFlex 
           align="center" class="like-wrapper clickable" 
-          :class="{ 'liked-wrapper': reply.isLiked }"
+          :class="{ 'liked-wrapper': reply.liked }"
           @click="handleLike"
         >
-          <LikeIcon v-if="!reply.isLiked" />
+          <LikeIcon v-if="!reply.liked" />
           <LikedIcon v-else />
           点赞
           <template v-if="reply.likeCount > 0">{{ reply.likeCount }}</template>
         </NFlex>
         <div class="verify-wrapper" 
-          :class="{ 'verified-wrapper': reply.isVerified, 'clickable': isAdmin }" 
+          :class="{ 'verified-wrapper': reply.verified, 'clickable': isAdmin }" 
           @click="handleVerify"
         >
-          <template v-if="reply.isVerified">已认证</template>
+          <template v-if="reply.verified">已认证</template>
           <template v-else>未认证</template>
         </div>
       </NFlex>
@@ -40,7 +40,7 @@
         <MarkdownDisplayer :content="reply.content" />
       </div>
       <NFlex justify="flex-end" align="center" v-if="!isEditingReply">
-        <button class="styled reply-btn" @click="isEditingReply = true">回复</button>
+        <button v-if="!isSecond" class="styled reply-btn" @click="isEditingReply = true">回复</button>
         <NPopconfirm
           positive-text="确认"
           negative-text="取消"
@@ -58,12 +58,12 @@
     
     <!-- 回复框 -->
     <div v-if="isEditingReply" class="reply-input">
-      <MarkdownEditor v-model:value="replyContent" />
-      <NFlex justify="flex-end" align="center" class="reply-btn-box">
-        <button @click="isEditingReply = false">取消</button>
-        <button class="styled" @click="sendReply">回复</button>
-      </NFlex>
-    </div>
+    <MarkdownEditor v-model:value="replyContent" />
+    <NFlex justify="flex-end" align="center" class="reply-btn-box">
+      <button @click="cancelReply">取消</button>
+      <button class="styled" @click="submitReply">回复</button>
+    </NFlex>
+  </div>
   </div>
 </template>
 
@@ -75,7 +75,7 @@ import LikedIcon from '../../svg/LikedIcon.vue'
 import DeleteIcon from '../../svg/DeleteIcon.vue'
 import { mapGetters } from 'vuex'
 import { NFlex, NPopconfirm } from 'naive-ui'
-
+import Discussion from '../../../api/Discussion.js' 
 
 export default {
   name: 'ReplyListItem',
@@ -87,6 +87,10 @@ export default {
     reply: {
       type: Object,
       default: null
+    },
+    discussionId: {
+      type: Number,
+      required: true
     }
   },
   components: {
@@ -108,17 +112,71 @@ export default {
     }
   },
   methods: {
-    handleLike() {
-      // todo
+    handleEvent(eventName, ...args) {
+      this.$emit(eventName, ...args);
     },
     handleVerify() {
-      // todo
+      if (!this.isAdmin) {
+        return;
+      }
+      const newVerifiedStatus = !this.reply.verified;
+      const action = newVerifiedStatus ? "认证" : "取消认证";
+      if (confirm(`确定要${action}这条回复吗？`)) {
+        Discussion.verify(id, newVerifiedStatus).then(
+          (response) => {
+            this.reply.verified=newVerifiedStatus
+          },
+          (error) => {
+            console.error(`${action}回复失败:`, error);
+          }
+        );
+      }
+    },
+    cancelReply() {
+      this.isEditingReply = false
+      this.replyContent = ''
+    },
+    submitReply() {
+      if (this.replyContent.trim() === '') {
+        alert("评论内容不得为空")
+        return
+      }
+      Discussion.createComment(this.discussionId, this.replyContent, this.reply.id).then(
+        (response) => {
+           this.cancelReply()
+           this.reply.replies.push(response.data.data)
+        },
+        (error) => {
+          console.log("回复失败", error)
+        }
+      )
+    },
+    handleLike() {
+      console.log(this.reply.liked)
+      Discussion.likeComment(this.reply.id, !this.reply.liked).then(
+        () => {
+          this.reply.likeCount+=1
+        },
+        (error) => {
+          console.log("点赞失败", error)
+        }
+      )
     },
     deleteReply() {
-      // todo
-    },
-    sendReply() {
-      // todo
+      Discussion.deleteComment(this.reply.id).then(
+          () => {
+             this.$emit('comment-deleted', this.reply);
+          },
+          (error) => {
+            console.log("删除评论失败", error)
+          }
+        )
+    }
+  },
+  computed: {
+    ...mapGetters(['isAdmin', 'getUserId']),
+    canDeleteComment() {
+      return this.isAdmin || this.reply.author.id === this.getUserId
     }
   }
 }

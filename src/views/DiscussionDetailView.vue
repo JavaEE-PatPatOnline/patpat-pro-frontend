@@ -3,37 +3,44 @@
   <section class="header-container">
     <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis showState editable />
   </section>
+  
   <!-- 详情 -->
-  <!-- 外包一层 div 是为了在 index.css 中清除 markdown 的部分样式 -->
   <section class="discussion-detail">
     <MarkdownDisplayer :content="discussion.content" />
   </section>
+  
   <!-- 删除按钮 -->
-  <button class="delete-btn" @click="deleteDiscussion">删除</button>
+  <button v-if="canDelete" class="delete-btn" @click="deleteDiscussion">删除</button>
+  
   <!-- 回复讨论 -->
   <section class="discussion-reply">
-    <!-- 如果未处于 isEditingReply，则显示“回复讨论”按钮 -->
+    <!-- 如果未处于 isEditingReply，则显示"回复讨论"按钮 -->
     <NFlex justify="flex-end" align="center" v-if="!isEditingReply" class="reply-btn">
       <button class="styled" @click="isEditingReply = true">
         回复讨论
       </button>
     </NFlex>
-    <!-- 否则显示回复框、“回复”和“取消”按钮 -->
+    <!-- 否则显示回复框、"回复"和"取消"按钮 -->
     <template v-else>
       <MarkdownEditor v-model:value="replyContent" />
       <NFlex justify="flex-end" align="center" class="reply-btn">
-        <button @click="isEditingReply = false">取消</button>
+        <button @click="cancelReply">取消</button>
         <button class="styled" @click="submitReply">回复</button>
       </NFlex>
     </template>
   </section>
+  
   <!-- 评论区 -->
   <section class="reply">
     <h4>全部回复</h4>
-    <ReplyList v-if="replies.length > 0" :replies="replies" />
+    <ReplyList v-if="replies.length > 0"
+      :replies="replies" 
+      :discussionId="discussion.id"
+    />
     <div class="empty-hint" v-else>暂无回复</div>
   </section>
 </template>
+
 <script>
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -56,7 +63,7 @@ export default {
   data() {
     return {
       discussion: {},
-      comments: [],
+      replies: [],
       isEditingReply: false,
       replyContent: '',
       route: useRoute(),
@@ -80,7 +87,7 @@ export default {
     Discussion.getDiscussionDetail(id).then(
       (response) => {
         this.discussion = response.data.data.discussion
-        this.comments = response.data.data.replies
+        this.replies = response.data.data.replies
       },
       (error) => {
         console.log('获取讨论详情失败' + error)
@@ -102,57 +109,25 @@ export default {
       }
     },
     submitReply() {
+      console.log("是在submit提交的")
       if (this.replyContent.trim() === '') {
-        this.replyContent = "恢复"
+        alert("评论内容不得为空")
+        return
       }
       Discussion.createComment(this.discussion.id, this.replyContent, 0).then(
         (response) => {
-          this.comments.push(response.data.data)
-
+          this.replies.push(response.data.data)
+          this.cancelReply()
         },
         (error) => {
           console.log("回复失败", error)
         }
       )
-      this.replyContent = ''
-      this.isEditingReply = false
     },
     cancelReply() {
       this.isEditingReply = false
       this.replyContent = ''
     },
-    likeComment(comment) {
-      Discussion.likeComment(comment.id, !comment.liked).then(
-        () => {
-          comment.liked = !comment.liked
-        },
-        (error) => {
-          console.log("点赞失败", error)
-        }
-      )
-    },
-    replyToComment(comment) {
-      // 实现回复特定评论的逻辑
-      console.log("回复评论", comment.id)
-    },
-    deleteComment(comment) {
-      if (confirm('确定要删除这条评论吗？')) {
-        Discussion.deleteComment(comment.id).then(
-          () => {
-            const index = this.comments.findIndex(c => c.id === comment.id)
-            if (index !== -1) {
-              this.comments.splice(index, 1)
-            }
-          },
-          (error) => {
-            console.log("删除评论失败", error)
-          }
-        )
-      }
-    },
-    canDeleteComment(comment) {
-      return this.isAdmin || comment.author.id === this.userId
-    }
   }
 }
 </script>
