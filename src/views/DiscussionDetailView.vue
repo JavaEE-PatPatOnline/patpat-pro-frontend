@@ -3,15 +3,15 @@
   <section class="header-container">
     <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis showState editable />
   </section>
-  
+
   <!-- 详情 -->
   <section class="discussion-detail">
     <MarkdownDisplayer :content="discussion.content" />
   </section>
-  
+
   <!-- 删除按钮 -->
   <button v-if="canDelete" class="delete-btn" @click="deleteDiscussion">删除</button>
-  
+
   <!-- 回复讨论 -->
   <section class="discussion-reply">
     <!-- 如果未处于 isEditingReply，则显示"回复讨论"按钮 -->
@@ -29,14 +29,11 @@
       </NFlex>
     </template>
   </section>
-  
+
   <!-- 评论区 -->
   <section class="reply">
     <h4>全部回复</h4>
-    <ReplyList v-if="replies.length > 0"
-      :replies="replies" 
-      :discussionId="discussion.id"
-    />
+    <ReplyList v-if="replies.length > 0" v-model:replies="replies" :discussionId="discussion.id" />
     <div class="empty-hint" v-else>暂无回复</div>
   </section>
 </template>
@@ -83,18 +80,24 @@ export default {
     }
   },
   mounted() {
-    const id = this.route.params.id
-    Discussion.getDiscussionDetail(id).then(
-      (response) => {
-        this.discussion = response.data.data.discussion
-        this.replies = response.data.data.replies
-      },
-      (error) => {
-        console.log('获取讨论详情失败' + error)
-      }
-    )
+    this.fetchDiscussionDetails()
+    this.$bus.on('comment-deleted', () => {
+      this.fetchDiscussionDetails()
+    })
   },
   methods: {
+    fetchDiscussionDetails() {
+      const id = this.route.params.id
+      Discussion.getDiscussionDetail(id).then(
+        (response) => {
+          this.discussion = response.data.data.discussion
+          this.replies = response.data.data.replies
+        },
+        (error) => {
+          console.log('获取讨论详情失败' + error)
+        }
+      )
+    },
     deleteDiscussion() {
       if (confirm('确定要删除这个讨论吗？')) {
         Discussion.deleteDiscussion(this.discussion.id).then(

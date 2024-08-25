@@ -15,20 +15,15 @@
       </NFlex>
       <!-- 点赞和认证 -->
       <NFlex align="center">
-        <NFlex 
-          align="center" class="like-wrapper clickable" 
-          :class="{ 'liked-wrapper': reply.liked }"
-          @click="handleLike"
-        >
+        <NFlex align="center" class="like-wrapper clickable" :class="{ 'liked-wrapper': reply.liked }"
+          @click="handleLike">
           <LikeIcon v-if="!reply.liked" />
           <LikedIcon v-else />
           点赞
           <template v-if="reply.likeCount > 0">{{ reply.likeCount }}</template>
         </NFlex>
-        <div class="verify-wrapper" 
-          :class="{ 'verified-wrapper': reply.verified, 'clickable': isAdmin }" 
-          @click="handleVerify"
-        >
+        <div class="verify-wrapper" :class="{ 'verified-wrapper': reply.verified, 'clickable': isAdmin }"
+          @click="handleVerify">
           <template v-if="reply.verified">已认证</template>
           <template v-else>未认证</template>
         </div>
@@ -41,12 +36,7 @@
       </div>
       <NFlex justify="flex-end" align="center" v-if="!isEditingReply">
         <button v-if="!isSecond" class="styled reply-btn" @click="isEditingReply = true">回复</button>
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="deleteReply"
-        >
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteReply">
           <template #trigger>
             <DeleteIcon small />
           </template>
@@ -55,15 +45,15 @@
       </NFlex>
     </NFlex>
     <!-- 底部 -->
-    
+
     <!-- 回复框 -->
     <div v-if="isEditingReply" class="reply-input">
-    <MarkdownEditor v-model:value="replyContent" />
-    <NFlex justify="flex-end" align="center" class="reply-btn-box">
-      <button @click="cancelReply">取消</button>
-      <button class="styled" @click="submitReply">回复</button>
-    </NFlex>
-  </div>
+      <MarkdownEditor v-model:value="replyContent" />
+      <NFlex justify="flex-end" align="center" class="reply-btn-box">
+        <button @click="cancelReply">取消</button>
+        <button class="styled" @click="submitReply">回复</button>
+      </NFlex>
+    </div>
   </div>
 </template>
 
@@ -75,7 +65,7 @@ import LikedIcon from '../../svg/LikedIcon.vue'
 import DeleteIcon from '../../svg/DeleteIcon.vue'
 import { mapGetters } from 'vuex'
 import { NFlex, NPopconfirm } from 'naive-ui'
-import Discussion from '../../../api/Discussion.js' 
+import Discussion from '../../../api/Discussion.js'
 
 export default {
   name: 'ReplyListItem',
@@ -112,24 +102,21 @@ export default {
     }
   },
   methods: {
-    handleEvent(eventName, ...args) {
-      this.$emit(eventName, ...args);
-    },
     handleVerify() {
       if (!this.isAdmin) {
-        return;
+        return
       }
-      const newVerifiedStatus = !this.reply.verified;
-      const action = newVerifiedStatus ? "认证" : "取消认证";
+      const newVerifiedStatus = !this.reply.verified
+      const action = newVerifiedStatus ? "认证" : "取消认证"
       if (confirm(`确定要${action}这条回复吗？`)) {
         Discussion.verify(id, newVerifiedStatus).then(
           (response) => {
-            this.reply.verified=newVerifiedStatus
+            this.reply.verified = newVerifiedStatus
           },
           (error) => {
-            console.error(`${action}回复失败:`, error);
+            console.error(`${action}回复失败:`, error)
           }
-        );
+        )
       }
     },
     cancelReply() {
@@ -143,8 +130,8 @@ export default {
       }
       Discussion.createComment(this.discussionId, this.replyContent, this.reply.id).then(
         (response) => {
-           this.cancelReply()
-           this.reply.replies.push(response.data.data)
+          this.cancelReply()
+          this.reply.replies.push(response.data.data)
         },
         (error) => {
           console.log("回复失败", error)
@@ -155,7 +142,7 @@ export default {
       console.log(this.reply.liked)
       Discussion.likeComment(this.reply.id, !this.reply.liked).then(
         () => {
-          this.reply.likeCount+=1
+          this.reply.likeCount += 1
         },
         (error) => {
           console.log("点赞失败", error)
@@ -164,13 +151,13 @@ export default {
     },
     deleteReply() {
       Discussion.deleteComment(this.reply.id).then(
-          () => {
-             this.$emit('comment-deleted', this.reply);
-          },
-          (error) => {
-            console.log("删除评论失败", error)
-          }
-        )
+        () => {
+          this.$bus.emit('comment-deleted', this.reply)
+        },
+        (error) => {
+          console.log("删除评论失败", error)
+        }
+      )
     }
   },
   computed: {
