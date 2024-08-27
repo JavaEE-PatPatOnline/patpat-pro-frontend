@@ -1,5 +1,5 @@
 <template>
-  <DiscussionListItem v-for="discussion in discussions" :key="discussion.id" :discussion="discussion" />
+  <DiscussionListItem v-for='discussion in discussions' :key='discussion.id' :discussion='discussion' />
 </template>
 
 <script>

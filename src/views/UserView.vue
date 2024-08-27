@@ -7,8 +7,7 @@
       <NFlex justify="space-evenly" align="center" class="user-info">
         <!-- 头像 -->
         <div class="avatar" :style="{ backgroundImage: `url('${avatar}')` }" @click="handleUpload"></div>
-        <input ref="fileInput" type="file" accept="image/*" 
-          style="display: none" @change="handleFileChange" />
+        <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="handleFileChange" />
         <!-- 文字信息 -->
         <NFlex justify="center" align="center" class="list-wrapper">
           <ul>
@@ -30,14 +29,11 @@
       </NFlex>
     </NFlex>
   </NFlex>
-  <NModal v-model:show="changePasswordModalShouldShow"
-    preset="card"
-    :style="modalStyle"
-  >
+  <NModal v-model:show="changePasswordModalShouldShow" preset="card" :style="modalStyle">
     <h4 class="modal-title">修改密码</h4>
-    <input type="password" placeholder="原密码" v-model="originPassword"/><br />
-    <input type="password" placeholder="新密码" v-model="newPassword"/><br />
-    <input type="password" placeholder="确认密码" v-model="confirmedPassword"/><br />
+    <input type="password" placeholder="原密码" v-model="originPassword" /><br />
+    <input type="password" placeholder="新密码" v-model="newPassword" /><br />
+    <input type="password" placeholder="确认密码" v-model="confirmedPassword" /><br />
     <NFlex justify="space-between" align="center" class="modal-btn">
       <button @click="changePasswordModalShouldShow = false">取消</button>
       <button class="styled" @click="changePassword">确认</button>
@@ -47,7 +43,7 @@
 
 <script>
 import { NFlex, NModal } from 'naive-ui'
-
+import User from '../api/User.js'
 export default {
   name: 'UserView',
   components: {
@@ -64,7 +60,7 @@ export default {
       classId: '212113', // 小班号
       course: '面向对象程序设计（Java）', // 课程名
       teacher: '高祥', // 教师名
-      avatar: 'http://8.130.103.241/public/boy.svg', // 头像
+      avatar: '', // 头像
       changePasswordModalShouldShow: false,
       originPassword: '',
       newPassword: '',
@@ -73,6 +69,31 @@ export default {
         width: 'fit-content',
       }
     }
+  },
+  mounted() {
+    User.getUserInfo().then(
+      (response) => {
+        const userData = response.data.data
+        if (userData) {
+          this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
+          this.name = userData.name || ''
+          this.buaaId = userData.buaaId || ''
+          this.school = userData.school || ''
+          this.major = userData.major || ''
+          this.classId = userData.classId || ''
+          this.course = userData.course || ''
+          this.teacher = userData.teacher || ''
+          this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
+          this.$bus.emit('updateAvatar', userData.avatar)
+        } else {
+          throw new Error('未接收到用户数据')
+        }
+      },
+      (error) => {
+        alert("获取用户头像失败")
+        console.error(error)
+      }
+    )
   },
   methods: {
     handleUpload() {
@@ -132,7 +153,7 @@ export default {
 }
 
 .list-wrapper {
-  width:50%;
+  width: 50%;
 }
 
 ul {
@@ -179,5 +200,4 @@ input {
   margin: 20px auto;
   width: 50%;
 }
-
 </style>

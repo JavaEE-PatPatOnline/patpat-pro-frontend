@@ -87,7 +87,7 @@ export default {
       }
     },
     jumpToEdit() {
-      this.$bus.emit('startNoticeEditing', this.id)
+      this.$bus.emit('startNoticeEditing', this.notice.id)
     },
     deleteNotice() {
       Notice.deleteNotice(this.notice.id).then(

@@ -1,7 +1,7 @@
 <template>
   <!-- 外层容器 -->
-  <div class="discussion-wrapper" @click="jumpToDiscussionDetail">
-    <DiscussionHeader :discussion="discussion" />
+  <div class='discussion-wrapper' @click='jumpToDiscussionDetail'>
+    <DiscussionHeader :discussion='discussion' />
   </div>
 </template>
 

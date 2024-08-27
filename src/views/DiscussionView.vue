@@ -1,155 +1,73 @@
 <template>
-  <DiscussionList :discussions="currentDiscussions" />
+  <button v-if="!isEditingDiscussion" class="styled add-btn" @click="newDiscussion">+</button>
+  <DiscussionEditor v-else :id="editingDiscussionId" />
+  <DiscussionList v-if="!isEditingDiscussion" :discussions="discussions" />
   <NFlex justify="center" class="pagination">
-    <NPagination v-model:page="page" :page-count="total"/>
+    <NPagination 
+      v-model:page="page" 
+      :page-count="totalPages" 
+      @update:page="fetchDiscussions"
+    />
   </NFlex>
 </template>
 
 <script>
 import DiscussionList from '../components/discussion/DiscussionList.vue'
+import Discussion from '../api/Discussion.js'
+import DiscussionEditor from '../components/discussion/DiscussionEditor.vue'
 import { NFlex, NPagination } from 'naive-ui'
-
 
 export default {
   name: 'DiscussionView',
   components: {
     DiscussionList,
     NFlex,
-    NPagination
+    NPagination,
+    DiscussionEditor
   },
   data() {
     return {
-      discussions: [
-        {
-          id: '1',
-          title: '关于封装思想的再探讨如果标题就是非常非常非常非常非常非常非常非常非常长怎么办',
-          type: 2,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: true,
-          likeCount: 10,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        },
-        {
-          id: '4',
-          title: '关于封装思想的再探讨',
-          type: 1,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: false,
-          isStarred: true,
-          likeCount: 10,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: false
-        },
-        {
-          id: '2',
-          title: '关于封装思想的再探讨',
-          type: 3,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: false,
-          likeCount: 0,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: false
-        },
-        {
-          id: '3',
-          title: '关于封装思想的再探讨',
-          type: 4,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: false,
-          isStarred: false,
-          likeCount: 10,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        },
-        {
-          id: '10',
-          title: '关于封装思想的再探讨',
-          type: 5,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: true,
-          likeCount: 5,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        },
-        {
-          id: '11',
-          title: '关于封装思想的再探讨',
-          type: 5,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: true,
-          likeCount: 5,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        },
-        {
-          id: '12',
-          title: '关于封装思想的再探讨',
-          type: 5,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: true,
-          likeCount: 5,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        },
-        {
-          id: '13',
-          title: '关于封装思想的再探讨',
-          type: 5,
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-          isTopped: true,
-          isStarred: true,
-          likeCount: 5,
-          createdAt: '2024.07.31 12:09:26',
-          updatedAt: '2024.07.31 12:09:27',
-          isLiked: true
-        }
-      ],
+      discussions: [],
+      isEditingDiscussion: false,
+      editingDiscussionId: null,
       page: 1,
-      total: 1,
-      pageSize: 6 // 确定的值
+      pageSize: 6, // 每页显示的讨论数量
+      totalItems: 0, // 总讨论数量
+    }
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.totalItems / this.pageSize)
     }
   },
   mounted() {
-    // 此处计算总页数
-    this.total = Math.ceil(this.discussions.length / this.pageSize)
+    this.$bus.on('startDiscussionEditing', (id) => {
+      this.editingDiscussionId = id
+      this.isEditingDiscussion = true
+    })
+    this.$bus.on('endDiscussionEditing', () => {
+      this.editingDiscussionId = null
+      this.isEditingDiscussion = false
+      this.fetchDiscussions() // 重新获取讨论列表
+    })
+    this.fetchDiscussions()
   },
-  computed: {
-    currentDiscussions() {
-      // 这是一次请求了全部讨论帖的写法
-      // 实际上应该通过调用接口获取对应的页
-      const startIndex = (this.page - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.discussions.slice(startIndex, endIndex);
+  methods: {
+    newDiscussion() {
+      this.editingDiscussionId = ''
+      this.isEditingDiscussion = true
     },
+    fetchDiscussions() {
+      Discussion.getDiscussionList(this.page, this.pageSize).then(
+        (response) => {
+          this.discussions = response.data.data.items
+          this.totalItems = 6
+        },
+        (error) => {
+          console.log('获取讨论列表失败:' + error)
+        }
+      )
+    }
   }
 }
 </script>
@@ -157,5 +75,11 @@ export default {
 <style scoped>
 .pagination {
   padding: 20px 0;
+}
+.styled.add-btn {
+  font-size: 30px;
+  font-weight: normal;
+  height: fit-content;
+  padding: 0 30px;
 }
 </style>

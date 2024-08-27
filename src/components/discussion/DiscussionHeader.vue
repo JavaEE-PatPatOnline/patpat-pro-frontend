@@ -1,7 +1,5 @@
 <template>
-  <NFlex 
-    justify="space-between" align="center" :wrap="false"
-  >
+  <NFlex justify="space-between" align="center" :wrap="false">
     <!-- 左侧 -->
     <div class="left">
       <!-- 左侧上部：标题和标签 -->
@@ -24,45 +22,45 @@
 
         <div 
           class="star starred" :class="{ 'clickable': isAdmin }" 
-          v-if="discussion.isStarred" @click="handleStar"
+          v-if="discussion.starred" @click.stop="handleStar"
         >
           已加精
         </div>
         <div 
-          class="star" v-else-if="!discussion.isStarred && showState"
-          :class="{ 'clickable': isAdmin }" @click="handleStar"
+          class="star" v-else-if="!discussion.starred && showState"
+          :class="{ 'clickable': isAdmin }" @click.stop="handleStar"
         >
           未加精
         </div>
 
         <div 
           class="top topped" :class="{ 'clickable': isAdmin }" 
-          v-if="discussion.isTopped" @click="handleTop"
+          v-if="discussion.topped" @click.stop="handleTop"
         >
           已置顶
         </div>
         <div 
           class="top" :class="{ 'clickable': isAdmin }" 
-          v-else-if="!discussion.isTopped && showState" @click="handleTop"
+          v-else-if="!discussion.topped && showState" @click.stop="handleTop"
         >
           未置顶
         </div>
 
         <NFlex 
           align="center" class="like-wrapper" 
-          :class="{ 'liked-wrapper': discussion.isLiked, 'clickable': editable }"
-          @click="handleLike"
+          :class="{ 'liked-wrapper': discussion.liked, 'clickable': editable }"
+          @click.stop="handleLike"
         >
-          <LikeIcon v-if="!discussion.isLiked" />
+          <LikeIcon v-if="!discussion.liked" />
           <LikedIcon v-else />
           点赞
           <template v-if="discussion.likeCount > 0">{{ discussion.likeCount }}</template>
         </NFlex>
       </NFlex>
       <!-- 左侧下部：头像，用户名 -->
-      <NFlex align="center" class="left-bottom">
-        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.authorAvatar}')` }"></div>
-        <span>{{ discussion.authorName }}</span>
+      <NFlex v-if="discussion.author" align="center" class="left-bottom">
+        <div class="avatar" :style="{ 'backgroundImage': `url('${discussion.author.avatar}')` }"></div>
+        <span>{{ discussion.author.name }}</span>
         <NEllipsis :tooltip="false" style="max-width: 80%" v-if="showContent">
           <span class="content">
             {{ discussion.content }}
@@ -87,6 +85,8 @@ import LikeIcon from '../svg/LikeIcon.vue'
 import LikedIcon from '../svg/LikedIcon.vue'
 import { mapGetters } from 'vuex'
 import { NFlex, NEllipsis } from 'naive-ui'
+import Discussion from '../../api/Discussion.js'
+
 
 export default {
   name: 'DiscussionHeader',
@@ -137,22 +137,50 @@ export default {
     }
   },
   methods: {
-    handleStar() {
-      if (this.editable) {
-        // todo
-      }
-    },
-    handleTop() {
-      if (this.editable) {
-        // todo
-      }
-    },
-    handleLike() {
-      if (this.editable) {
-        // todo
-      }
+  handleStar() {
+    if (this.editable) {
+      const newStarredState = !this.discussion.starred
+      Discussion.setStarState(this.discussion.id, newStarredState)
+        .then(() => {
+          this.discussion.starred=newStarredState
+          // console.log(newStarredState ? "加精成功" : "取消加精成功");
+        })
+        .catch(error => {
+          console.log("加精操作失败", error);
+        });
     }
+  },
+
+  handleTop() {
+    if (this.editable) {
+      const newToppedState = !this.discussion.topped
+      Discussion.setTopState(this.discussion.id, newToppedState)
+        .then(() => {
+          this.discussion.topped=newToppedState
+          // console.log(newToppedState ? "置顶成功" : "取消置顶成功");
+        })
+        .catch(error => {
+          console.log("置顶操作失败", error);
+        });
+    }
+  },
+
+  handleLike() {
+    // if (this.editable) {
+    //都能点赞吧
+    console.log(this.discussion)
+    const newLikedState = !this.discussion.liked
+    Discussion.likeDiscussion(this.discussion.id, newLikedState)
+    .then(response => {
+      
+      this.discussion.liked=newLikedState
+      // console.log("点赞操作成功");
+    })
+    .catch(error => {
+      console.log("点赞操作失败", error);
+    });
   }
+}
 }
 </script>
 

@@ -3,45 +3,53 @@
   <section class="header-container">
     <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis showState editable />
   </section>
+
   <!-- 详情 -->
-  <!-- 外包一层 div 是为了在 index.css 中清除 markdown 的部分样式 -->
   <section class="discussion-detail">
     <MarkdownDisplayer :content="discussion.content" />
   </section>
+
+  <!-- 删除按钮 -->
+  <button v-if="canDelete" class="delete-btn" @click="deleteDiscussion">删除</button>
+
   <!-- 回复讨论 -->
   <section class="discussion-reply">
-    <!-- 如果未处于 isEditingReply，则显示“回复讨论”按钮 -->
+    <!-- 如果未处于 isEditingReply，则显示"回复讨论"按钮 -->
     <NFlex justify="flex-end" align="center" v-if="!isEditingReply" class="reply-btn">
       <button class="styled" @click="isEditingReply = true">
         回复讨论
       </button>
     </NFlex>
-    <!-- 否则显示回复框、“回复”和“取消”按钮 -->
+    <!-- 否则显示回复框、"回复"和"取消"按钮 -->
     <template v-else>
-      <MarkdownEditor v-model:value="replyContent"/>
+      <MarkdownEditor v-model:value="replyContent" />
       <NFlex justify="flex-end" align="center" class="reply-btn">
-        <button @click="isEditingReply = false">取消</button>
-        <button class="styled" @click="reply">回复</button>
+        <button @click="cancelReply">取消</button>
+        <button class="styled" @click="submitReply">回复</button>
       </NFlex>
     </template>
   </section>
+
   <!-- 评论区 -->
   <section class="reply">
     <h4>全部回复</h4>
-    <ReplyList v-if="replies.length > 0" :replies="replies" />
+    <ReplyList v-if="replies.length > 0" v-model:replies="replies" :discussionId="discussion.id" />
     <div class="empty-hint" v-else>暂无回复</div>
   </section>
 </template>
 
 <script>
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import DiscussionHeader from '../components/discussion/DiscussionHeader.vue'
 import MarkdownDisplayer from '../components/markdown/MarkdownDisplayer.vue'
 import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
 import ReplyList from '../components/discussion/reply/ReplyList.vue'
 import { NFlex } from 'naive-ui'
+import Discussion from '../api/Discussion.js'
 
 export default {
-  name: 'DiscussionDetailView.vue',
+  name: 'DiscussionDetail',
   components: {
     DiscussionHeader,
     MarkdownDisplayer,
@@ -51,105 +59,142 @@ export default {
   },
   data() {
     return {
-      discussion: {
-        title: '关于封装思想的再探讨',
-        authorAvatar: 'http://8.130.103.241/public/boy.svg',
-        authorName: '柳政尧',
-        createdAt: '2024.08.01 12:53:36',
-        updatedAt: '2024.08.01 12:53:37',
-        content: '封装是面向对象编程（OOP）的三大基本特征之一，它指的是将数据（属性）和操作这些数据的方法组合在一起的过程。封装有助于隐藏内部的实现细节，只暴露出一个可以被外界访问的接口。',
-        isStarred: true,
-        isTopped: true,
-        likeCount: 10,
-        isLiked: true
-      },
-      isEditingReply: false, // 是否正在编辑回复
-      replyContent: '', // 回复的字符串内容
-      replies: [
-        {
-          id: '1',
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '柳政尧',
-          createdAt: '2024.08.01 12:53:36',
-          content: '封装是面向对象编程（OOP）的三大基本特征之一哈佛啊回复哦啊哦发动行情奥if电话啊哦哦回复从i啊是佛卡佛i啊搜ID号ID号奥i回复i哦啊哈佛卡哦if好if厚爱发',
-          to: '柳政尧',
-          isVerified: true,
-          isLiked: true,
-          likeCount: 10,
-          children: [
-            {
-              id: '2',
-              authorAvatar: 'http://8.130.103.241/public/boy.svg',
-              authorName: '周奕航',
-              createdAt: '2024.08.01 12:53:37',
-              content: '封装是面向对象编程（OOP）的三大基本特征之一',
-              to: '柳政尧',
-              isVerified: false,
-              isLiked: false,
-              likeCount: 12
-            },
-            {
-              id: '3',
-              authorAvatar: 'http://8.130.103.241/public/girl.svg',
-              authorName: '冉超月',
-              createdAt: '2024.08.01 12:54:36',
-              content: '封装是面向对象编程（OOP）的三大基本特征之一',
-              to: '周奕航',
-              isVerified: false,
-              isLiked: true,
-              likeCount: 1,
-            }
-          ]
-        },
-        {
-          id: '4',
-          authorAvatar: 'http://8.130.103.241/public/boy.svg',
-          authorName: '周奕航',
-          createdAt: '2024.08.01 12:55:36',
-          content: '战无不胜的 **柳政尧主义思想** 万岁！',
-          to: '柳政尧',
-          isVerified: true,
-          isLiked: false,
-          likeCount: 100,
-          children: [
-            {
-              id: '5',
-              authorAvatar: 'http://8.130.103.241/public/girl.svg',
-              authorName: '冉超月',
-              createdAt: '2024.08.02 08:57:36',
-              content: '# 非常认同\n',
-              to: '周奕航',
-              isVerified: false,
-              isLiked: false,
-              likeCount: 0,
-            }
-          ]
-        }
-      ]
+      discussion: {},
+      replies: [],
+      isEditingReply: false,
+      replyContent: '',
+      route: useRoute(),
+      router: useRouter(),
+      store: useStore()
     }
   },
-  methods: {
-    reply() {
-      // todo
-
-      this.isEditingReply = false
+  computed: {
+    userId() {
+      return this.store.getters.getUserId
+    },
+    isAdmin() {
+      return this.store.getters.isAdmin
+    },
+    canDelete() {
+      return this.isAdmin || (this.discussion.author && this.discussion.author.id === this.userId)
     }
+  },
+  mounted() {
+    this.fetchDiscussionDetails()
+    this.$bus.on('comment-deleted', () => {
+      this.fetchDiscussionDetails()
+    })
+  },
+  methods: {
+    fetchDiscussionDetails() {
+      const id = this.route.params.id
+      Discussion.getDiscussionDetail(id).then(
+        (response) => {
+          this.discussion = response.data.data.discussion
+          this.replies = response.data.data.replies
+        },
+        (error) => {
+          console.log('获取讨论详情失败' + error)
+        }
+      )
+    },
+    deleteDiscussion() {
+      if (confirm('确定要删除这个讨论吗？')) {
+        Discussion.deleteDiscussion(this.discussion.id).then(
+          () => {
+            alert("删除成功")
+            this.router.push('/discussions')
+          },
+          (error) => {
+            console.log("删除失败", error)
+          }
+        )
+      }
+    },
+    submitReply() {
+      console.log("是在submit提交的")
+      if (this.replyContent.trim() === '') {
+        alert("评论内容不得为空")
+        return
+      }
+      Discussion.createComment(this.discussion.id, this.replyContent, 0).then(
+        (response) => {
+          this.replies.push(response.data.data)
+          this.cancelReply()
+        },
+        (error) => {
+          console.log("回复失败", error)
+        }
+      )
+    },
+    cancelReply() {
+      this.isEditingReply = false
+      this.replyContent = ''
+    },
   }
 }
 </script>
 
 <style scoped>
+.discussion-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .header-container {
-  margin-left: 25px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.discussion-detail {
+  margin-bottom: 30px;
+}
+
+.discussion-actions {
+  margin-bottom: 20px;
 }
 
 .discussion-reply {
   margin-left: 25px;
 }
 
-.reply-btn {
+.comment {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.comment-actions {
   margin-top: 10px;
+}
+
+.comment-actions button {
+  margin-right: 10px;
+}
+
+.delete-btn,
+.styled {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.styled {
+  background-color: #1890ff;
+  color: white;
 }
 
 .reply {

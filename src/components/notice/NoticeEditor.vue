@@ -33,7 +33,16 @@ export default {
   },
   mounted() {
     if (this.id !== '') {
-      //todo：后端还没写，获取单个notice
+      Notice.getOneNotice(this.id).then(
+        (response) => {
+          this.title = response.data.data.title
+          this.content = response.data.data.content
+        },
+        (error) => {
+          console.log(this.id)
+          alert("公告不存在")
+        }
+      )
     }
   },
   methods: {
@@ -45,12 +54,10 @@ export default {
       console.log(this.content)
       if (this.title === '') {
         alert("公告标题不得为空")
-        //this.$bus.emit('message', { title: '公告标题不得为空', ok: false })
         return
       }
       if (this.content === '') {
         alert("公告内容不得为空")
-        //this.$bus.emit('message', { title: '公告内容不得为空', ok: false })
         return
       }
       if (this.id === '') {
@@ -67,7 +74,7 @@ export default {
         )
       }
       else {
-        Notice.updateNotice(id,
+        Notice.updateNotice(this.id,
           this.title,
           this.content,
           this.state)
