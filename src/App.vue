@@ -73,7 +73,7 @@ let labs = ref([])
 let labMenuOptions = ref([])
 
 function getAllLabs() {
-  Lab.getLabs(isAdmin).then(
+  Lab.getLabs(false).then(
     (response) => {
       labs.value = response.data.data
       console.log(labs.value)
@@ -122,7 +122,7 @@ let iters = ref([])
 let iterMenuOptions = ref([])
 
 function getAllIters() {
-  Iter.getAllIters(isAdmin).then(
+  Iter.getIters(false).then(
     (response) => {
       iters.value = response.data.data
       iterMenuOptions.value = iters.value.map(iter => ({
@@ -198,8 +198,14 @@ let menuOptions = ref([
     icon: renderIcon(ChatIcon)
   },
   {
-    label: '团队管理',
-    key: 'team',
+    label: () => h(
+      RouterLink,
+      {
+        to: '/group',
+      },
+      { default: () => '团队管理' }
+    ),
+    key: 'group',
     icon: renderIcon(TeamIcon)
   },
   {
@@ -217,7 +223,7 @@ let menuOptions = ref([
     ),
     key: 'problem',
     icon: renderIcon(ProblemIcon)
-  },
+  }
 ])
 
 // 监听路由变化，设置 activeKey 控制菜单样式
@@ -243,6 +249,9 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('discussion')) {
     // 讨论区
     activeKey.value = 'discussion'
+  } else if (newPath.includes('group')) {
+    // 团队
+    activeKey.value = 'group'
   } else if (newPath.includes('problem')) {
     // 题目库
     activeKey.value = 'problem'

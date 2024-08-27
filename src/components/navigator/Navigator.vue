@@ -19,9 +19,13 @@
 
 <script>
 import ColorModeIcon from '../svg/ColorModeIcon.vue'
+import javaIcon from '../../assets/icons8-java.json'
+import User from '../../api/User.js'
+
+import { mapMutations } from 'vuex'
+
 import { NFlex } from 'naive-ui'
 import { Vue3Lottie } from 'vue3-lottie'
-import javaIcon from '../../assets/icons8-java.json'
 
 export default {
   name: 'Navigator',
@@ -32,7 +36,7 @@ export default {
   },
   data() {
     return {
-      avatar: 'http://8.130.103.241/public/boy.svg',
+      avatar: null,
       javaIcon
     }
   },
@@ -52,8 +56,25 @@ export default {
         this.$refs.java.pause()
       }
     }, 1)
+    User.getUserInfo().then(
+      (response) => {
+        const user = response.data.data
+        this.setUserAvatar(user.avatar)
+        this.setUserBuaaId(user.buaaId)
+        this.setIsAdmin(user.ta || user.teacher)
+        this.avatar = user.avatar
+      },
+      (error) => {
+        alert('获取用户信息失败')
+      }
+    )
   },
   methods: {
+    ...mapMutations([
+      'setIsAdmin',
+      'setUserAvatar',
+      'setUserBuaaId'
+    ]),
     jumpToHome() {
       this.$router.push('/')
     },

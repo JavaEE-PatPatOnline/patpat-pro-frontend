@@ -9,6 +9,7 @@ import UserView from '../views/UserView.vue'
 import DiscussionView from '../views/DiscussionView.vue'
 import DiscussionDetailView from '../views/DiscussionDetailView.vue'
 import ProblemView from '../views/ProblemView.vue'
+import GroupView from '../views/GroupView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,10 @@ const router = createRouter({
     {
       path: '/discussion/:id',
       component: DiscussionDetailView
+    },
+    {
+      path: '/group',
+      component: GroupView
     },
     {
       path: '/problem',

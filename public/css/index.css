@@ -1,5 +1,5 @@
 :root {
-  --default-red: #ea2d2e;
+  --default-red: rgb(234, 45, 46);
 
   --default-blue: rgb(0, 116, 189);
   --default-blue-transparent: rgba(0, 116, 189, .1);
@@ -90,6 +90,20 @@ button.styled:hover {
   background: var(--default-blue-light);
 }
 
+button.danger {
+  color: var(--default-red) !important;
+  background-color: rgba(234, 45, 46, .1);
+  border: 0;
+}
+
+button.danger:hover {
+  background: rgba(234, 45, 46, .2);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 input {
   width: 400px;
   height: 40px;
@@ -108,6 +122,7 @@ div.empty-hint {
   font-style: italic;
   font-size: 18px;
   margin: 20px auto;
+  margin-bottom: 10px;
 }
 
 .shadow.markdown-body {
@@ -465,3 +480,65 @@ div.dp__menu.dp__menu_index.dp__theme_light {
 .test-result .lottie-animation-container svg {
   cursor: default !important;
 }
+
+/* n-input-number (组员权重) 样式 */
+div.n-input-number {
+  position: absolute !important;
+  right: 0 !important;
+  border: 1px solid var(--default-grey);
+  border-radius: 3px !important;
+  height: 20px !important;
+}
+
+div.n-input-number,
+div.n-input-number * {
+  background: transparent !important;
+  height: 20px !important;
+}
+
+div.n-input-wrapper {
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  height: 20px !important;
+  align-items: flex-start !important;
+  flex-grow: 0 !important;
+}
+
+div.n-input__input {
+  width: 25px !important;
+}
+
+input.n-input__input-el {
+  font-size: 14px !important;
+  color: var(--font-color) !important;
+  width: 25px !important; 
+  caret-color: var(--default-blue) !important;
+  height: 20px !important;
+  position: absolute !important;
+  top: 0 !important;
+}
+
+div.n-input__placeholder {
+  display: none !important;
+}
+
+div.n-input__suffix {
+  margin-left: 0 !important;
+}
+
+div.n-input-number svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+div.n-input-number button.n-button.n-button--default-type.n-button--medium-type,
+div.n-input-number span.n-button__icon,
+div.n-input-number div.n-icon-slot,
+div.n-input-number i.n-base-icon {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
