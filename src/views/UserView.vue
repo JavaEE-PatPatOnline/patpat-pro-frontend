@@ -102,7 +102,7 @@ export default {
           this.teacher = stu.teacherName
         },
         (error) => {
-          alert('获取用户信息失败')
+          alert('获取学生信息失败')
         }
       )
     }
