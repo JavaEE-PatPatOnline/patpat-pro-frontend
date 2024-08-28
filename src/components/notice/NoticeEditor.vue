@@ -63,13 +63,11 @@ export default {
       if (this.id === '') {
         Notice.createNotice(this.title, this.content).then(
           (response) => {
-            this.$bus.emit('message', { title: '发布公告成功', ok: true })
             this.title = ''
             this.content = ''
           },
           (error) => {
-            this.$bus.emit('message', { title: '发布公告失败', ok: false })
-            console.error(error)
+            alert('发布公告失败')
           }
         )
       }
@@ -82,11 +80,9 @@ export default {
             (response) => {
               this.title = ''
               this.content = ''
-              this.$bus.emit('message', { title: '更新公告成功', ok: true })
             },
             (error) => {
-              this.$bus.emit('message', { title: '更新公告失败', ok: false })
-              console.error(error)
+              alert('更新公告失败')
             }
           )
       }

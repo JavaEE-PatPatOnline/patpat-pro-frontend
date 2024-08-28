@@ -4,16 +4,12 @@
   <template v-if="!isEditingDiscussion">
     <DiscussionList v-if="discussions.length > 0" :discussions="discussions" />
     <NFlex justify="center" class="pagination" v-if="discussions.length > 0">
-      <NPagination 
-        v-model:page="page" 
-        :page-count="totalPages" 
-        @update:page="fetchDiscussions"
-      />
+      <NPagination v-model:page="page" :page-count="totalPages" @update:page="fetchDiscussions" />
     </NFlex>
     <div class="empty-hint" v-if="discussions.length === 0">暂无讨论帖</div>
   </template>
-  
-  
+
+
 </template>
 
 <script>
@@ -56,6 +52,9 @@ export default {
       this.fetchDiscussions() // 重新获取讨论列表
     })
     this.fetchDiscussions()
+    this.$bus.on('discussion-change', () => {
+      this.fetchDiscussions()
+    })
   },
   methods: {
     newDiscussion() {
@@ -81,6 +80,7 @@ export default {
 .pagination {
   padding: 20px 0;
 }
+
 .styled.add-btn {
   font-size: 30px;
   font-weight: normal;

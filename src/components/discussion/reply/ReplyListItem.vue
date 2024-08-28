@@ -36,7 +36,8 @@
       </div>
       <NFlex justify="flex-end" align="center" v-if="!isEditingReply">
         <button v-if="!isSecond" class="styled reply-btn" @click="isEditingReply = true">回复</button>
-        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteReply">
+        <NPopconfirm v-if="isAdmin || reply.author.buaaId == userBuaaId" positive-text="确认" negative-text="取消"
+          :show-icon="false" @positive-click="deleteReply">
           <template #trigger>
             <DeleteIcon small />
           </template>
@@ -93,7 +94,8 @@ export default {
     NPopconfirm
   },
   computed: {
-    ...mapGetters(['isAdmin'])
+    ...mapGetters(['isAdmin']),
+    ...mapGetters(['userBuaaId'])
   },
   data() {
     return {
@@ -109,9 +111,10 @@ export default {
       const newVerifiedStatus = !this.reply.verified
       const action = newVerifiedStatus ? "认证" : "取消认证"
       if (confirm(`确定要${action}这条回复吗？`)) {
-        Discussion.verify(id, newVerifiedStatus).then(
+        Discussion.verify(this.reply.id, newVerifiedStatus).then(
           (response) => {
             this.reply.verified = newVerifiedStatus
+            this.$bus.emit("reply-change")
           },
           (error) => {
             console.error(`${action}回复失败:`, error)
@@ -143,6 +146,7 @@ export default {
       Discussion.likeComment(this.reply.id, !this.reply.liked).then(
         () => {
           this.reply.likeCount += 1
+          this.$bus.emit("reply-change")
         },
         (error) => {
           console.log("点赞失败", error)
@@ -152,7 +156,7 @@ export default {
     deleteReply() {
       Discussion.deleteComment(this.reply.id).then(
         () => {
-          this.$bus.emit('comment-deleted', this.reply)
+          this.$bus.emit('reply-change')
         },
         (error) => {
           console.log("删除评论失败", error)
@@ -161,10 +165,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAdmin', 'getUserId']),
-    canDeleteComment() {
-      return this.isAdmin || this.reply.author.id === this.getUserId
-    }
+    ...mapGetters(['isAdmin', 'userBuaaId']),
   }
 }
 </script>

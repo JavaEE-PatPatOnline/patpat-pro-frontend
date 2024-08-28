@@ -4,7 +4,7 @@ const url = {
   all: '/discussion/query',
   create: '/discussion/create',
   delete: '/discussion/delete',
-  setTopState: '/discussion/top',
+  setTopState: 'admin/discussion/top',
   detail: '/discussion/',
   like: '/discussion/like',
   createComment: '/discussion/reply/create',
@@ -62,7 +62,6 @@ export default class Discussion {
   }
 
   static async createDiscussion(title, content, type) {
-    // const data = { title: title.value, content: content.value, type: '1' };
     const data = { title, content, type }
     return service(url.create, {
       method: 'POST',

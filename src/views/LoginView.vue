@@ -61,15 +61,14 @@ export default {
                 },
                 (error) => {
                   alert("获取用户信息失败")
-                  console.error(error)
                 }
               )
               // let courseId = response.data.data.courses[0].id
               //Todo:选择课程页面
               // Account.selectCourse(courseId).then(
-                // (response) => {
-                  // console.log("默认选择最新课程")
-                // }
+              // (response) => {
+              // console.log("默认选择最新课程")
+              // }
               // )
               this.$bus.emit('update-navigator')
               this.$router.push('/select-course')
@@ -77,8 +76,6 @@ export default {
           },
           (error) => {
             alert("登录失败")
-            //this.$bus.emit('message', { title: '登录失败', ok: false })
-            console.error(error)
           }
         )
       }

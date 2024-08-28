@@ -15,7 +15,8 @@
             <!-- 编辑按钮 -->
             <EditIcon @click="jumpToEdit" v-if="isAdmin" />
             <!-- 删除按钮 -->
-            <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice" v-if="isAdmin">
+            <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice"
+              v-if="isAdmin">
               <template #trigger>
                 <DeleteIcon />
               </template>
@@ -73,15 +74,11 @@ export default {
           this.notice.content,
           !this.notice.isTopped).then(
             (response) => {
-              this.$emit('updateState', {
-                index: this.index,
-                isTopped: newTopState
-              })
+              this.$bus.emit('updateState')
               alert(newTopState ? "置顶成功" : "取消置顶成功")
             },
             (error) => {
               alert("操作失败")
-              console.error(error)
             }
           )
       }
@@ -92,15 +89,10 @@ export default {
     deleteNotice() {
       Notice.deleteNotice(this.notice.id).then(
         (response) => {
-          this.$emit('updateState', {
-            index: this.index,
-            deleted: true
-          })
-          //this.$bus.emit('message', { title: '删除公告成功', ok: true })
+          this.$bus.emit('updateState')
         },
         (error) => {
-          //this.$bus.emit('message', { title: '删除公告失败', ok: false })
-          console.error(error)
+          alert('公告删除失败')
         }
       )
     }
