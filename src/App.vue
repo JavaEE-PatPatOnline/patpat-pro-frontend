@@ -127,6 +127,7 @@ import Iter from './api/Iter.js'
 let iters = ref([])
 let iterMenuOptions = ref([])
 
+
 function getAllIters() {
   Iter.getIters(false).then(
     (response) => {
@@ -226,19 +227,36 @@ let menuOptions = ref([
     ),
     key: 'tutorial',
     icon: renderIcon(InfoIcon)
-  },
-  {
-    label: () => h(
-      RouterLink,
-      {
-        to: '/problem',
-      },
-      { default: () => '题目列表' }
-    ),
-    key: 'problem',
-    icon: renderIcon(ProblemIcon)
   }
+  // ,
+  // {
+  //   label: () => h(
+  //     RouterLink,
+  //     {
+  //       to: '/problem',
+  //     },
+  //     { default: () => '题目列表' }
+  //   ),
+  //   key: 'problem',
+  //   icon: renderIcon(ProblemIcon)
+  // }
 ])
+
+if (isAdmin) {
+  menuOptions.push(
+    {
+      label: () => h(
+        RouterLink,
+        {
+          to: '/problem',
+        },
+        { default: () => '题目列表' }
+      ),
+      key: 'problem',
+      icon: renderIcon(ProblemIcon)
+    }
+  )
+}
 
 // 监听路由变化，设置 activeKey 控制菜单样式
 watch(() => instance.proxy.$route.path, (newPath, oldPath) => {

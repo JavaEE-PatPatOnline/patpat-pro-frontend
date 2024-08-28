@@ -10,7 +10,19 @@
   </section>
 
   <!-- 删除按钮 -->
-  <button v-if="canDelete" class="delete-btn" @click="deleteDiscussion">删除</button>
+  <NPopconfirm
+    positive-text="确认"
+    negative-text="取消"
+    :show-icon="false"
+    @positive-click="deleteDiscussion"
+    v-if="canDelete"
+  >
+    <template #trigger>
+      <button class="danger" >删除</button>
+    </template>
+    确认删除此讨论帖？
+  </NPopconfirm>
+  
 
   <!-- 回复讨论 -->
   <section class="discussion-reply">
@@ -45,7 +57,7 @@ import DiscussionHeader from '../components/discussion/DiscussionHeader.vue'
 import MarkdownDisplayer from '../components/markdown/MarkdownDisplayer.vue'
 import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
 import ReplyList from '../components/discussion/reply/ReplyList.vue'
-import { NFlex } from 'naive-ui'
+import { NFlex, NPopconfirm } from 'naive-ui'
 import Discussion from '../api/Discussion.js'
 
 export default {
@@ -56,6 +68,7 @@ export default {
     MarkdownEditor,
     ReplyList,
     NFlex,
+    NPopconfirm
   },
   data() {
     return {
@@ -187,15 +200,15 @@ export default {
   cursor: pointer;
 }
 
-.delete-btn {
+/* .delete-btn {
   background-color: #ff4d4f;
   color: white;
-}
+} */
 
-.styled {
+/* .styled {
   background-color: #1890ff;
   color: white;
-}
+} */
 
 .reply {
   margin-left: 25px;

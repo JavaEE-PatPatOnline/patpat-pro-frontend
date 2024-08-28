@@ -17,13 +17,14 @@
         <input ref="fileInput" style="display: none" type="file" 
           @change="handleFileChange" accept=".pdf, .zip"/>
         <!-- 编辑按钮 -->
-        <EditIcon @click="startEditingLab"/>
+        <EditIcon @click="startEditingLab" v-if="isAdmin" />
         <!-- 删除按钮 -->
         <NPopconfirm
           positive-text="确认"
           negative-text="取消"
           :show-icon="false"
           @positive-click="deleteLab"
+          v-if="isAdmin"
         >
           <template #trigger>
             <DeleteIcon />
@@ -52,6 +53,8 @@ import Lab from '../../api/Lab.js'
 
 import { NFlex, NPopconfirm } from 'naive-ui'
 
+import { mapState } from 'vuex'
+
 export default {
   name: 'LabDetail',
   components: {
@@ -75,6 +78,9 @@ export default {
       ddlTime: '',
       endTime: ''
     }
+  },
+  computed: {
+    ...mapState(['isAdmin'])
   },
   watch: {
     '$route'(to, from) {

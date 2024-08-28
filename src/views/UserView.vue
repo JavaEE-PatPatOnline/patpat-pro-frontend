@@ -16,7 +16,6 @@
             <li>学院：{{ school }}</li>
             <li v-if="type === '学生'">专业：{{ major }}</li>
             <li v-if="type === '学生'">班级：{{ classId }}</li>
-            <li>课程：{{ course }}</li>
             <li v-if="type === '学生'">授课教师：{{ teacher }}</li>
             <li>身份：{{ type }}</li>
           </ul>
@@ -45,6 +44,9 @@
 import { NFlex, NModal } from 'naive-ui'
 import User from '../api/User.js'
 import Account from '../api/Account.js'
+
+import { mapState } from 'vuex'
+
 export default {
   name: 'UserView',
   components: {
@@ -59,7 +61,6 @@ export default {
       school: '软件学院', // 学院
       major: '软件工程', // 专业
       classId: '212113', // 小班号
-      course: '面向对象程序设计（Java）', // 课程名
       teacher: '高祥', // 教师名
       avatar: '', // 头像
       changePasswordModalShouldShow: false,
@@ -71,22 +72,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['isAdmin'])
+  },
   mounted() {
     User.getUserInfo().then(
       (response) => {
         const userData = response.data.data
         if (userData) {
-          console.log('user', userData)
           this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
           this.name = userData.name || ''
-          this.buaaId = userData.buaaId || ''
-          this.school = userData.school || ''
-          this.major = userData.major || ''
-          this.classId = userData.classId || ''
-          this.course = userData.course || ''
-          this.teacher = userData.teacher || ''
           this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
-          // this.$bus.emit('updateAvatar', userData.avatar)
         }
       },
       (error) => {
@@ -94,6 +90,22 @@ export default {
         console.log(error.response.data.status)
       }
     )
+    if (!this.isAdmin) {
+      User.getStuInfo().then(
+        (response) => {
+          const stu = response.data.data
+          this.avatar = stu.avatar
+          this.buaaId = stu.buaaId
+          this.school = stu.school
+          this.major = stu.major
+          this.classId = stu.className
+          this.teacher = stu.teacherName
+        },
+        (error) => {
+          alert('获取用户信息失败')
+        }
+      )
+    }
   },
   methods: {
     handleUpload() {

@@ -1,7 +1,7 @@
 <template>
   <NFlex justify="space-between" align="center" class="notice-top" v-if="!isEditingNotice">
     <h3>公告列表</h3>
-    <button class="styled add-btn" @click="newNotice">+</button>
+    <button class="styled add-btn" @click="newNotice" v-if="isAdmin">+</button>
   </NFlex>
   <NoticeList v-if="!isEditingNotice" :notices="notices" />
   <NoticeEditor v-else :id="editingNoticeId" />
@@ -12,6 +12,9 @@ import NoticeList from '../components/notice/NoticeList.vue'
 import NoticeEditor from '../components/notice/NoticeEditor.vue'
 import { NFlex } from 'naive-ui'
 import Notice from '../api/Notice.js'
+
+import { mapState } from 'vuex'
+
 export default {
   name: 'NoticeView',
   components: {
@@ -26,6 +29,9 @@ export default {
       notices: [],
       triggerAreas: [],
     }
+  },
+  computed: {
+    ...mapState(['isAdmin'])
   },
   mounted() {
     this.$bus.on('startNoticeEditing', (id) => {

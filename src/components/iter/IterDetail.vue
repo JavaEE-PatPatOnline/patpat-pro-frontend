@@ -5,13 +5,14 @@
       <h3>{{ title }}</h3>
       <NFlex align="center" class="iter-btn">
         <!-- 编辑按钮 -->
-        <EditIcon @click="startEditingIter"/>
+        <EditIcon @click="startEditingIter" v-if="isAdmin" />
         <!-- 删除按钮 -->
         <NPopconfirm
           positive-text="确认"
           negative-text="取消"
           :show-icon="false"
           @positive-click="deleteIter"
+          v-if="isAdmin"
         >
           <template #trigger>
             <DeleteIcon />
@@ -80,6 +81,8 @@ import Iter from '../../api/Iter.js'
 import Problem from '../../api/Problem.js'
 import Stream from '../../api/Stream.js'
 
+import { mapState } from 'vuex'
+
 export default {
   name: 'IterDetail',
   components: {
@@ -119,6 +122,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['isAdmin'])
+  },
   mounted() {
     this.id = this.$route.params.id
     this.getIterDetail()
@@ -145,7 +151,7 @@ export default {
             this.problemId = response.data.data[0].problemId
             Problem.getLatesSubmission(this.problemId).then(
               (response) => {
-                if (response.data) {
+                if (response.data.data) {
                   const mostRecentTest = response.data.data
                   if (mostRecentTest.endTime) {
                     this.testResultShouldShow = true

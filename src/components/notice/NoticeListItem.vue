@@ -13,9 +13,9 @@
               置顶
             </span>
             <!-- 编辑按钮 -->
-            <EditIcon @click="jumpToEdit" />
+            <EditIcon @click="jumpToEdit" v-if="isAdmin" />
             <!-- 删除按钮 -->
-            <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice">
+            <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice" v-if="isAdmin">
               <template #trigger>
                 <DeleteIcon />
               </template>

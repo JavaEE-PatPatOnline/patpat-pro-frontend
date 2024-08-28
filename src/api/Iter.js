@@ -7,7 +7,7 @@ const url = {
   updateIter: '/admin/task/iter/update/',
   createIter: '/admin/task/iter/create',
   deleteIter: '/admin/task/iter/delete/',
-  linkedProblem: '/admin/task/iter/problems/',
+  linkedProblem: '/task/iter/problems/',
   linkProblem: '/admin/task/iter/problems/update/'
 }
 
