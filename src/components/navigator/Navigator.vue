@@ -7,7 +7,8 @@
     </NFlex>
     <NFlex justify="flex-end" align="center">
       <ColorModeIcon @click="changeColorMode" />
-      <div @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
+      <div v-if="avatar"
+        @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
       </div>
     </NFlex>
   </NFlex>
@@ -52,20 +53,9 @@ export default {
         this.$refs.java.pause()
       }
     }, 1)
-    User.getUserInfo().then(
-      (response) => {
-        const user = response.data.data
-        this.setUserAvatar(user.avatar)
-        this.setUserBuaaId(user.buaaId)
-        this.setIsAdmin(user.ta || user.teacher)
-        this.avatar = user.avatar
-      },
-      (error) => {
-        alert('获取用户信息失败')
-      }
-    )
-    this.$bus.on('updateAvatar', (newAvatar) => {
-      this.avatar = newAvatar
+    this.getUserAvatar()
+    this.$bus.on('update-navigator', () => {
+      this.getUserAvatar()
     })
   },
   methods: {
@@ -125,6 +115,24 @@ export default {
 
         localStorage.setItem('color-mode', 'dark')
       }
+    },
+    getUserAvatar() {
+      if (this.$cookies.get('jwt')) {
+        User.getUserInfo().then(
+          (response) => {
+            const user = response.data.data
+            this.setUserAvatar(user.avatar)
+            this.setUserBuaaId(user.buaaId)
+            this.setIsAdmin(user.ta || user.teacher)
+            this.avatar = user.avatar
+          },
+          (error) => {
+            alert('获取用户头像失败')
+          }
+        )
+      } else {
+        this.avatar = null
+      }
     }
   }
 }
@@ -157,7 +165,6 @@ export default {
 .avatar {
   width: 45px;
   height: 45px;
-  background: green;
   border-radius: 50%;
   margin-right: 20px;
   cursor: pointer;

@@ -1,14 +1,19 @@
 <template>
   <button v-if="!isEditingDiscussion" class="styled add-btn" @click="newDiscussion">+</button>
   <DiscussionEditor v-else :id="editingDiscussionId" />
-  <DiscussionList v-if="!isEditingDiscussion" :discussions="discussions" />
-  <NFlex justify="center" class="pagination">
-    <NPagination 
-      v-model:page="page" 
-      :page-count="totalPages" 
-      @update:page="fetchDiscussions"
-    />
-  </NFlex>
+  <template v-if="!isEditingDiscussion">
+    <DiscussionList v-if="discussions.length > 0" :discussions="discussions" />
+    <NFlex justify="center" class="pagination" v-if="discussions.length > 0">
+      <NPagination 
+        v-model:page="page" 
+        :page-count="totalPages" 
+        @update:page="fetchDiscussions"
+      />
+    </NFlex>
+    <div class="empty-hint" v-if="discussions.length === 0">暂无讨论帖</div>
+  </template>
+  
+  
 </template>
 
 <script>

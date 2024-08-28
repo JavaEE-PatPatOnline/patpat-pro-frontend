@@ -1,10 +1,11 @@
 <template>
   <NMessageProvider>
-    <Navigator />
+    <Navigator v-if="instance.proxy.$route.path !== '/'" />
     <template 
       v-if="!(instance.proxy.$route.path.includes('user') || 
       instance.proxy.$route.path.includes('login') || 
-      instance.proxy.$route.path.includes('select-course'))" 
+      instance.proxy.$route.path.includes('select-course') ||
+      instance.proxy.$route.path === '/')" 
     >
       <NLayout has-sider>
         <NLayoutSider
@@ -52,6 +53,8 @@ import {
   InformationCircleOutline as InfoIcon,
   HelpCircleOutline as ProblemIcon,
 } from '@vicons/ionicons5'
+
+import User from './api/User.js'
 
 // 访问 store 中的 isAdmin
 import { useStore } from 'vuex'
@@ -111,7 +114,10 @@ function getAllLabs() {
   )
 }
 
-getAllLabs()
+
+if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
+  getAllLabs()
+}
 // 如果收到更新通知，重新获取 lab 列表
 instance.proxy.$bus.on('update-lab', () => {
   getAllLabs()
@@ -155,7 +161,9 @@ function getAllIters() {
   )
 }
 
-getAllIters()
+if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
+  getAllIters()
+}
 instance.proxy.$bus.on('update-iter', () => {
   getAllIters()
 })
@@ -209,8 +217,14 @@ let menuOptions = ref([
     icon: renderIcon(TeamIcon)
   },
   {
-    label: '课程资料',
-    key: 'information',
+    label: () => h(
+      RouterLink,
+      {
+        to: '/tutorial'
+      },
+      { default: () => '课程资料' }
+    ),
+    key: 'tutorial',
     icon: renderIcon(InfoIcon)
   },
   {
@@ -252,6 +266,9 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('group')) {
     // 团队
     activeKey.value = 'group'
+  } else if (newPath.includes('tutorial')) {
+    // 教程
+    activeKey.value = 'tutorial'
   } else if (newPath.includes('problem')) {
     // 题目库
     activeKey.value = 'problem'

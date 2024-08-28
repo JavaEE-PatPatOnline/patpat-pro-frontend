@@ -1,7 +1,7 @@
 <template>
   <NFlex justify="center" align="center" class="container">
     <NFlex vertical justify="flex-start" align="center" wrap class="login-container">
-      <h2>欢迎来到 Patpat 网页版</h2>
+      <h2>欢迎来到 Patpat Online</h2>
       <div class="input-container">
         <span>
           用户名
@@ -31,6 +31,8 @@
 import { NFlex, useMessage } from 'naive-ui'
 import Account from '../api/Account.js'
 import User from '../api/User.js'
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'LoginView',
   components: {
@@ -44,6 +46,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setIsAdmin', 'setUserBuaaId']),
     login() {
       if (this.username === '' || this.password === '') {
         alert("用户名和密码不得为空")
@@ -53,22 +56,22 @@ export default {
             if (response.data.status === 200) {
               User.getUserInfo().then(
                 (response) => {
-                  this.setIsAdmin(response.data.data.account.ta | response.data.data.account.teacher)
-                  this.setUserId(response.data.data.account.id)
+                  this.setIsAdmin(response.data.data.ta | response.data.data.teacher)
+                  this.setUserBuaaId(response.data.data.id)
                 },
                 (error) => {
-                  alert("获取用户头像失败")
+                  alert("获取用户信息失败")
                   console.error(error)
                 }
               )
-              console.log("登录成功")
-              let courseId = response.data.data.courses[0].id
+              // let courseId = response.data.data.courses[0].id
               //Todo:选择课程页面
-              Account.selectCourse(courseId).then(
-                (response) => {
-                  console.log("默认选择最新课程")
-                }
-              )
+              // Account.selectCourse(courseId).then(
+                // (response) => {
+                  // console.log("默认选择最新课程")
+                // }
+              // )
+              this.$bus.emit('update-navigator')
               this.$router.push('/select-course')
             }
           },

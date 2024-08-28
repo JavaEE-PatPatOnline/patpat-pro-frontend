@@ -25,7 +25,7 @@
       <!-- 下方按钮容器 -->
       <NFlex justify="flex-end" align="center" class="btn-box">
         <button @click="changePasswordModalShouldShow = true">修改密码</button>
-        <button class="styled">退出登录</button>
+        <button class="styled" @click="logout">退出登录</button>
       </NFlex>
     </NFlex>
   </NFlex>
@@ -44,6 +44,7 @@
 <script>
 import { NFlex, NModal } from 'naive-ui'
 import User from '../api/User.js'
+import Account from '../api/Account.js'
 export default {
   name: 'UserView',
   components: {
@@ -75,6 +76,7 @@ export default {
       (response) => {
         const userData = response.data.data
         if (userData) {
+          console.log('user', userData)
           this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
           this.name = userData.name || ''
           this.buaaId = userData.buaaId || ''
@@ -84,14 +86,12 @@ export default {
           this.course = userData.course || ''
           this.teacher = userData.teacher || ''
           this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
-          this.$bus.emit('updateAvatar', userData.avatar)
-        } else {
-          throw new Error('未接收到用户数据')
+          // this.$bus.emit('updateAvatar', userData.avatar)
         }
       },
       (error) => {
-        alert("获取用户头像失败")
-        console.error(error)
+        alert("获取用户信息失败")
+        console.log(error.response.data.status)
       }
     )
   },
@@ -107,6 +107,18 @@ export default {
     },
     changePassword() {
       // todo
+    },
+    logout() {
+      Account.logout().then(
+        (response) => {
+          alert('登出成功')
+          this.$router.push('/login')
+          this.$bus.emit('update-navigator')
+        },
+        (error) => {
+          alert('登出失败')
+        }
+      )
     }
   }
 }
