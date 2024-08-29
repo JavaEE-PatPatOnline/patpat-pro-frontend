@@ -21,7 +21,7 @@ import User from '../../api/User.js'
 
 import { mapMutations } from 'vuex'
 
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import { Vue3Lottie } from 'vue3-lottie'
 
 export default {
@@ -33,6 +33,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       avatar: null,
       javaIcon
     }
@@ -127,7 +128,7 @@ export default {
             this.avatar = user.avatar
           },
           (error) => {
-            alert('获取用户头像失败')
+            this.message.error('获取用户头像失败')
           }
         )
       } else {

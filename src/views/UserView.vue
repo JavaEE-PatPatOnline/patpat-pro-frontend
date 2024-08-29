@@ -46,6 +46,7 @@ import User from '../api/User.js'
 import Account from '../api/Account.js'
 
 import { mapState } from 'vuex'
+import { useMessage } from 'naive-ui'
 
 export default {
   name: 'UserView',
@@ -55,6 +56,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       type: '教师', // 用户类型：学生/助教/教师
       name: '柳政尧', // 用户姓名
       buaaId: '21371300', // 学工号
@@ -86,7 +88,7 @@ export default {
         }
       },
       (error) => {
-        alert("获取用户信息失败")
+        this.message.error('获取用户信息失败')
         console.log(error.response.data.status)
       }
     )
@@ -102,7 +104,7 @@ export default {
           this.teacher = stu.teacherName
         },
         (error) => {
-          alert('获取学生信息失败')
+          this.message.error('获取学生信息失败')
         }
       )
     }
@@ -116,25 +118,25 @@ export default {
         this.avatar = URL.createObjectURL(event.target.files[0])
         Account.updataAvatar(event.target.files[0]).then(
           (response) => {
-            alert('修改头像成功')
+            this.message.success('修改头像成功')
           },
           (error) => {
-            alert('修改头像失败')
+            this.message.error('修改头像失败')
           }
         )
       }
     },
     changePassword() {
       if (this.newPassword !== this.confirmedPassword) {
-        alert('密码与确认密码不一致')
+        this.message.error('密码与确认密码不一致')
       } else {
         User.changePassword(this.originPassword, this.newPassword).then(
           (response) => {
-            alert('修改密码成功')
+            this.message.success('修改密码成功')
             this.logout()
           },
           (error) => {
-            alert('修改密码失败')
+            this.message.error('修改密码失败')
           }
         )
       }
@@ -142,12 +144,11 @@ export default {
     logout() {
       Account.logout().then(
         (response) => {
-          // alert('登出成功')
           this.$router.push('/login')
           this.$bus.emit('update-navigator')
         },
         (error) => {
-          alert('登出失败')
+          this.message.error('登出失败')
         }
       )
     }

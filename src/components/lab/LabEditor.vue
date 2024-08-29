@@ -57,10 +57,9 @@ import MarkdownEditor from '../markdown/MarkdownEditor.vue'
 
 import Lab from '../../api/Lab.js'
 
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import DatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { ReturnDownBack } from '@vicons/ionicons5'
 
 export default {
   name: 'LabEditor',
@@ -71,6 +70,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       visibility: 'invisible',
       title: '',
       content: '',
@@ -99,7 +99,7 @@ export default {
           this.visibility = lab.visible ? 'visible' : 'invisible'
         },
         (error) => {
-          alert('获取实验详情失败')
+          this.message.error('获取实验详情失败')
         }
       )
     },
@@ -108,26 +108,26 @@ export default {
     },
     confirmChange() {
       if (this.title === '') {
-        alert('实验标题不得为空')
+        this.message.error('实验标题不得为空')
         return
       }
       if (this.content === '') {
-        alert('实验内容不得为空')
+        this.message.error('实验内容不得为空')
         return
       }
       if (this.startTime === '' || this.dllTime === '' || this.endTime === '') {
-        alert('实验起止时间不得为空')
+        this.message.error('实验起止时间不得为空')
         return
       }
       const start = new Date(this.startTime)
       const ddl = new Date(this.ddlTime)
       const end = new Date(this.endTime)
       if (start.getTime() >= ddl.getTime()) {
-        alert('开始时间不得晚于结束时间')
+        this.message.error('开始时间不得晚于结束时间')
         return
       }
       if (ddl.getTime() >= end.getTime()) {
-        alert('结束时间不得晚于截止时间')
+        this.message.error('结束时间不得晚于截止时间')
         return
       }
 
@@ -144,25 +144,25 @@ export default {
         // id 为空表示新建实验
         Lab.createLab(labData).then(
           (response) => {
-            alert('创建实验成功')
+            this.message.success('创建实验成功')
             this.$bus.emit('update-lab')
             this.$router.push('/lab/' + response.data.data.id)
           },
           (error) => {
-            alert('创建实验失败')
+            this.message.error('创建实验失败')
           }
         )
       } else {
         // 否则为修改实验内容
         Lab.updateLab(this.id, labData).then(
           (response) => {
-            alert('更新实验成功')
+            this.message.success('更新实验成功')
             this.$bus.emit('update-lab')
             this.$router.push('/lab/' + this.id)
             // 
           },
           (error) => {
-            alert('更新实验失败')
+            this.message.error('更新实验失败')
           }
         )
       }

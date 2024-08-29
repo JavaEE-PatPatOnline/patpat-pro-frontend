@@ -10,7 +10,7 @@
 <script>
 import NoticeList from '../components/notice/NoticeList.vue'
 import NoticeEditor from '../components/notice/NoticeEditor.vue'
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import Notice from '../api/Notice.js'
 
 import { mapState } from 'vuex'
@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       editingNoticeId: null,
       isEditingNotice: false,
       notices: [],
@@ -63,7 +64,7 @@ export default {
           }
         },
         (error) => {
-          alert('获取公告列表失败')
+          this.message.error('获取公告列表失败')
         }
       )
     },

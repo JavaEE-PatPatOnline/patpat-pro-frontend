@@ -6,7 +6,8 @@ const url = {
   labDetail: '/task/lab/query/',
   updateLab: '/admin/task/lab/update/',
   createLab: '/admin/task/lab/create',
-  deleteLab: '/admin/task/lab/delete/'
+  deleteLab: '/admin/task/lab/delete/',
+  submit: '/task/lab/submit/'
 }
 
 export default class Lab {
@@ -53,6 +54,16 @@ export default class Lab {
   static async deleteLab(id) {
     return service(url.deleteLab + id, {
       method: 'delete'
+    })
+  }
+
+  static async submitReport(id, file) {
+    let data = new FormData()
+    data.append('file', file)
+
+    return service(url.submit + id, {
+      method: 'post',
+      data
     })
   }
 }

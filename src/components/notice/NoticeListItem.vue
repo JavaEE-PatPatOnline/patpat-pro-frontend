@@ -38,7 +38,7 @@
 import MarkdownDisplayer from '../markdown/MarkdownDisplayer.vue'
 import DeleteIcon from '../svg/DeleteIcon.vue'
 import EditIcon from '../svg/EditIcon.vue'
-import { NFlex, NCollapseItem, NPopconfirm } from 'naive-ui'
+import { NFlex, NCollapseItem, NPopconfirm, useMessage } from 'naive-ui'
 import { mapState } from 'vuex'
 import Notice from '../../api/Notice.js'
 export default {
@@ -51,6 +51,11 @@ export default {
     index: {
       type: Number,
       default: null
+    }
+  },
+  data() {
+    return {
+      message: useMessage()
     }
   },
   components: {
@@ -66,7 +71,6 @@ export default {
   },
   methods: {
     handleTop() {
-      // todo
       if (this.isAdmin) {
         const newTopState = !this.notice.isTopped
         Notice.updateNotice(this.notice.id,
@@ -75,10 +79,10 @@ export default {
           !this.notice.isTopped).then(
             (response) => {
               this.$bus.emit('updateState')
-              alert(newTopState ? "置顶成功" : "取消置顶成功")
+              this.message.success(newTopState ? '置顶成功' : '取消置顶成功')
             },
             (error) => {
-              alert("操作失败")
+              this.message.error('操作失败')
             }
           )
       }
@@ -92,7 +96,7 @@ export default {
           this.$bus.emit('updateState')
         },
         (error) => {
-          alert('公告删除失败')
+          this.message.error('删除公告失败')
         }
       )
     }

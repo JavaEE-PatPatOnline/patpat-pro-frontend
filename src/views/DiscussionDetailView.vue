@@ -16,7 +16,7 @@
       <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteDiscussion"
         v-if="canDelete">
         <template #trigger>
-          <button>删除</button>
+          <button class="danger">删除</button>
         </template>
         确认删除此讨论帖？
       </NPopconfirm>
@@ -50,7 +50,7 @@ import DiscussionHeader from '../components/discussion/DiscussionHeader.vue'
 import MarkdownDisplayer from '../components/markdown/MarkdownDisplayer.vue'
 import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
 import ReplyList from '../components/discussion/reply/ReplyList.vue'
-import { NFlex, NPopconfirm } from 'naive-ui'
+import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 import Discussion from '../api/Discussion.js'
 import { mapGetters } from 'vuex'
 export default {
@@ -65,6 +65,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       discussion: {},
       replies: [],
       isEditingReply: false,
@@ -106,22 +107,20 @@ export default {
       )
     },
     deleteDiscussion() {
-      if (confirm('确定要删除这个讨论吗？')) {
-        Discussion.deleteDiscussion(this.discussion.id).then(
-          () => {
-            alert("删除成功")
-            this.router.push('/discussions')
-          },
-          (error) => {
-            console.log("删除失败", error)
-          }
-        )
-      }
+      Discussion.deleteDiscussion(this.discussion.id).then(
+        (response) => {
+          this.message.success('删除讨论帖成功')
+          this.router.push('/discussions')
+        },
+        (error) => {
+          this.message.error('删除讨论帖失败')
+        }
+      )
     },
     submitReply() {
       console.log("是在submit提交的")
       if (this.replyContent.trim() === '') {
-        alert("评论内容不得为空")
+        this.message.error('评论内容不得为空')
         return
       }
       Discussion.createComment(this.discussion.id, this.replyContent, 0).then(
@@ -130,7 +129,7 @@ export default {
           this.cancelReply()
         },
         (error) => {
-          console.log("回复失败", error)
+          this.message.error('回复评论失败')
         }
       )
     },

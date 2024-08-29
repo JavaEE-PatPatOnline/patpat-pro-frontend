@@ -73,7 +73,7 @@
 import MarkdownDisplayer from '../markdown/MarkdownDisplayer.vue'
 import EditIcon from '../svg/EditIcon.vue'
 import DeleteIcon from '../svg/DeleteIcon.vue'
-import { NFlex, NPopconfirm } from 'naive-ui'
+import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 import { Vue3Lottie } from 'vue3-lottie'
 import javaIcon from '../../assets/icons8-java.json'
 
@@ -95,6 +95,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       javaIcon,
       fileToSubmit: null,
       filename: '',
@@ -142,7 +143,7 @@ export default {
           this.endTime = iter.endTime
         },
         (error) => {
-          alert('获取迭代详情失败')
+          this.message.error('获取迭代详情失败')
         }
       )
       Iter.getLinkedProblem(this.id).then(
@@ -165,13 +166,13 @@ export default {
             }
               },
               (error) => {
-                alert('获取评测记录失败')
+                this.message.error('获取评测记录失败')
               }
             )
           }
         },
         (error) => {
-          alert('获取关联评测题失败')
+          this.message.error('获取关联评测题失败')
         }
       )
     },
@@ -181,12 +182,12 @@ export default {
     deleteIter() {
       Iter.deleteIter(this.id).then(
         (response) => {
-          alert('删除迭代成功')
+          this.message.success('删除迭代成功')
           this.$bus.emit('update-iter')
           this.$router.go(-1)
         },
         (error) => {
-          alert('删除迭代失败')
+          this.message.error('删除迭代失败')
         }
       )
     },
@@ -218,7 +219,7 @@ export default {
             }
           }
           this.ws.onerror = (error) => {
-            alert('WebSocket 错误')
+            this.message.error('WebSocket 错误')
             console.error('WebSocket 错误:', error)
           }
           this.ws.onclose = () => {
@@ -226,7 +227,7 @@ export default {
           }
         },
         (error) => {
-          alert('获取 WebSocket URL 失败')
+          this.message.error('获取 WebSocket URL 失败')
         }
       )
     },
@@ -244,7 +245,7 @@ export default {
             // this.setupWebSocket()
           },
           (error) => {
-            alert('提交评测失败')
+            this.message.error('提交评测失败')
           }
         )
       }

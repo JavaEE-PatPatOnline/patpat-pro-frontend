@@ -69,7 +69,7 @@ import MarkdownEditor from '../markdown/MarkdownEditor.vue'
 import Problem from '../../api/Problem.js'
 import Iter from '../../api/Iter.js'
 
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import DatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -82,6 +82,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       id: '',
       visibility: 'invisible',
       title: '',
@@ -104,7 +105,7 @@ export default {
         this.problems = response.data.data
       },
       (error) => {
-        alert('获取评测题列表失败')
+        this.message.error('获取评测题列表失败')
       }
     )
   },
@@ -121,7 +122,7 @@ export default {
           this.visibility = iter.visible ? 'visible' : 'invisible'
         },
         (error) => {
-          alert('获取迭代详情失败')
+          this.message.error('获取迭代详情失败')
         }
       )
       Iter.getLinkedProblem(this.id).then(
@@ -131,7 +132,7 @@ export default {
           }
         },
         (error) => {
-          alert('获取关联评测题失败')
+          this.message.error('获取关联评测题失败')
         }
       )
     },
@@ -140,31 +141,31 @@ export default {
     },
     confirmChange() {
       if (this.title === '') {
-        alert('迭代标题不得为空')
+        this.message.error('迭代标题不得为空')
         return
       }
       if (this.content === '') {
-        alert('迭代内容不得为空')
+        this.message.error('迭代内容不得为空')
         return
       }
       if (this.startTime === '' || this.dllTime === '' || this.endTime === '') {
-        alert('迭代起止时间不得为空')
+        this.message.error('迭代起止时间不得为空')
         return
       }
       const start = new Date(this.startTime)
       const ddl = new Date(this.ddlTime)
       const end = new Date(this.endTime)
       if (start.getTime() >= ddl.getTime()) {
-        alert('开始时间不得晚于结束时间')
+        this.message.error('开始时间不得晚于结束时间')
         return
       }
       if (ddl.getTime() >= end.getTime()) {
-        alert('结束时间不得晚于截止时间')
+        this.message.error('结束时间不得晚于截止时间')
         return
       }
 
       if (!this.problem) {
-        alert('迭代需关联一道评测题')
+        this.message.error('迭代需关联一道评测题')
         return
       }
 
@@ -183,17 +184,17 @@ export default {
             this.id = response.data.data.id
             Iter.linkProblem(this.id, this.problem).then(
               (response) => {
-                alert('创建迭代成功')
+                this.message.success('创建迭代成功')
                 this.$bus.emit('update-iter')
                 this.$router.push('/iter/' + this.id)
               },
               (error) => {
-                alert('创建迭代失败')
+                this.message.error('创建迭代失败')
               }
             )
           },
           (error) => {
-            alert('创建迭代失败')
+            this.message.error('创建迭代失败')
           }
         )
       } else {
@@ -201,17 +202,17 @@ export default {
           (response) => {
             Iter.linkProblem(this.id, this.problem).then(
               (response) => {
-                alert('更新迭代成功')
+                this.message.success('更新迭代成功')
                 this.$bus.emit('update-iter')
                 this.$router.push('/iter/' + this.id)
               },
               (error) => {
-                alert('更新迭代失败')
+                this.message.error('更新迭代失败')
               }
             )
           },
           (error) => {
-            alert('更新迭代失败')
+            this.message.error('更新迭代失败')
           }
         )
       }

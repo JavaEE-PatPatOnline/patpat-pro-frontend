@@ -49,7 +49,7 @@ export default {
     ...mapMutations(['setIsAdmin', 'setUserBuaaId']),
     login() {
       if (this.username === '' || this.password === '') {
-        alert("用户名和密码不得为空")
+        this.message.error('用户名和密码不得为空')
       } else {
         Account.login(this.username, this.password).then(
           (response) => {
@@ -60,22 +60,15 @@ export default {
                   this.setUserBuaaId(response.data.data.id)
                 },
                 (error) => {
-                  alert("获取用户信息失败")
+                  this.message.error('获取用户信息失败')
                 }
               )
-              // let courseId = response.data.data.courses[0].id
-              //Todo:选择课程页面
-              // Account.selectCourse(courseId).then(
-              // (response) => {
-              // console.log("默认选择最新课程")
-              // }
-              // )
               this.$bus.emit('update-navigator')
               this.$router.push('/select-course')
             }
           },
           (error) => {
-            alert("登录失败")
+            this.message.error('登录失败')
           }
         )
       }

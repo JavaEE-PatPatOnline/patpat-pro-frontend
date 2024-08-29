@@ -51,7 +51,7 @@ import CrossIcon from '../svg/CrossIcon.vue'
 
 import Lab from '../../api/Lab.js'
 
-import { NFlex, NPopconfirm } from 'naive-ui'
+import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 
 import { mapState } from 'vuex'
 
@@ -68,6 +68,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       fileToSubmit: null,
       filename: '',
       fileURL: '',
@@ -106,7 +107,7 @@ export default {
           this.endTime = lab.endTime
         },
         (error) => {
-          alert('获取实验详情失败')
+          this.message.error('获取实验详情失败')
         }
       )
     },
@@ -116,12 +117,12 @@ export default {
     deleteLab() {
       Lab.deleteLab(this.id).then(
         (response) => {
-          alert('删除实验成功')
+          this.message.success('删除实验成功')
           this.$bus.emit('update-lab')
           this.$router.go(-1)
         },
         (error) => {
-          alert('删除实验失败')
+          this.message.error('删除实验失败')
         }
       )
     },
@@ -134,6 +135,14 @@ export default {
         this.filename = this.fileToSubmit.name
         this.fileURL = URL.createObjectURL(this.fileToSubmit)
         // todo： 提交
+        Lab.submitReport(this.id, this.fileToSubmit).then(
+          (response) => {
+            this.message.success('提交实验报告成功')
+          },
+          (error) => {
+            this.message.error('提交实验报告失败')
+          }
+        )
       }
     },
     removeFile() {

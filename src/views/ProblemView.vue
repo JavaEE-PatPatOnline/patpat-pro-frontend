@@ -68,7 +68,7 @@ import DeleteIcon from '../components/svg/DeleteIcon.vue'
 
 import Problem from '../api/Problem.js'
 
-import { NCollapse, NCollapseItem, NFlex, NPopconfirm } from 'naive-ui'
+import { NCollapse, NCollapseItem, NFlex, NPopconfirm, useMessage } from 'naive-ui'
 
 export default {
   name: 'ProblemView',
@@ -83,6 +83,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       problems: [],
       title: '',
       configFile: null,
@@ -106,13 +107,13 @@ export default {
                 problem.cases = response.data.data.descriptor.cases
               },
               (error) => {
-                alert('获取题目详情失败')
+                this.message.error('获取题目详情失败')
               }
             )
           })
         },
         (error) => {
-          alert('获取评测题列表失败')
+          this.message.error('获取评测题列表失败')
         }
       )
     },
@@ -127,11 +128,11 @@ export default {
       problemData.append('title', problem.title)
       Problem.updateProblem(problem.id, problemData).then(
         (response) => {
-          alert('更新评测题标题成功')
+          this.message.success('更新评测题标题成功')
           this.getProblemList()
         },
         (error) => {
-          alert('更新评测题标题失败')
+          this.message.error('更新评测题标题失败')
         }
       ) 
     },
@@ -144,11 +145,11 @@ export default {
         problemData.append('file', event.target.files[0])
         Problem.updateProblem(id, problemData).then(
           (response) => {
-            alert('上传配置文件成功：' + event.target.files[0].name)
+            this.message.success('上传配置文件成功：' + event.target.files[0].name)
             this.getProblemList()
           },
           (error) => {
-            alert('上传配置文件失败')
+            this.message.error('上传配置文件失败')
           }
         )
       }
@@ -159,19 +160,18 @@ export default {
     changeConfigFile(event) {
       if (event.target.files && event.target.files.length > 0) {
         this.configFile = event.target.files[0]
-        alert('成功上传：' + this.configFile.name)
+        this.message.success('成功上传：' + this.configFile.name)
       }
     },
     createProblem(event) {
       Problem.createProblem(this.title, this.configFile).then(
         (response) => {
-          alert('新建题目成功')
+          this.message.success('新建题目成功')
           this.newProblemShouldShow = false
           this.getProblemList()
         },
         (error) => {
-          alert('新建题目失败')
-          console.error(error)
+          this.message.error('新建题目失败')
         }
       )
     },
@@ -188,18 +188,18 @@ export default {
           document.body.removeChild(link) // 下载完成后移除 a 标签
         },
         (error) => {
-          alert('获取配置文件失败')
+          this.message.error('获取配置文件失败')
         }
       )
     },
     deleteProblem(id) {
       Problem.deleteProblem(id).then(
         (response) => {
-          alert('删除评测题成功')
+          this.message.success('删除评测题成功')
           this.getProblemList()
         },
         (error) => {
-          alert('删除评测题失败')
+          this.message.error('删除评测题失败')
         }
       )
     }

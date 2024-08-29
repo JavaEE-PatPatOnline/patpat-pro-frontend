@@ -11,7 +11,7 @@
 
 <script>
 import MarkdownEditor from '../markdown/MarkdownEditor.vue'
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import Notice from '../../api/Notice.js'
 export default {
   name: 'NoticeEditor',
@@ -26,6 +26,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       title: '',
       content: '',
       state: false
@@ -39,8 +40,7 @@ export default {
           this.content = response.data.data.content
         },
         (error) => {
-          console.log(this.id)
-          alert("公告不存在")
+          this.message.error('公告不存在')
         }
       )
     }
@@ -53,11 +53,11 @@ export default {
     publishNotice() {
       console.log(this.content)
       if (this.title === '') {
-        alert("公告标题不得为空")
+        this.message.error('公告标题不得为空')
         return
       }
       if (this.content === '') {
-        alert("公告内容不得为空")
+        this.message.error('公告内容不得为空')
         return
       }
       if (this.id === '') {
@@ -65,9 +65,10 @@ export default {
           (response) => {
             this.title = ''
             this.content = ''
+            this.message.success('发布公告成功')
           },
           (error) => {
-            alert('发布公告失败')
+            this.message.error('发布公告失败')
           }
         )
       }
@@ -80,9 +81,10 @@ export default {
             (response) => {
               this.title = ''
               this.content = ''
+              this.message.success('更新公告成功')
             },
             (error) => {
-              alert('更新公告失败')
+              this.message.error('更新公告失败')
             }
           )
       }

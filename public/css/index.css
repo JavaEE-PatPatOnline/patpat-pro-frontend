@@ -22,12 +22,12 @@
   --shadow-color: #d9d9d9;
 }
 
-svg {
+svg:not(.n-message *) {
   fill: var(--font-color);
   cursor: pointer;
 }
 
-svg path {
+svg path:not(.n-message *) {
   color: var(--font-color) !important;
 }
 
@@ -49,7 +49,7 @@ svg.default:hover {
   font-size: 16px;
 }
 
-*:not(body, div.hljs, div.hljs *) {
+*:not(body, div.hljs, div.hljs *, .n-message *) {
   color: var(--font-color);
   transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
     background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
@@ -272,14 +272,13 @@ div.v-note-edit.divarea-wrapper.scroll-style.transition {
   border-radius: 5px !important;
 }
 
-.n-message,
-.n-message * {
+.n-message__content {
   color: var(--font-color) !important;
 }
 
+
 .n-message svg {
-  /* background: var(--theme-color) !important; */
-  fill: var(--theme-color) !important;
+  margin-top: 3px !important;
 }
 
 i.n-icon,

@@ -10,6 +10,7 @@
 
 <script>
 import Bucket from '../../api/Bucket.js'
+import { useMessage } from 'naive-ui'
 
 export default {
   name: 'MarkdownEditor',
@@ -17,6 +18,7 @@ export default {
   emits: ['update:value'],
   data () {
     return {
+      message: useMessage(),
       content: this.value,
       toolbars: {
         bold: true,
@@ -59,15 +61,9 @@ export default {
           this.$refs.editor.$img2Url(pos, response.data.data)
         },
         (erorr) => {
-          alert('上传文件失败')
+          this.message.error('上传图片失败')
         }
       )
-          // 
-        // },
-        // (error) => {
-          // console.log(error.message)
-        // }
-      // )
     },
   }
 }

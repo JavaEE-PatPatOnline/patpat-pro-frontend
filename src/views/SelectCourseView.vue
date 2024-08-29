@@ -15,6 +15,8 @@
 import Course from '../api/Course.js'
 import { NFlex } from 'naive-ui'
 
+import { useMessage } from 'naive-ui'
+
 export default {
   name: 'SelectCourseView',
   components: {
@@ -22,6 +24,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       courses: [] 
     }
   },
@@ -31,7 +34,7 @@ export default {
         this.courses = response.data.data
       },
       (error) => {
-        alert('获取课程列表失败')
+        this.message.error('获取课程列表失败')
       }
     )
   },
@@ -39,13 +42,13 @@ export default {
     selectCourse(id) {
       Course.selectCourse(id).then(
         (response) => {
-          alert('选择课程成功')
+          this.message.success('选择课程成功')
           this.$router.push('/notice')
           this.$bus.emit('update-lab')
           this.$bus.emit('update-iter')
         },
         (error) => {
-          alert('选择课程失败')
+          this.message.error('选择课程失败')
         }
       )
     }

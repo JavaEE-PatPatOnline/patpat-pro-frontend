@@ -141,84 +141,83 @@ let menuOptions = ref([
 ])
 
 function getAllLabs(isAdmin) {
-  Lab.getLabs(isAdmin).then(
-    (response) => {
-      labs.value = response.data.data
-      labMenuOptions.value = labs.value.map(lab => ({
-        label: () => h(
-          RouterLink,
-          {
-            to: {
-              path: '/lab/' + lab.id
-            }
-          },
-          { default: () => lab.title }
-        ),
-        key: 'lab' + lab.id
-      }))
-      if (isAdmin) {
-        labMenuOptions.value.unshift({
+  if (instance.proxy.$cookies.get('course') && instance.proxy.$cookies.get('course') !=='') {
+    Lab.getLabs(isAdmin).then(
+      (response) => {
+        labs.value = response.data.data
+        labMenuOptions.value = labs.value.map(lab => ({
           label: () => h(
             RouterLink,
             {
               to: {
-                path: '/lab/create'
+                path: '/lab/' + lab.id
               }
             },
-            { default: () => '新建实验' }
+            { default: () => lab.title }
           ),
-          key: 'creating-lab'
-        })
-        menuOptions.value[1].children.value = labMenuOptions.value
+          key: 'lab' + lab.id
+        }))
+        if (isAdmin) {
+          labMenuOptions.value.unshift({
+            label: () => h(
+              RouterLink,
+              {
+                to: {
+                  path: '/lab/create'
+                }
+              },
+              { default: () => '新建实验' }
+            ),
+            key: 'creating-lab'
+          })
+          menuOptions.value[1].children.value = labMenuOptions.value
+        }
       }
-    },
-    (error) => {
-      alert('获取实验列表失败')
-    }
-  )
+    )
+  }
 }
 
 function getAllIters(isAdmin) {
-  console.log('a')
-  Iter.getIters(isAdmin).then(
-    (response) => {
-      iters.value = response.data.data
-      iterMenuOptions.value = iters.value.map(iter => ({
-        label: () => h(
-          RouterLink,
-          {
-            to: {
-              path: '/iter/' + iter.id
-            }
-          },
-          { default: () => iter.title }
-        ),
-        key: 'iter' + iter.id
-      }))
-      if (isAdmin) {
-        iterMenuOptions.value.unshift({
+  if (instance.proxy.$cookies.get('course') && instance.proxy.$cookies.get('course') !=='') {
+    Iter.getIters(isAdmin).then(
+      (response) => {
+        iters.value = response.data.data
+        iterMenuOptions.value = iters.value.map(iter => ({
           label: () => h(
             RouterLink,
             {
               to: {
-                path: '/iter/create'
+                path: '/iter/' + iter.id
               }
             },
-            { default: () => '新建迭代' }
+            { default: () => iter.title }
           ),
-          key: 'creating-iter'
-        })
-        console.log('09', iterMenuOptions.value)
-        menuOptions.value[2].children.value = iterMenuOptions.value
+          key: 'iter' + iter.id
+        }))
+        if (isAdmin) {
+          iterMenuOptions.value.unshift({
+            label: () => h(
+              RouterLink,
+              {
+                to: {
+                  path: '/iter/create'
+                }
+              },
+              { default: () => '新建迭代' }
+            ),
+            key: 'creating-iter'
+          })
+          menuOptions.value[2].children.value = iterMenuOptions.value
+        }
       }
-    }
-  )
+    )
+  }
 }
 
 watch(() => store.state.isAdmin, (a, b) => {
   getAllLabs(store.state.isAdmin)
   getAllIters(store.state.isAdmin)
-  if (store.state.isAdmin) {
+  if (store.state.isAdmin && menuOptions.value.length < 7) {
     menuOptions.value.push(
       {
         label: () => h(
