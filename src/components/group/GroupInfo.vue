@@ -7,25 +7,19 @@
         <UnlockIcon @click="changeLockState" v-else />
       </h3>
       <div class="name-editor" v-else>
-        <input class="name-input"  v-model="newGroupName" />
+        <input class="name-input" v-model="newGroupName" />
         <button @click="isEditingName = false">取消</button>
         <button class="styled" @click="changeGroupName">修改</button>
       </div>
-      
+
       <ul>
         <li v-for="member in members" :key="member.accountId">
-          <div class="avatar" :style="{ 'backgroundImage': `url('${ member.avatar }')` }"></div>
+          <div class="avatar" :style="{ 'backgroundImage': `url('${member.avatar}')` }"></div>
           <div class="member-info">
             <NFlex justify="flex-start" align="center" class="member-name">
               {{ member.name }}
-              <NPopconfirm
-                positive-text="确认"
-                negative-text="取消"
-                :show-icon="false"
-                @positive-click="kickMember(member)"
-                v-if="!member.owner && isLeader"
-                :disabled="isLocked"
-              >
+              <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="kickMember(member)"
+                v-if="!member.owner && isLeader" :disabled="isLocked">
                 <template #trigger>
                   <PersonRemoveIcon smaller :class="{ 'disabled': isLocked }" />
                 </template>
@@ -36,42 +30,28 @@
           </div>
           <div class="leader" v-if="member.owner">组长</div>
           <div class="member" v-else>组员</div>
-          <NInputNumber 
-            :min="minWeight" :max="maxWeight"
-            v-model:value="member.weight" style="width: 60px; height: 20px" :bordered="false" 
-            :disabled="!isLeader"
-            @blur="updateWeight(member)"
-            @focus="prevWeight = member.weight"
-          />
+          <NInputNumber :min="minWeight" :max="maxWeight" v-model:value="member.weight"
+            style="width: 60px; height: 20px" :bordered="false" :disabled="!isLeader" @blur="updateWeight(member)"
+            @focus="prevWeight = member.weight" />
           <div class="member-icon">
-            
+
           </div>
         </li>
       </ul>
       <NFlex justify="flex-end" align="center">
-        <span v-if="assignment !== ''">已提交：<a class="download-link" @click="downloadAssignment">{{ assignment }}</a></span>
+        <span v-if="assignment !== ''">已提交：<a class="download-link" @click="downloadAssignment">{{ assignment
+            }}</a></span>
         <button class="styled" v-if="isLeader" @click="handleSubmit">提交作业</button>
-        <input type="file" accept=".zip"
-          ref="fileInput" @input="submitAssignment"  v-if="isLeader" style="display: none" />
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="dismissGroup"
-          v-if="isLeader"
-        >
+        <input type="file" accept=".zip" ref="fileInput" @input="submitAssignment" v-if="isLeader"
+          style="display: none" />
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="dismissGroup"
+          v-if="isLeader">
           <template #trigger>
             <button class="danger" :disabled="isLocked">解散团队</button>
           </template>
           确认解散团队？
         </NPopconfirm>
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="quitGroup"
-          v-else
-        >
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="quitGroup" v-else>
           <template #trigger>
             <button class="danger" :disabled="isLocked">退出团队</button>
           </template>
@@ -90,7 +70,7 @@
         <button class="styled" @click="createGroup">确认</button>
       </NFlex>
     </template>
-    
+
   </template>
   <template v-else>
     <div class="config">组队配置</div>
@@ -117,7 +97,7 @@ import Group from '../../api/Group.js'
 
 import { mapGetters } from 'vuex'
 
-import { NFlex, NInputNumber, NPopconfirm } from 'naive-ui'
+import { NFlex, NInputNumber, NPopconfirm, useMessage } from 'naive-ui'
 
 export default {
   name: 'GroupInfo',
@@ -131,6 +111,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       id: '',
       isLocked: false,
       isLeader: false,
@@ -173,7 +154,7 @@ export default {
           this.enabled = config.enabled ? 'enabled' : 'disabled'
         },
         (error) => {
-          alert('获取团队配置信息失败')
+          this.message.error('获取团队配置信息失败')
         }
       )
     },
@@ -210,7 +191,7 @@ export default {
           }
         },
         (error) => {
-          alert('获取当前团队失败')
+          this.message.error('获取当前团队失败')
         }
       )
     },
@@ -218,10 +199,10 @@ export default {
       if (member.weight && this.prevWeight != member.weight) {
         Group.updateWeight(member.accountId, member.weight).then(
           (response) => {
-            alert('更新组员权重成功')
+            this.message.success('更新组员权重成功')
           },
           (error) => {
-            alert('更新组员权重失败')
+            this.message.error('更新组员权重失败')
           }
         )
       }
@@ -229,33 +210,33 @@ export default {
     kickMember(member) {
       Group.kickMember(member.accountId).then(
         (response) => {
-          alert('移除团队成员成功')
+          this.message.success('移除团队成员成功')
           this.getCurrentGroup()
         },
         (error) => {
-          alert('移除团队成员失败')
+          this.message.error('移除团队成员失败')
         }
       )
     },
     dismissGroup() {
       Group.dismissGroup().then(
         (response) => {
-          alert('解散团队成功')
+          this.message.success('解散团队成功')
           this.getCurrentGroup()
         },
         (error) => {
-          alert('解散团队失败')
+          this.message.error('解散团队失败')
         }
       )
     },
     quitGroup() {
       Group.quitGroup().then(
         (response) => {
-          alert('退出团队成功')
+          this.message.success('退出团队成功')
           this.getCurrentGroup()
         },
         (error) => {
-          alert('退出团队失败')
+          this.message.error('退出团队失败')
         }
       )
     },
@@ -264,17 +245,16 @@ export default {
         this.isEditingName = true
       }
     },
-
     changeGroupName() {
       if (this.newGroupName !== '' && this.newGroupName !== this.groupName) {
         Group.updateGroup(this.newGroupName, this.isLocked).then(
           (response) => {
-            alert('更新小组名称成功')
+            this.message.success('更新小组名称成功')
             this.isEditingName = false
             this.getCurrentGroup()
           },
           (error) => {
-            alert('更新小组名称失败')
+            this.message.error('更新小组名称失败')
           }
         )
       }
@@ -283,15 +263,15 @@ export default {
       if (this.isLeader) {
         Group.updateGroup(this.groupName, !this.isLocked).then(
           (response) => {
-            alert('更新小组锁定状态成功')
+            this.message.success('更新小组锁定状态成功')
             this.getCurrentGroup()
           },
           (error) => {
-            alert('更新小组锁定状态失败')
+            this.message.error('更新小组锁定状态失败')
           }
         )
       } else {
-        alert('无权限修改锁定状态')
+        this.message.error('无权限修改锁定状态')
       }
     },
     handleSubmit() {
@@ -304,10 +284,10 @@ export default {
         data.append('file', file)
         Group.submitAssignment(data).then(
           (response) => {
-            alert('提交大作业成功：' + file.name)
+            this.message.success('提交大作业成功：' + file.name)
           },
           (error) => {
-            alert('提交大作业失败')
+            this.message.error('提交大作业失败')
           }
         )
       }
@@ -325,7 +305,7 @@ export default {
           document.body.removeChild(link) // 下载完成后移除 a 标签
         },
         (error) => {
-          alert('下载作业文件失败')
+          this.message.error('下载作业文件失败')
         }
       )
     },
@@ -338,30 +318,30 @@ export default {
       }
       Group.updateGroupConfig(config).then(
         (response) => {
-          alert('修改组队配置成功')
+          this.message.success('修改组队配置成功')
         },
         (error) => {
-          alert('修改组队配置失败')
+          this.message.error('修改组队配置失败')
         }
       )
     },
     createGroup() {
       if (this.groupNameToCreate === '') {
-        alert('团队名称不得为空')
+        this.message.error('团队名称不得为空')
       } else {
         Group.createGroup(this.groupNameToCreate).then(
           (response) => {
-            alert('创建团队成功')
+            this.message.success('创建团队成功')
             this.getCurrentGroup()
             this.$bus.emit('update-group-list')
           },
           (error) => {
-            alert('创建团队失败')
+            this.message.error('创建团队失败')
           }
         )
       }
     }
-  } 
+  }
 }
 </script>
 
@@ -427,7 +407,8 @@ li {
   color: var(--default-grey);
 }
 
-.leader, .member {
+.leader,
+.member {
   position: absolute;
   right: 70px;
   padding: 5px;

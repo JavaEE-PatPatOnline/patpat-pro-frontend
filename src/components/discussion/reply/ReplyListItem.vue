@@ -65,7 +65,7 @@ import LikeIcon from '../../svg/LikeIcon.vue'
 import LikedIcon from '../../svg/LikedIcon.vue'
 import DeleteIcon from '../../svg/DeleteIcon.vue'
 import { mapGetters } from 'vuex'
-import { NFlex, NPopconfirm } from 'naive-ui'
+import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 import Discussion from '../../../api/Discussion.js'
 
 export default {
@@ -99,6 +99,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       isEditingReply: false,
       replyContent: ''
     }
@@ -117,7 +118,7 @@ export default {
             this.$bus.emit("reply-change")
           },
           (error) => {
-            console.error(`${action}回复失败:`, error)
+            this.message.error(`${action}失败`)
           }
         )
       }
@@ -128,7 +129,7 @@ export default {
     },
     submitReply() {
       if (this.replyContent.trim() === '') {
-        alert("评论内容不得为空")
+        this.message.error("评论内容不得为空")
         return
       }
       Discussion.createComment(this.discussionId, this.replyContent, this.reply.id).then(
@@ -137,7 +138,7 @@ export default {
           this.reply.replies.push(response.data.data)
         },
         (error) => {
-          console.log("回复失败", error)
+          this.message.error("回复失败")
         }
       )
     },
@@ -149,7 +150,7 @@ export default {
           this.$bus.emit("reply-change")
         },
         (error) => {
-          console.log("点赞失败", error)
+          this.message.error("点赞失败")
         }
       )
     },
@@ -159,7 +160,7 @@ export default {
           this.$bus.emit('reply-change')
         },
         (error) => {
-          console.log("删除评论失败", error)
+          this.message.error("删除评论失败")
         }
       )
     }

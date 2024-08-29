@@ -17,7 +17,7 @@
 
 <script>
 import MarkdownEditor from '../markdown/MarkdownEditor.vue'
-import { NFlex } from 'naive-ui'
+import { NFlex, useMessage } from 'naive-ui'
 import Discussion from '../../api/Discussion.js'
 
 export default {
@@ -28,6 +28,7 @@ export default {
     },
     data() {
         return {
+            message: useMessage(),
             title: '',
             content: '',
             discussionType: ''
@@ -39,15 +40,15 @@ export default {
         },
         publishDiscussion() {
             if (this.title === '') {
-                alert('讨论标题不得为空')
+                this.message.error('讨论标题不得为空')
                 return
             }
             if (this.content === '') {
-                alert('讨论内容不得为空')
+                this.message.error('讨论内容不得为空')
                 return
             }
             if (this.discussionType === '') {
-                alert('请选择讨论帖类型')
+                this.message.error('请选择讨论帖类型')
                 return
             }
             Discussion.createDiscussion(this.title, this.content, this.discussionType).then(
@@ -55,10 +56,11 @@ export default {
                     this.title = ''
                     this.content = ''
                     this.discussionType = ''
+                    this.message.success('讨论发布成功')
                     this.goBack()
                 },
                 (error) => {
-                    alert('发布讨论失败')
+                    this.message.error('发布讨论失败')
                 }
             )
         }

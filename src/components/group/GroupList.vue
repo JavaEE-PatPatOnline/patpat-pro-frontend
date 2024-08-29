@@ -5,9 +5,9 @@
       <div class="left-info">
         <div class="name">
           <NEllipsis style="max-width: 240px">
-            {{ group.name }} 
+            {{ group.name }}
           </NEllipsis>
-          ({{ group.memberCount }}/{{ group.maxSize}})
+          ({{ group.memberCount }}/{{ group.maxSize }})
         </div>
         <div class="members">
           <span v-for="member in group.members" :key="member.accountId">
@@ -16,12 +16,7 @@
         </div>
       </div>
       <NFlex justify="center">
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="joinGroup(group.id)"
-        >
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="joinGroup(group.id)">
           <template #trigger>
             <PersonAddIcon small v-show="!isAdmin && !inGroup" />
           </template>
@@ -42,7 +37,7 @@ import Group from '../../api/Group.js'
 
 import { mapGetters } from 'vuex'
 
-import { NFlex, NEllipsis, NPopconfirm } from 'naive-ui'
+import { NFlex, NEllipsis, NPopconfirm, useMessage } from 'naive-ui'
 
 export default {
   name: 'GroupList',
@@ -54,6 +49,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       groups: [],
       inGroup: false
     }
@@ -70,7 +66,7 @@ export default {
         }
       },
       (error) => {
-        alert('获取团队信息失败')
+        this.message.error('获取团队信息失败')
       }
     )
     this.$bus.on('update-group-list', () => {
@@ -85,18 +81,18 @@ export default {
           console.log(this.groups)
         },
         (error) => {
-          alert('获取团队列表失败')
+          this.message.error('获取团队列表失败')
         }
       )
     },
     joinGroup(id) {
       Group.joinGroup(id).then(
         (response) => {
-          alert('加入团队成功')
+          this.message.success('加入团队成功')
           this.$bus.emit('update-group-info')
         },
         (error) => {
-          alert('加入团队失败')
+          this.message.error('加入团队失败')
         }
       )
     }
@@ -140,7 +136,8 @@ li:last-child {
   margin-right: 20px;
 }
 
-.name, .name * {
+.name,
+.name * {
   font-size: 18px;
   font-weight: bold;
   color: var(--default-blue);
@@ -156,5 +153,4 @@ li:last-child {
 .members span:first-child {
   font-weight: bold;
 }
-
 </style>

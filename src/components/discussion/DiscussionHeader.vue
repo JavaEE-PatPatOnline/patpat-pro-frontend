@@ -69,7 +69,7 @@
 import LikeIcon from '../svg/LikeIcon.vue'
 import LikedIcon from '../svg/LikedIcon.vue'
 import { mapGetters } from 'vuex'
-import { NFlex, NEllipsis } from 'naive-ui'
+import { NFlex, NEllipsis, useMessage } from 'naive-ui'
 import Discussion from '../../api/Discussion.js'
 
 
@@ -116,6 +116,7 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       discussionType: {
         1: '问题求助',
         2: '交流分享',
@@ -136,7 +137,7 @@ export default {
             this.$bus.emit('discussion-change')
           })
           .catch(error => {
-            alert('加精操作失败')
+            this.message.error('加精操作失败')
           })
       }
     },
@@ -150,7 +151,7 @@ export default {
             this.$bus.emit('discussion-change')
           })
           .catch(error => {
-            alert('置顶操作失败')
+            this.message.error('置顶操作失败')
           })
       }
     },
@@ -165,7 +166,7 @@ export default {
           this.$bus.emit('discussion-change')
         })
         .catch(error => {
-          alert('点赞操作失败')
+          this.message.error('点赞操作失败')
         })
     }
   }
