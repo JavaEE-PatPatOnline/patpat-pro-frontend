@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       title: '',
-      content: '111',
+      content: '',
       state: false
     }
   },

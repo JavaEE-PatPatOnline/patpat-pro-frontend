@@ -38,7 +38,7 @@ import MarkdownDisplayer from '../markdown/MarkdownDisplayer.vue'
 import DeleteIcon from '../svg/DeleteIcon.vue'
 import EditIcon from '../svg/EditIcon.vue'
 import { NFlex, NCollapseItem, NPopconfirm } from 'naive-ui'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import Notice from '../../api/Notice.js'
 export default {
   name: 'NoticeListItem',
@@ -61,7 +61,7 @@ export default {
     NPopconfirm
   },
   computed: {
-    ...mapGetters(['isAdmin'])
+    ...mapState(['isAdmin'])
   },
   methods: {
     handleTop() {

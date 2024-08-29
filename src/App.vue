@@ -59,8 +59,6 @@ import User from './api/User.js'
 // 访问 store 中的 isAdmin
 import { useStore } from 'vuex'
 const store = useStore()
-const isAdmin = store.state.isAdmin
-
 const instance = getCurrentInstance()
 
 // 绑定左侧导航菜单的值
@@ -72,102 +70,14 @@ function renderIcon(icon) {
 }
 
 import Lab from './api/Lab.js'
+
 let labs = ref([])
 let labMenuOptions = ref([])
 
-function getAllLabs() {
-  Lab.getLabs(false).then(
-    (response) => {
-      labs.value = response.data.data
-      console.log(labs.value)
-      labMenuOptions.value = labs.value.map(lab => ({
-        label: () => h(
-          RouterLink,
-          {
-            to: {
-              path: '/lab/' + lab.id
-            }
-          },
-          { default: () => lab.title }
-        ),
-        key: 'lab' + lab.id
-      }))
-      // 如果是助教，labMenuOptions 的第一项是新建 lab
-      if (isAdmin) {
-        labMenuOptions.value.unshift({
-          label: () => h(
-            RouterLink,
-            {
-              to: {
-                path: '/lab/create'
-              }
-            },
-            { default: () => '新建实验' }
-          ),
-          key: 'creating-lab'
-        })
-      }
-    },
-    (error) => {
-      alert('获取实验列表失败')
-    }
-  )
-}
-
-
-if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
-  getAllLabs()
-}
-// 如果收到更新通知，重新获取 lab 列表
-instance.proxy.$bus.on('update-lab', () => {
-  getAllLabs()
-})
-
 import Iter from './api/Iter.js'
+
 let iters = ref([])
 let iterMenuOptions = ref([])
-
-
-function getAllIters() {
-  Iter.getIters(false).then(
-    (response) => {
-      iters.value = response.data.data
-      iterMenuOptions.value = iters.value.map(iter => ({
-        label: () => h(
-          RouterLink,
-          {
-            to: {
-              path: '/iter/' + iter.id
-            }
-          },
-          { default: () => iter.title }
-        ),
-        key: 'iter' + iter.id
-      }))
-      if (isAdmin) {
-        iterMenuOptions.value.unshift({
-          label: () => h(
-            RouterLink,
-            {
-              to: {
-                path: '/iter/create'
-              }
-            },
-            { default: () => '新建迭代' }
-          ),
-          key: 'creating-iter'
-        })
-      }
-    }
-  )
-}
-
-if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
-  getAllIters()
-}
-instance.proxy.$bus.on('update-iter', () => {
-  getAllIters()
-})
 
 let menuOptions = ref([
   {
@@ -228,35 +138,117 @@ let menuOptions = ref([
     key: 'tutorial',
     icon: renderIcon(InfoIcon)
   }
-  // ,
-  // {
-  //   label: () => h(
-  //     RouterLink,
-  //     {
-  //       to: '/problem',
-  //     },
-  //     { default: () => '题目列表' }
-  //   ),
-  //   key: 'problem',
-  //   icon: renderIcon(ProblemIcon)
-  // }
 ])
 
-if (isAdmin) {
-  menuOptions.push(
-    {
-      label: () => h(
-        RouterLink,
-        {
-          to: '/problem',
-        },
-        { default: () => '题目列表' }
-      ),
-      key: 'problem',
-      icon: renderIcon(ProblemIcon)
+function getAllLabs(isAdmin) {
+  Lab.getLabs(isAdmin).then(
+    (response) => {
+      labs.value = response.data.data
+      labMenuOptions.value = labs.value.map(lab => ({
+        label: () => h(
+          RouterLink,
+          {
+            to: {
+              path: '/lab/' + lab.id
+            }
+          },
+          { default: () => lab.title }
+        ),
+        key: 'lab' + lab.id
+      }))
+      if (isAdmin) {
+        labMenuOptions.value.unshift({
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: '/lab/create'
+              }
+            },
+            { default: () => '新建实验' }
+          ),
+          key: 'creating-lab'
+        })
+        menuOptions.value[1].children.value = labMenuOptions.value
+      }
+    },
+    (error) => {
+      alert('获取实验列表失败')
     }
   )
 }
+
+function getAllIters(isAdmin) {
+  console.log('a')
+  Iter.getIters(isAdmin).then(
+    (response) => {
+      iters.value = response.data.data
+      iterMenuOptions.value = iters.value.map(iter => ({
+        label: () => h(
+          RouterLink,
+          {
+            to: {
+              path: '/iter/' + iter.id
+            }
+          },
+          { default: () => iter.title }
+        ),
+        key: 'iter' + iter.id
+      }))
+      if (isAdmin) {
+        iterMenuOptions.value.unshift({
+          label: () => h(
+            RouterLink,
+            {
+              to: {
+                path: '/iter/create'
+              }
+            },
+            { default: () => '新建迭代' }
+          ),
+          key: 'creating-iter'
+        })
+        console.log('09', iterMenuOptions.value)
+        menuOptions.value[2].children.value = iterMenuOptions.value
+      }
+    }
+  )
+}
+
+watch(() => store.state.isAdmin, (a, b) => {
+  getAllLabs(store.state.isAdmin)
+  getAllIters(store.state.isAdmin)
+  if (store.state.isAdmin) {
+    menuOptions.value.push(
+      {
+        label: () => h(
+          RouterLink,
+          {
+            to: '/problem',
+          },
+          { default: () => '题目列表' }
+        ),
+        key: 'problem',
+        icon: renderIcon(ProblemIcon)
+      }
+    )
+  }
+}, { immediate: true })
+
+// if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
+//   getAllLabs(store.state.isAdmin)
+// }
+instance.proxy.$bus.on('update-lab', () => {
+  getAllLabs(store.state.isAdmin)
+})
+
+
+// if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course')) {
+//   getAllIters(store.state.isAdmin)
+// }
+instance.proxy.$bus.on('update-iter', () => {
+  getAllIters(store.state.isAdmin)
+})
 
 // 监听路由变化，设置 activeKey 控制菜单样式
 watch(() => instance.proxy.$route.path, (newPath, oldPath) => {

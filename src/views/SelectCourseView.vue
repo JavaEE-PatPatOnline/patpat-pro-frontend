@@ -41,8 +41,8 @@ export default {
         (response) => {
           alert('选择课程成功')
           this.$router.push('/notice')
-          this.$bus.emit('update-labs')
-          this.$bus.emit('update-iters')
+          this.$bus.emit('update-lab')
+          this.$bus.emit('update-iter')
         },
         (error) => {
           alert('选择课程失败')

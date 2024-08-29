@@ -114,16 +114,35 @@ export default {
     handleFileChange(event) {
       if (event.target.files && event.target.files.length > 0) {
         this.avatar = URL.createObjectURL(event.target.files[0])
-        // todo
+        Account.updataAvatar(event.target.files[0]).then(
+          (response) => {
+            alert('修改头像成功')
+          },
+          (error) => {
+            alert('修改头像失败')
+          }
+        )
       }
     },
     changePassword() {
-      // todo
+      if (this.newPassword !== this.confirmedPassword) {
+        alert('密码与确认密码不一致')
+      } else {
+        User.changePassword(this.originPassword, this.newPassword).then(
+          (response) => {
+            alert('修改密码成功')
+            this.logout()
+          },
+          (error) => {
+            alert('修改密码失败')
+          }
+        )
+      }
     },
     logout() {
       Account.logout().then(
         (response) => {
-          alert('登出成功')
+          // alert('登出成功')
           this.$router.push('/login')
           this.$bus.emit('update-navigator')
         },

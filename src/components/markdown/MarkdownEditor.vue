@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import Bucket from '../../api/Bucket.js'
+
 export default {
   name: 'MarkdownEditor',
   props: ['value'],
@@ -51,11 +53,16 @@ export default {
   },
   methods: {
     async imageAdd(pos, file) {
-      let formData = new FormData()
-      formData.append('files', file)
-      // Moment.addImage(formData).then(
       //   (response) => {
-          this.$refs.editor.$img2Url(pos, response.data.files[0])
+      Bucket.uploadFile(file).then(
+        (response) => {
+          this.$refs.editor.$img2Url(pos, response.data.data)
+        },
+        (erorr) => {
+          alert('上传文件失败')
+        }
+      )
+          // 
         // },
         // (error) => {
           // console.log(error.message)

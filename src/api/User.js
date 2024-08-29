@@ -4,6 +4,7 @@ const url = {
   info: '/account/self',
   stuInfo: '/student/self',
   uploadAvatar: '/account/upload/avatar',
+  pwd: '/account/password'
 }
 
 export default class User {
@@ -25,6 +26,16 @@ export default class User {
     return service(url.uploadAvatar, {
       method: 'post',
       data,
+    })
+  }
+
+  static async changePassword(oldPassword, newPassword) {
+    return service(url.pwd, {
+      method: 'put',
+      data: {
+        'old': oldPassword,
+        'new': newPassword
+      }
     })
   }
 }
