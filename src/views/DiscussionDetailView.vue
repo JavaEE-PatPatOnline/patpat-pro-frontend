@@ -1,7 +1,8 @@
 <template>
   <!-- Discussion Header -->
   <section class="header-container">
-    <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis showState editable />
+    <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis :showState="showState"
+      :editable="editable" />
   </section>
 
   <!-- 详情 -->
@@ -9,37 +10,29 @@
     <MarkdownDisplayer :content="discussion.content" />
   </section>
 
-  <!-- 删除按钮 -->
-  <NPopconfirm
-    positive-text="确认"
-    negative-text="取消"
-    :show-icon="false"
-    @positive-click="deleteDiscussion"
-    v-if="canDelete"
-  >
-    <template #trigger>
-      <button class="danger" >删除</button>
-    </template>
-    确认删除此讨论帖？
-  </NPopconfirm>
-  
-
-  <!-- 回复讨论 -->
-  <section class="discussion-reply">
-    <!-- 如果未处于 isEditingReply，则显示"回复讨论"按钮 -->
-    <NFlex justify="flex-end" align="center" v-if="!isEditingReply" class="reply-btn">
-      <button class="styled" @click="isEditingReply = true">
+  <!-- 操作按钮区域 -->
+  <section class="discussion-actions">
+    <NFlex justify="flex-end" align="center">
+      <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteDiscussion"
+        v-if="canDelete">
+        <template #trigger>
+          <button>删除</button>
+        </template>
+        确认删除此讨论帖？
+      </NPopconfirm>
+      <button class="styled" @click="isEditingReply = true" v-if="!isEditingReply">
         回复讨论
       </button>
     </NFlex>
-    <!-- 否则显示回复框、"回复"和"取消"按钮 -->
-    <template v-else>
-      <MarkdownEditor v-model:value="replyContent" />
-      <NFlex justify="flex-end" align="center" class="reply-btn">
-        <button @click="cancelReply">取消</button>
-        <button class="styled" @click="submitReply">回复</button>
-      </NFlex>
-    </template>
+  </section>
+
+  <!-- 回复讨论 -->
+  <section class="discussion-reply" v-if="isEditingReply">
+    <MarkdownEditor v-model:value="replyContent" />
+    <NFlex justify="flex-end" align="center" class="reply-btn">
+      <button @click="cancelReply">取消</button>
+      <button class="styled" @click="submitReply">回复</button>
+    </NFlex>
   </section>
 
   <!-- 评论区 -->
@@ -59,7 +52,7 @@ import MarkdownEditor from '../components/markdown/MarkdownEditor.vue'
 import ReplyList from '../components/discussion/reply/ReplyList.vue'
 import { NFlex, NPopconfirm } from 'naive-ui'
 import Discussion from '../api/Discussion.js'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'DiscussionDetail',
   components: {
@@ -78,23 +71,24 @@ export default {
       replyContent: '',
       route: useRoute(),
       router: useRouter(),
-      store: useStore()
+      store: useStore(),
     }
   },
   computed: {
-    userId() {
-      return this.store.getters.getUserId
+    ...mapGetters(['isAdmin', 'userBuaaId']),
+    showState() {
+      return this.isAdmin
     },
-    isAdmin() {
-      return this.store.getters.isAdmin
+    editable() {
+      return this.isAdmin
     },
     canDelete() {
-      return this.isAdmin || (this.discussion.author && this.discussion.author.id === this.userId)
+      return this.isAdmin || (this.discussion.author && this.discussion.author.buaaId === this.userBuaaId)
     }
   },
   mounted() {
     this.fetchDiscussionDetails()
-    this.$bus.on('comment-deleted', () => {
+    this.$bus.on('reply-change', () => {
       this.fetchDiscussionDetails()
     })
   },
@@ -221,5 +215,13 @@ h4 {
   font-weight: bold;
   color: var(--default-blue);
   margin-bottom: 10px;
+}
+
+.discussion-actions {
+  margin-bottom: 20px;
+}
+
+.discussion-actions button {
+  margin-left: 10px;
 }
 </style>

@@ -50,18 +50,15 @@ export default {
                 alert('请选择讨论帖类型')
                 return
             }
-
             Discussion.createDiscussion(this.title, this.content, this.discussionType).then(
                 (response) => {
-                    this.$bus.emit('message', { title: '发布讨论成功', ok: true })
                     this.title = ''
                     this.content = ''
                     this.discussionType = ''
                     this.goBack()
                 },
                 (error) => {
-                    this.$bus.emit('message', { title: '发布讨论失败', ok: false })
-                    console.error(error)
+                    alert('发布讨论失败')
                 }
             )
         }

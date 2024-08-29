@@ -42,26 +42,31 @@ export default {
       this.editingNoticeId = null
       this.isEditingNotice = false
     })
-    Notice.getNoticeList().then(
-      (response) => {
-        this.notices = response.data.data.map(notice => ({
-          id: notice.id,
-          time: notice.createdAt,
-          title: notice.title,
-          content: notice.content,
-          isTopped: notice.topped//为什么这里返回的是topped
-        }))
-        for (let i = 0; i < this.notices.length; i++) {
-          this.triggerAreas.push('main')
-        }
-      },
-      (error) => {
-        this.$bus.emit('message', { title: '获取公告列表失败', ok: false })
-        console.error(error)
-      }
-    )
+    this.fetchNotice()
+    this.$bus.on('updateState', () => {
+      this.fetchNotice()
+    })
   },
   methods: {
+    fetchNotice() {
+      Notice.getNoticeList().then(
+        (response) => {
+          this.notices = response.data.data.map(notice => ({
+            id: notice.id,
+            time: notice.createdAt,
+            title: notice.title,
+            content: notice.content,
+            isTopped: notice.topped
+          }))
+          for (let i = 0; i < this.notices.length; i++) {
+            this.triggerAreas.push('main')
+          }
+        },
+        (error) => {
+          alert('获取公告列表失败')
+        }
+      )
+    },
     newNotice() {
       this.editingNoticeId = ''
       this.isEditingNotice = true

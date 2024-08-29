@@ -1,4 +1,5 @@
 <template>
+  <!-- <span style="display: none;">{{ debugShowState }} 111</span> -->
   <NFlex justify="space-between" align="center" :wrap="false">
     <!-- 左侧 -->
     <div class="left">
@@ -7,50 +8,34 @@
         <NEllipsis :tooltip="titleEllipsis" style="max-width: calc(100% - 300px); min-width: 250px;">
           <span class="title">{{ discussion.title }}</span>
         </NEllipsis>
-        <div 
-          class="discussion-type"
-          :class="{
-            'discussion-type-1': discussion.type === 1,
-            'discussion-type-2': discussion.type === 2,
-            'discussion-type-3': discussion.type === 3,
-            'discussion-type-4': discussion.type === 4,
-            'discussion-type-5': discussion.type === 5
-          }"
-        >
+        <div class="discussion-type" :class="{
+          'discussion-type-1': discussion.type === 1,
+          'discussion-type-2': discussion.type === 2,
+          'discussion-type-3': discussion.type === 3,
+          'discussion-type-4': discussion.type === 4,
+          'discussion-type-5': discussion.type === 5
+        }">
           {{ discussionType[discussion.type] }}
         </div>
 
-        <div 
-          class="star starred" :class="{ 'clickable': isAdmin }" 
-          v-if="discussion.starred" @click.stop="handleStar"
-        >
+        <div class="star starred" :class="{ 'clickable': isAdmin }" v-if="discussion.starred" @click.stop="handleStar">
           已加精
         </div>
-        <div 
-          class="star" v-else-if="!discussion.starred && showState"
-          :class="{ 'clickable': isAdmin }" @click.stop="handleStar"
-        >
+        <div class="star" v-else-if="!discussion.starred && showState" :class="{ 'clickable': isAdmin }"
+          @click.stop="handleStar">
           未加精
         </div>
 
-        <div 
-          class="top topped" :class="{ 'clickable': isAdmin }" 
-          v-if="discussion.topped" @click.stop="handleTop"
-        >
+        <div class="top topped" :class="{ 'clickable': isAdmin }" v-if="discussion.topped" @click.stop="handleTop">
           已置顶
         </div>
-        <div 
-          class="top" :class="{ 'clickable': isAdmin }" 
-          v-else-if="!discussion.topped && showState" @click.stop="handleTop"
-        >
+        <div class="top" :class="{ 'clickable': isAdmin }" v-else-if="!discussion.topped && showState"
+          @click.stop="handleTop">
           未置顶
         </div>
 
-        <NFlex 
-          align="center" class="like-wrapper" 
-          :class="{ 'liked-wrapper': discussion.liked, 'clickable': editable }"
-          @click.stop="handleLike"
-        >
+        <NFlex align="center" class="like-wrapper" :class="{ 'liked-wrapper': discussion.liked, 'clickable': editable }"
+          @click.stop="handleLike">
           <LikeIcon v-if="!discussion.liked" />
           <LikedIcon v-else />
           点赞
@@ -123,7 +108,11 @@ export default {
     NEllipsis
   },
   computed: {
-    ...mapGetters(['isAdmin'])
+    ...mapGetters(['isAdmin']),
+    // debugShowState() {
+    //   console.log('showState:', this.showState)
+    //   return this.showState
+    // }
   },
   data() {
     return {
@@ -136,51 +125,50 @@ export default {
       }
     }
   },
+
   methods: {
-  handleStar() {
-    if (this.editable) {
-      const newStarredState = !this.discussion.starred
-      Discussion.setStarState(this.discussion.id, newStarredState)
-        .then(() => {
-          this.discussion.starred=newStarredState
-          // console.log(newStarredState ? "加精成功" : "取消加精成功");
+    handleStar() {
+      if (this.editable) {
+        const newStarredState = !this.discussion.starred
+        Discussion.setStarState(this.discussion.id, newStarredState)
+          .then(() => {
+            this.discussion.starred = newStarredState
+            this.$bus.emit('discussion-change')
+          })
+          .catch(error => {
+            alert('加精操作失败')
+          })
+      }
+    },
+
+    handleTop() {
+      if (this.editable) {
+        const newToppedState = !this.discussion.topped
+        Discussion.setTopState(this.discussion.id, newToppedState)
+          .then(() => {
+            this.discussion.topped = newToppedState
+            this.$bus.emit('discussion-change')
+          })
+          .catch(error => {
+            alert('置顶操作失败')
+          })
+      }
+    },
+
+    handleLike() {
+      // if (this.editable) {
+      //都能点赞吧
+      console.log(this.discussion)
+      const newLikedState = !this.discussion.liked
+      Discussion.likeDiscussion(this.discussion.id, newLikedState)
+        .then(response => {
+          this.$bus.emit('discussion-change')
         })
         .catch(error => {
-          console.log("加精操作失败", error);
-        });
-    }
-  },
-
-  handleTop() {
-    if (this.editable) {
-      const newToppedState = !this.discussion.topped
-      Discussion.setTopState(this.discussion.id, newToppedState)
-        .then(() => {
-          this.discussion.topped=newToppedState
-          // console.log(newToppedState ? "置顶成功" : "取消置顶成功");
+          alert('点赞操作失败')
         })
-        .catch(error => {
-          console.log("置顶操作失败", error);
-        });
     }
-  },
-
-  handleLike() {
-    // if (this.editable) {
-    //都能点赞吧
-    console.log(this.discussion)
-    const newLikedState = !this.discussion.liked
-    Discussion.likeDiscussion(this.discussion.id, newLikedState)
-    .then(response => {
-      
-      this.discussion.liked=newLikedState
-      // console.log("点赞操作成功");
-    })
-    .catch(error => {
-      console.log("点赞操作失败", error);
-    });
   }
-}
 }
 </script>
 

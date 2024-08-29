@@ -1,13 +1,13 @@
 <template>
   <!-- 外层容器 -->
   <div class='discussion-wrapper' @click='jumpToDiscussionDetail'>
-    <DiscussionHeader :discussion='discussion' />
+    <DiscussionHeader :discussion='discussion' :showState="showState" :editable="editable" />
   </div>
 </template>
 
 <script>
 import DiscussionHeader from './DiscussionHeader.vue'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'DiscussionListItem',
   props: {
@@ -18,6 +18,15 @@ export default {
   },
   components: {
     DiscussionHeader,
+  },
+  computed: {
+    ...mapGetters(['isAdmin']),
+    showState() {
+      return this.isAdmin
+    },
+    editable() {
+      return this.isAdmin
+    },
   },
   methods: {
     jumpToDiscussionDetail() {
