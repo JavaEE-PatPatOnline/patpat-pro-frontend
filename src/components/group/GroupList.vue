@@ -1,5 +1,5 @@
 <template>
-  <div class="list-title">团队列表</div>
+  <div class="list-title" v-if="groups.length > 0">团队列表</div>
   <ul v-if="groups.length > 0">
     <li v-for="group in groups" :key="group.id">
       <div class="left-info">

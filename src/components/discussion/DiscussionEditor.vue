@@ -48,7 +48,7 @@ export default {
                 return
             }
             if (this.discussionType === '') {
-                this.message.error('请选择讨论帖类型')
+                this.message.error('未选择讨论帖类型')
                 return
             }
             Discussion.createDiscussion(this.title, this.content, this.discussionType).then(
@@ -74,6 +74,7 @@ export default {
 }
 
 .select-type {
+    background: transparent;
     margin-left: 10px;
     padding: 5px;
 }
