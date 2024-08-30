@@ -57,13 +57,13 @@ export default {
   data() {
     return {
       message: useMessage(),
-      type: '教师', // 用户类型：学生/助教/教师
-      name: '柳政尧', // 用户姓名
-      buaaId: '21371300', // 学工号
-      school: '软件学院', // 学院
-      major: '软件工程', // 专业
-      classId: '212113', // 小班号
-      teacher: '高祥', // 教师名
+      type: '学生', // 用户类型：学生/助教/教师
+      name: '', // 用户姓名
+      buaaId: '1', // 学工号
+      school: '', // 学院
+      major: '', // 专业
+      classId: '', // 小班号
+      teacher: '', // 教师名
       avatar: '', // 头像
       changePasswordModalShouldShow: false,
       originPassword: '',
@@ -75,16 +75,24 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isAdmin'])
+    ...mapState(['isAdmin', 'userAvatar'])
   },
   mounted() {
+    if (this.userAvatar !== '') {
+      this.avatar = this.userAvatar
+    }
     User.getUserInfo().then(
       (response) => {
         const userData = response.data.data
+        console.log(userData)
         if (userData) {
           this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
           this.name = userData.name || ''
-          this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
+          this.buaaId = userData.buaaId
+          this.school = userData.school
+          if (this.avatar === '') {
+            this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
+          }
         }
       },
       (error) => {
@@ -97,8 +105,6 @@ export default {
         (response) => {
           const stu = response.data.data
           this.avatar = stu.avatar
-          this.buaaId = stu.buaaId
-          this.school = stu.school
           this.major = stu.major
           this.classId = stu.className
           this.teacher = stu.teacherName
