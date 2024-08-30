@@ -1,5 +1,8 @@
 <template>
-  <template v-if="!isAdmin">
+  <template v-if="enabled === 'disabled' && !isAdmin">
+    <div class="empty-hint">暂未开启组队</div>
+  </template>
+  <template v-if="enabled === 'enabled' && !isAdmin">
     <div v-if="id !== ''">
       <h3 v-if="!isEditingName">
         <span @click="startEditingName">{{ groupName }}</span>
@@ -72,7 +75,7 @@
     </template>
 
   </template>
-  <template v-else>
+  <template v-if="isAdmin">
     <div class="config">组队配置</div>
     <NFlex align="center">
       最大成员数 <input type="number" v-model="newMaxSize" />&nbsp;&nbsp;&nbsp;
