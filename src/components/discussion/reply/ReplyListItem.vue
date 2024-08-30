@@ -135,7 +135,8 @@ export default {
       Discussion.createComment(this.discussionId, this.replyContent, this.reply.id).then(
         (response) => {
           this.cancelReply()
-          this.reply.replies.push(response.data.data)
+          // this.reply.replies.push(response.data.data)
+          this.$bus.emit('reply-change')
         },
         (error) => {
           this.message.error("回复失败")
@@ -234,6 +235,7 @@ export default {
 
 .displayer-wrapper {
   width: calc(100% - 80px);
+  margin-bottom: 10px;
 }
 
 .reply-btn {
