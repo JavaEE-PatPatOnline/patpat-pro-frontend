@@ -90,7 +90,9 @@ export default {
   mounted() {
     this.fetchDiscussionDetails()
     this.$bus.on('reply-change', () => {
-      this.fetchDiscussionDetails()
+      if (this.route.params.id) {
+        this.fetchDiscussionDetails()
+      }
     })
   },
   methods: {
@@ -118,7 +120,6 @@ export default {
       )
     },
     submitReply() {
-      console.log("是在submit提交的")
       if (this.replyContent.trim() === '') {
         this.message.error('评论内容不得为空')
         return

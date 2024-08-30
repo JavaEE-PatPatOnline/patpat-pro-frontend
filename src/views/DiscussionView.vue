@@ -1,4 +1,8 @@
 <template>
+  <div v-if="!isEditingDiscussion" class="search-box">
+    <input v-model="searchQuery" @input="handleSearch" placeholder="搜索讨论..." />
+  </div>
+
   <button v-if="!isEditingDiscussion" class="styled add-btn" @click="newDiscussion">+</button>
   <DiscussionEditor v-else :id="editingDiscussionId" />
   <template v-if="!isEditingDiscussion">
@@ -8,8 +12,6 @@
     </NFlex>
     <div class="empty-hint" v-if="discussions.length === 0">暂无讨论帖</div>
   </template>
-
-
 </template>
 
 <script>
@@ -32,8 +34,10 @@ export default {
       isEditingDiscussion: false,
       editingDiscussionId: null,
       page: 1,
-      pageSize: 6, // 每页显示的讨论数量
-      totalItems: 0, // 总讨论数量
+      pageSize: 6,
+      totalItems: 0,
+      searchQuery: '',
+      searchTimeout: null,
     }
   },
   computed: {
@@ -49,7 +53,7 @@ export default {
     this.$bus.on('endDiscussionEditing', () => {
       this.editingDiscussionId = null
       this.isEditingDiscussion = false
-      this.fetchDiscussions() // 重新获取讨论列表
+      this.fetchDiscussions()
     })
     this.fetchDiscussions()
     this.$bus.on('discussion-change', () => {
@@ -62,15 +66,29 @@ export default {
       this.isEditingDiscussion = true
     },
     fetchDiscussions() {
-      Discussion.getDiscussionList(this.page, this.pageSize).then(
+      const params = {
+        page: this.page,
+        pageSize: this.pageSize,
+      }
+      if (this.searchQuery) {
+        params.query = this.searchQuery
+      }
+      Discussion.getDiscussionList(params).then(
         (response) => {
           this.discussions = response.data.data.items
-          this.totalItems = 6
+          this.totalItems = response.data.data.total
         },
         (error) => {
           console.log('获取讨论列表失败:' + error)
         }
       )
+    },
+    handleSearch() {
+      clearTimeout(this.searchTimeout)
+      this.searchTimeout = setTimeout(() => {
+        this.page = 1
+        this.fetchDiscussions()
+      }, 300)
     }
   }
 }
@@ -86,5 +104,17 @@ export default {
   font-weight: normal;
   height: fit-content;
   padding: 0 30px;
+}
+
+.search-box {
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  width: 50%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 </style>

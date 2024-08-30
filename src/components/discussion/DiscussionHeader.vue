@@ -164,6 +164,7 @@ export default {
       Discussion.likeDiscussion(this.discussion.id, newLikedState)
         .then(response => {
           this.$bus.emit('discussion-change')
+          this.$bus.emit('reply-change')
         })
         .catch(error => {
           this.message.error('点赞操作失败')

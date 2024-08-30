@@ -55,8 +55,12 @@ export default class Discussion {
     })
   }
 
-  static async getDiscussionList(page, pageSize) {
-    return service(`${url.all}?p=${page}&ps=${pageSize}`, {
+  static async getDiscussionList({ page, pageSize, query }) {
+    const queryParams = new URLSearchParams({ p: page, ps: pageSize })
+    if (query) {
+      queryParams.append('query', query)
+    }
+    return service(`${url.all}?${queryParams.toString()}`, {
       method: 'GET',
     })
   }
