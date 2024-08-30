@@ -1,33 +1,35 @@
 <template>
-  <div class="list-title" v-if="groups.length > 0">团队列表</div>
-  <ul v-if="groups.length > 0">
-    <li v-for="group in groups" :key="group.id">
-      <div class="left-info">
-        <div class="name">
-          <NEllipsis style="max-width: 240px">
-            {{ group.name }}
-          </NEllipsis>
-          ({{ group.memberCount }}/{{ group.maxSize }})
+  <template v-if="enabled">
+    <div class="list-title">团队列表</div>
+    <ul v-if="groups.length > 0">
+      <li v-for="group in groups" :key="group.id">
+        <div class="left-info">
+          <div class="name">
+            <NEllipsis style="max-width: 240px">
+              {{ group.name }}
+            </NEllipsis>
+            ({{ group.memberCount }}/{{ group.maxSize }})
+          </div>
+          <div class="members">
+            <span v-for="member in group.members" :key="member.accountId">
+              {{ member.name }} ({{ member.buaaId }})
+            </span>
+          </div>
         </div>
-        <div class="members">
-          <span v-for="member in group.members" :key="member.accountId">
-            {{ member.name }} ({{ member.buaaId }})
-          </span>
-        </div>
-      </div>
-      <NFlex justify="center">
-        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="joinGroup(group.id)">
-          <template #trigger>
-            <PersonAddIcon small v-show="!isAdmin && !inGroup" />
-          </template>
-          确认加入该团队？
-        </NPopconfirm>
-      </NFlex>
-    </li>
-  </ul>
-  <div v-else class="empty-hint">
-    暂无团队
-  </div>
+        <NFlex justify="center">
+          <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="joinGroup(group.id)">
+            <template #trigger>
+              <PersonAddIcon small v-show="!isAdmin && !inGroup" />
+            </template>
+            确认加入该团队？
+          </NPopconfirm>
+        </NFlex>
+      </li>
+    </ul>
+    <div v-else class="empty-hint">
+      暂无团队
+    </div>
+  </template>
 </template>
 
 <script>
@@ -51,13 +53,22 @@ export default {
     return {
       message: useMessage(),
       groups: [],
-      inGroup: false
+      inGroup: false,
+      enabled: false
     }
   },
   computed: {
     ...mapGetters(['isAdmin'])
   },
   mounted() {
+    Group.getGroupConfig().then(
+      (response) => {
+        this.enabled = response.data.data.enabled
+      },
+      (error) => {
+        this.message.error('获取团队配置信息失败')
+      }
+    )
     this.getAllGroups()
     Group.getCurrentGroup().then(
       (response) => {
