@@ -72,6 +72,9 @@ export default {
     this.$bus.on('update-group-list', () => {
       this.getAllGroups()
     })
+    this.$bus.on('change-in-group', () => {
+      this.inGroup = false
+    })
   },
   methods: {
     getAllGroups() {

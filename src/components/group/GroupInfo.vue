@@ -223,6 +223,7 @@ export default {
         (response) => {
           this.message.success('解散团队成功')
           this.getCurrentGroup()
+          this.$bus.emit('change-in-group')
         },
         (error) => {
           this.message.error('解散团队失败')
@@ -234,6 +235,7 @@ export default {
         (response) => {
           this.message.success('退出团队成功')
           this.getCurrentGroup()
+          this.$bus.emit('change-in-group')
         },
         (error) => {
           this.message.error('退出团队失败')
@@ -334,6 +336,7 @@ export default {
             this.message.success('创建团队成功')
             this.getCurrentGroup()
             this.$bus.emit('update-group-list')
+            this.$bus.emit('change-in-group')
           },
           (error) => {
             this.message.error('创建团队失败')
