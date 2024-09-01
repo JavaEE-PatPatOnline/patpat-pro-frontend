@@ -210,11 +210,13 @@ export default {
             console.log(JSON.parse(event.data))
             const testData = JSON.parse(event.data).data
             if (testData && testData.endTime) {
-              this.waitingTestResult = false
-              this.testResultShouldShow = true
-              this.submitTime = testData.submitTime
-              this.score = testData.score
-              this.results = testData.result.results
+              setTimeout(() => {
+                this.waitingTestResult = false
+                this.testResultShouldShow = true
+                this.submitTime = testData.submitTime
+                this.score = testData.score
+                this.results = testData.result.results
+              }, 2000)
             }
           }
           this.ws.onerror = (error) => {
