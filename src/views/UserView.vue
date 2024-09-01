@@ -45,7 +45,7 @@ import { NFlex, NModal } from 'naive-ui'
 import User from '../api/User.js'
 import Account from '../api/Account.js'
 
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { useMessage } from 'naive-ui'
 
 export default {
@@ -116,15 +116,18 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setUserAvatar']),
     handleUpload() {
       this.$refs.fileInput.click()
     },
     handleFileChange(event) {
       if (event.target.files && event.target.files.length > 0) {
-        this.avatar = URL.createObjectURL(event.target.files[0])
         Account.updataAvatar(event.target.files[0]).then(
           (response) => {
             this.message.success('修改头像成功')
+            this.avatar = URL.createObjectURL(event.target.files[0])
+            this.setUserAvatar(response.data.data)
+            this.$bus.emit('update-navigator')
           },
           (error) => {
             this.message.error('修改头像失败')

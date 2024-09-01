@@ -52,14 +52,15 @@
   
   <MarkdownEditor v-model:value="content" />
 
-  <div class="selector">
+  <NFlex align="center" class="selector">
     选择评测题目：
-    <select v-model="problem">
+    <NSelect v-model:value="problem" :options="selectOptions" />
+    <!-- <select v-model="problem">
       <option v-for="problem in problems" :value="problem.id" :key="problem.id">
         {{ problem.title }}
       </option>
-    </select>
-  </div>
+    </select> -->
+  </NFlex>
   
 </template>
 
@@ -69,7 +70,7 @@ import MarkdownEditor from '../markdown/MarkdownEditor.vue'
 import Problem from '../../api/Problem.js'
 import Iter from '../../api/Iter.js'
 
-import { NFlex, useMessage } from 'naive-ui'
+import { NFlex, NSelect, useMessage } from 'naive-ui'
 import DatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -78,6 +79,7 @@ export default {
   components: {
     MarkdownEditor,
     NFlex,
+    NSelect,
     DatePicker
   },
   data() {
@@ -91,7 +93,8 @@ export default {
       ddlTime: null,
       endTime: null,
       problem: null,
-      problems: []
+      problems: [],
+      selectOptions: []
     }
   },
   mounted() {
@@ -103,6 +106,10 @@ export default {
     Problem.getAllProblems().then(
       (response) => {
         this.problems = response.data.data
+        this.selectOptions = this.problems.map(problem => ({
+          label: problem.title,
+          value: problem.id
+        }))
       },
       (error) => {
         this.message.error('获取评测题列表失败')
@@ -248,23 +255,10 @@ input[type="radio"] {
   height: 15px;
 }
 
-div.selector {
+.selector {
   padding: 20px 0;
   font-weight: bold;
   color: var(--default-blue);
 }
 
-div.selector select {
-  height: 30px;
-  border-radius: 3px;
-  background: transparent;
-  border: 1px solid var(--default-blue);
-  box-sizing: border-box;
-  padding: 5px;
-  width: 300px;
-}
-
-div.selector select:focus-visible {
-  outline: 0;
-}
 </style>

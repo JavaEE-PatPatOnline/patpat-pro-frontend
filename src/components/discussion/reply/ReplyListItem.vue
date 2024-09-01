@@ -8,7 +8,7 @@
         <div>
           <div>
             {{ reply.author.name }}
-            <template v-if="isSecond">@ {{ reply.toName }}</template>
+            <template v-if="isSecond"><span class="at">@</span> {{ reply.toName }}</template>
           </div>
           <div class="time">{{ reply.createdAt }}</div>
         </div>
@@ -254,5 +254,9 @@ export default {
 
 .reply-btn-box {
   margin-top: 10px;
+}
+
+span.at {
+  color: var(--default-grey);
 }
 </style>

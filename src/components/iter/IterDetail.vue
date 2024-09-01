@@ -38,9 +38,9 @@
         <button class="styled" @click="testCode">评测</button>
       </NFlex>
       <div class="test-result">
-        <div v-if="waitingTestResult">
-          <Vue3Lottie :animationData="javaIcon" :height="80" :width="80" style="margin: 0; margin-bottom: 20px" />
-        </div>
+        <NFlex justify="center" v-if="waitingTestResult">
+          <Vue3Lottie :animationData="javaIcon" :height="180" :width="180" style="margin: 0; margin-bottom: 20px" />
+        </NFlex>
         <div class="result-wrapper" v-if="testResultShouldShow">
           <NFlex justify="space-between" align="center">
             <div><b>提交时间：</b>{{ submitTime }}</div>

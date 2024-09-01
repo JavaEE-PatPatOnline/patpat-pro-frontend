@@ -1,5 +1,5 @@
 <template>
-  <template v-if="enabled">
+  <!-- <template v-if="enabled"> -->
     <div class="list-title">团队列表</div>
     <ul v-if="groups.length > 0">
       <li v-for="group in groups" :key="group.id">
@@ -29,7 +29,7 @@
     <div v-else class="empty-hint">
       暂无团队
     </div>
-  </template>
+  <!-- </template> -->
 </template>
 
 <script>

@@ -5,17 +5,18 @@
       <h3>{{ title }}</h3>
       <NFlex align="center" class="lab-btn">
         <!-- 提交按钮 -->
-        <UploadIcon @click="selectFile" />
-        <template v-if="fileToSubmit">
-          <span>已选择：
-            <a :href="fileURL" :download="filename">
+        <!-- <UploadIcon @click="selectFile" /> -->
+        <button class="styled" @click="selectFile">{{ filename === '' ? '提交报告' : '重新提交' }}</button>
+        <template v-if="filename !== ''">
+          <span>已提交：
+            <a @click="downloadReport">
               {{ filename }}
             </a>
           </span>
-          <CrossIcon v-if="fileToSubmit" @click="removeFile" />
+          <!-- <CrossIcon v-if="fileToSubmit" @click="removeFile" /> -->
         </template>
         <input ref="fileInput" style="display: none" type="file" 
-          @change="handleFileChange" accept=".pdf, .zip"/>
+          @input="handleFileChange" accept=".pdf, .zip"/>
         <!-- 编辑按钮 -->
         <EditIcon @click="startEditingLab" v-if="isAdmin" />
         <!-- 删除按钮 -->
@@ -88,12 +89,14 @@ export default {
       if (to.params.id !== from.params.id) {
         this.id = to.params.id
         this.getLabDetail()
+        this.getScore()
       }
     }
   },
   mounted() {
     this.id = this.$route.params.id
     this.getLabDetail()
+    this.getScore()
   },
   methods: {
     getLabDetail() {
@@ -108,6 +111,19 @@ export default {
         },
         (error) => {
           this.message.error('获取实验详情失败')
+        }
+      )
+    },
+    getScore() {
+      this.filename = ''
+      Lab.getScore(this.id).then(
+        (response) => {
+          if (response.data.data) {
+            this.filename = response.data.data.filename
+          }
+        },
+        (error) => {
+          this.message.error('获取实验报告提交情况失败')
         }
       )
     },
@@ -132,11 +148,11 @@ export default {
     handleFileChange(event) {
       if (event.target.files && event.target.files.length > 0) {
         this.fileToSubmit = event.target.files[0]
-        this.filename = this.fileToSubmit.name
-        this.fileURL = URL.createObjectURL(this.fileToSubmit)
+        // this.fileURL = URL.createObjectURL(this.fileToSubmit)
         // todo： 提交
         Lab.submitReport(this.id, this.fileToSubmit).then(
           (response) => {
+            this.filename = this.fileToSubmit.name
             this.message.success('提交实验报告成功')
           },
           (error) => {
@@ -149,6 +165,24 @@ export default {
       this.fileToSubmit = null
       this.filename = ''
       this.fileURL = null
+    },
+    downloadReport() {
+      Lab.getReport(this.id).then(
+        (response) => {
+          const blob = response.data
+          const downloadUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a') // 创建一个 a 标签
+          link.href = downloadUrl // 设置 a 标签的 url
+          link.download = this.filename // 设置文件名
+          document.body.appendChild(link) // 将 a 标签添加到 DOM
+          link.click() // 模拟点击，开始下载
+          document.body.removeChild(link) // 下载完成后移除 a 标签
+        },
+        (error) => {
+          this.message.error('下载实验报告失败')
+        }
+      )
+      
     }
   }
 }

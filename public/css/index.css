@@ -75,6 +75,10 @@ button {
   cursor: pointer;
 }
 
+button.dp__btn.dp__month_year_select {
+  padding: 0 5px !important;
+}
+
 button:hover {
   transform: scale(1.05);
   background: var(--default-grey-light);
@@ -315,6 +319,14 @@ div.n-menu {
   --n-item-color-active-hover: var(--default-blue-transparent) !important;
   --n-item-color-active-collapsed: var(--default-blue-transparent) !important;
 }
+
+div.n-menu a[href="/iter/create"],
+div.n-menu a[href="/lab/create"] {
+  font-weight: bold !important;
+  color: var(--default-blue) !important
+}
+
+
 /* 菜单右侧分割线 */
 div.n-layout-sider__border {
   background: var(--bg-grey) !important;
@@ -482,8 +494,8 @@ div.dp__menu.dp__menu_index.dp__theme_light {
 
 /* n-input-number (组员权重) 样式 */
 div.n-input-number {
-  position: absolute !important;
-  right: 0 !important;
+  /* position: absolute !important; */
+  /* right: 0 !important; */
   border: 1px solid var(--default-grey);
   border-radius: 3px !important;
   height: 20px !important;
@@ -541,3 +553,31 @@ div.n-input-number i.n-base-icon {
   height: 15px !important;
 }
 
+/* n-select 样式 */
+div.n-base-selection-placeholder__inner {
+  display: none !important;
+}
+
+div.n-select {
+  width: 300px !important;
+}
+
+div.n-base-selection {
+  --n-border-active: 1px solid var(--default-blue) !important; 
+  --n-border-hover: 1px solid var(--default-blue) !important; 
+  --n-border-focus: 1px solid var(--default-blue) !important; 
+  --n-box-shadow-active: none !important;
+  --n-box-shadow-focus: none !important;
+}
+
+div.n-base-selection-label {
+  background: transparent !important;
+}
+
+div.n-base-select-menu.n-select-menu {
+  --n-color: var(--bg-like) !important; 
+  --n-option-color-pending: var(--default-grey-transparent) !important;
+  --n-option-color-active-pending: var(--default-grey-transparent) !important;
+  --n-option-text-color-active: var(--default-blue) !important;
+  --n-option-text-color-pressed: var(--default-blue) !important;
+}
