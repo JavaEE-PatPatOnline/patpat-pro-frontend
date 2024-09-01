@@ -39,8 +39,7 @@
       </NFlex>
       <div class="test-result">
         <div v-if="waitingTestResult">
-          <Vue3Lottie :animationData="javaIcon" :height="80" :width="80" style="margin: 0" />
-          <div>正在等待评测结果...</div>
+          <Vue3Lottie :animationData="javaIcon" :height="80" :width="80" style="margin: 0; margin-bottom: 20px" />
         </div>
         <div class="result-wrapper" v-if="testResultShouldShow">
           <NFlex justify="space-between" align="center">
