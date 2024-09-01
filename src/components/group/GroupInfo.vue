@@ -1,4 +1,7 @@
 <template>
+  <!-- <template v-if="enabled === 'disabled' && !isAdmin">
+    <div class="empty-hint">暂未开启组队</div>
+  </template> -->
   <template v-if="!isAdmin">
     <div v-if="id !== ''">
       <h3 v-if="!isEditingName">
@@ -30,12 +33,12 @@
           </div>
           <div class="leader" v-if="member.owner">组长</div>
           <div class="member" v-else>组员</div>
-          <NInputNumber :min="minWeight" :max="maxWeight" v-model:value="member.weight"
-            style="width: 60px; height: 20px" :bordered="false" :disabled="!isLeader" @blur="updateWeight(member)"
-            @focus="prevWeight = member.weight" />
-          <div class="member-icon">
-
-          </div>
+          <NFlex align="center" class="weight">
+            权重
+            <NInputNumber :min="minWeight" :max="maxWeight" v-model:value="member.weight"
+              style="width: 60px; height: 20px" :bordered="false" :disabled="!isLeader" @blur="updateWeight(member)"
+              @focus="prevWeight = member.weight" />
+          </NFlex>
         </li>
       </ul>
       <NFlex justify="flex-end" align="center">
@@ -72,7 +75,7 @@
     </template>
 
   </template>
-  <template v-else>
+  <template v-if="isAdmin">
     <div class="config">组队配置</div>
     <NFlex align="center">
       最大成员数 <input type="number" v-model="newMaxSize" />&nbsp;&nbsp;&nbsp;
@@ -223,6 +226,7 @@ export default {
         (response) => {
           this.message.success('解散团队成功')
           this.getCurrentGroup()
+          this.$bus.emit('update-group-list')
           this.$bus.emit('change-in-group')
         },
         (error) => {
@@ -235,6 +239,7 @@ export default {
         (response) => {
           this.message.success('退出团队成功')
           this.getCurrentGroup()
+          this.$bus.emit('update-group-list')
           this.$bus.emit('change-in-group')
         },
         (error) => {
@@ -287,6 +292,7 @@ export default {
         Group.submitAssignment(data).then(
           (response) => {
             this.message.success('提交大作业成功：' + file.name)
+            this.assignment = file.name
           },
           (error) => {
             this.message.error('提交大作业失败')
@@ -301,7 +307,7 @@ export default {
           const downloadUrl = URL.createObjectURL(blob)
           const link = document.createElement('a') // 创建一个 a 标签
           link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'sample.zip' // 设置文件名
+          link.download = this.assignment // 设置文件名
           document.body.appendChild(link) // 将 a 标签添加到 DOM
           link.click() // 模拟点击，开始下载
           document.body.removeChild(link) // 下载完成后移除 a 标签
@@ -385,7 +391,7 @@ li {
   align-items: center;
   margin: 10px;
   position: relative;
-  width: 290px;
+  width: 330px;
   margin-right: 50px;
 }
 
@@ -413,7 +419,7 @@ li {
 .leader,
 .member {
   position: absolute;
-  right: 70px;
+  right: 110px;
   padding: 5px;
   border-radius: 3px;
   font-size: 14px;
@@ -427,6 +433,14 @@ li {
 
 .member {
   background: var(--default-green);
+}
+
+.weight {
+  position: absolute;
+  right: 0;
+  font-size: 14px;
+  gap: 3px;
+  font-weight: bold;
 }
 
 a.download-link {

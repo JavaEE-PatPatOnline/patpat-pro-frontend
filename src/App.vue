@@ -14,6 +14,8 @@
           :collapsed-width="64"
           :width="250"
           :collapsed="false"
+          style="height: calc(100vh - 60px)"
+          :native-scrollbar="false"
         >
           <NMenu
             v-model:value="activeKey"

@@ -16,7 +16,7 @@
       <span class="time-text">开始时间</span>
       <DatePicker 
         ref="start" v-model="startTime" locale="zh-CN" 
-        format="yyyy-MM-dd HH:mm:ss" model-type="yyyy-MM-dd HH:mm:ss"
+        format="yyyy-MM-dd HH:mm:SS" model-type="yyyy-MM-dd HH:mm:SS"
       >
         <template #action-buttons>
           <button class="styled" @click="selectStartTime">选择</button>

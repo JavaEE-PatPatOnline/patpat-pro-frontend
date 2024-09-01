@@ -9,7 +9,6 @@
   <section class="discussion-detail">
     <MarkdownDisplayer :content="discussion.content" />
   </section>
-
   <!-- 操作按钮区域 -->
   <section class="discussion-actions">
     <NFlex justify="flex-end" align="center">
@@ -126,7 +125,8 @@ export default {
       }
       Discussion.createComment(this.discussion.id, this.replyContent, 0).then(
         (response) => {
-          this.replies.push(response.data.data)
+          // this.replies.push(response.data.data)
+          this.$bus.emit('reply-change')
           this.cancelReply()
         },
         (error) => {
@@ -186,24 +186,6 @@ export default {
   margin-right: 10px;
 }
 
-.delete-btn,
-.styled {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* .delete-btn {
-  background-color: #ff4d4f;
-  color: white;
-} */
-
-/* .styled {
-  background-color: #1890ff;
-  color: white;
-} */
-
 .reply {
   margin-left: 25px;
   /* DO NOT MODIFY: */
@@ -223,5 +205,9 @@ h4 {
 
 .discussion-actions button {
   margin-left: 10px;
+}
+
+.reply-btn {
+  margin-top: 10px;
 }
 </style>

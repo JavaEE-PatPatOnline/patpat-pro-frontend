@@ -5,7 +5,7 @@
     <div class="left">
       <!-- 左侧上部：标题和标签 -->
       <NFlex align="center" class="left-top">
-        <NEllipsis :tooltip="titleEllipsis" style="max-width: calc(100% - 300px); min-width: 250px;">
+        <NEllipsis :tooltip="titleEllipsis" style="max-width: calc(100% - 200px); min-width: 100px">
           <span class="title">{{ discussion.title }}</span>
         </NEllipsis>
         <div class="discussion-type" :class="{
@@ -135,6 +135,7 @@ export default {
           .then(() => {
             this.discussion.starred = newStarredState
             this.$bus.emit('discussion-change')
+            this.$bus.emit('reply-change')
           })
           .catch(error => {
             this.message.error('加精操作失败')
@@ -149,6 +150,7 @@ export default {
           .then(() => {
             this.discussion.topped = newToppedState
             this.$bus.emit('discussion-change')
+            this.$bus.emit('reply-change')
           })
           .catch(error => {
             this.message.error('置顶操作失败')
@@ -176,7 +178,7 @@ export default {
 
 <style scoped>
 .left {
-  width: 80%;
+  width: 70%;
 }
 
 .left-top,

@@ -28,7 +28,7 @@ export default {
     }
   },
   watch: {
-    value: function (updated) {
+    content: function (updated) {
       this.value = updated
     },
     value: function (old, updated) {

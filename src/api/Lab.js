@@ -7,7 +7,9 @@ const url = {
   updateLab: '/admin/task/lab/update/',
   createLab: '/admin/task/lab/create',
   deleteLab: '/admin/task/lab/delete/',
-  submit: '/task/lab/submit/'
+  submit: '/task/lab/submit/',
+  score: '/task/lab/score/',
+  report: '/task/lab/download/'
 }
 
 export default class Lab {
@@ -64,6 +66,19 @@ export default class Lab {
     return service(url.submit + id, {
       method: 'post',
       data
+    })
+  }
+
+  static async getScore(id) {
+    return service(url.score + id, {
+      method: 'get'
+    })
+  }
+
+  static async getReport(id) {
+    return service(url.report + id, {
+      method: 'get',
+      responseType: 'blob'
     })
   }
 }
