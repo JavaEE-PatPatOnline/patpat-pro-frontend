@@ -15,15 +15,15 @@ app.config.globalProperties.$cookies = VueCookies
 app.use(mavonEditor)
 
 
-function handler(err, vm, info) {
-  // 检查是否是401错误
-  console.error('err', err)
-  // if (err.response && err.response.data.status === 401) {
-  //   router.replace('/login')
-  // }
-}
+// function handler(err, vm, info) {
+//   // 检查是否是401错误
+//   console.error('err', err)
+//   // if (err.response && err.response.data.status === 401) {
+//   //   router.replace('/login')
+//   // }
+// }
 
-app.config.errorHandler = handler
+// app.config.errorHandler = handler
 
 app.use(router)
 app.use(store)
