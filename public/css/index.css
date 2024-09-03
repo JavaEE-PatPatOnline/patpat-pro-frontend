@@ -373,6 +373,10 @@ div.n-collapse-item__content-inner {
   padding-top: 0 !important;
 }
 
+.n-collapse .n-collapse-item:not(:first-child) {
+  border-top: 1px solid var(--default-grey-transparent) !important;
+}
+
 /* 弹出确认背景颜色 */
 div.n-popover.n-popover-shared.n-popconfirm.n-popover-shared--show-arrow {
   background: var(--bg-like) !important;
