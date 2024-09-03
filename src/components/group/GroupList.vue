@@ -106,7 +106,7 @@ export default {
           this.$bus.emit('update-group-info')
         },
         (error) => {
-          this.message.error('加入团队失败')
+          this.message.error(error.response.data.message)
         }
       )
     }

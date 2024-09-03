@@ -322,6 +322,7 @@ h3 {
 .times {
   margin-left: 25px;
   width: 60%;
+  margin-bottom: 20px;
 }
 
 .times span {
