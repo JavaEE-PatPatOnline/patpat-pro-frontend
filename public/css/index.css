@@ -435,6 +435,15 @@ div.n-card-header svg {
   --n-item-border-active: 1px solid var(--default-blue) !important;
   --n-item-color-disabled: transparent !important;
 }
+
+div.n-virtual-list {
+  background: var(--bg-grey) !important;
+}
+
+div.n-base-select-option:hover::before {
+  background: var(--bg-like) !important;
+}
+
 /* 设置不可点击 svg 的鼠标样式 */
 .n-pagination-item--disabled svg {
   cursor: not-allowed !important;
@@ -580,4 +589,20 @@ div.n-base-select-menu.n-select-menu {
   --n-option-color-active-pending: var(--default-grey-transparent) !important;
   --n-option-text-color-active: var(--default-blue) !important;
   --n-option-text-color-pressed: var(--default-blue) !important;
+}
+
+/* n-date-table */
+div.n-data-table {
+  --n-th-text-color: var(--font-color) !important;
+  --n-td-text-color: var(--font-color) !important;
+  --n-merged-th-color: transparent !important;
+  --n-merged-td-color: transparent !important;
+  --n-merged-border-color: var(--default-grey-transparent) !important;
+  --n-merged-td-color-hover: var(--default-grey-transparent) !important;
+  /* --n-th-color: transparent !important;
+  --n-th-color-hover: transparent !important;
+  --n-th-color-modal: transparent !important;
+  --n-th-color-hover-modal: transparent !important;
+  --n-th-color-popover: transparent !important;
+  --n-th-color-hover-popover: transparent !important; */
 }

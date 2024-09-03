@@ -8,7 +8,10 @@ const url = {
   createIter: '/admin/task/iter/create',
   deleteIter: '/admin/task/iter/delete/',
   linkedProblem: '/task/iter/problems/',
-  linkProblem: '/admin/task/iter/problems/update/'
+  linkProblem: '/admin/task/iter/problems/update/',
+  score: '/task/iter/score/',
+  submit: '/task/iter/submit/',
+  download: '/task/iter/download/'
 }
 
 export default class Iter {
@@ -69,6 +72,26 @@ export default class Iter {
     return service(url.linkProblem + id, {
       method: 'post',
       data
+    })
+  }
+
+  static async getIterScore(id) {
+    return service(url.score + id, {
+      method: 'get'
+    })
+  }
+
+  static async submit(id, submission) {
+    return service(url.submit + id, {
+      method: 'post',
+      data: submission
+    })
+  }
+
+  static async downloadCode(id) {
+    return service(url.download + id, {
+      method: 'get',
+      responseType: 'blob'
     })
   }
 }

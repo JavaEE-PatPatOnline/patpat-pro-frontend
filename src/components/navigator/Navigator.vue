@@ -1,6 +1,6 @@
 <template>
   <NFlex justify="space-between" align="center" class="header">
-    <NFlex justify="center" align="center" class="banner" @click="jumpToHome" @mouseenter="$refs.java.play()"
+    <NFlex justify="center" align="center" class="banner" @click="jumpToHome" @dblclick="jumpToGame" @mouseenter="$refs.java.play()"
       @mouseleave="$refs.java.pause()">
       <Vue3Lottie ref="java" :animationData="javaIcon" :height="50" :width="50" />
       <h1>Patpat Online</h1>
@@ -35,7 +35,8 @@ export default {
     return {
       message: useMessage(),
       avatar: null,
-      javaIcon
+      javaIcon,
+      isDouble: false
     }
   },
   created() {
@@ -66,7 +67,18 @@ export default {
       'setUserBuaaId'
     ]),
     jumpToHome() {
-      this.$router.push('/')
+      setTimeout(() => {
+        if (!this.isDouble) {
+          this.$router.push('/')
+        }
+      }, 200)
+    },
+    jumpToGame() {
+      this.isDouble = true
+      this.$router.push('/game')
+      setTimeout(() => {
+        this.isDouble = false
+      }, 200)
     },
     jumpToUser() {
       this.$router.push('/user')
@@ -161,6 +173,10 @@ export default {
   color: var(--default-blue);
   font-size: 24px;
   font-weight: bold;
+}
+
+.banner h1::selection {
+  background: transparent;
 }
 
 .avatar {

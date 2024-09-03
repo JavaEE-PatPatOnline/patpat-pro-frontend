@@ -87,6 +87,7 @@
       <input type="radio" id="option2" value="enabled" v-model="enabled" />
       <label for="option2">开启</label>&nbsp;&nbsp;&nbsp;
       <button class="styled" @click="changeGroupConfig">修改配置</button>
+      <button @click="exportGroups">导出</button>
     </NFlex>
   </template>
 </template>
@@ -349,6 +350,23 @@ export default {
           }
         )
       }
+    },
+    exportGroups() {
+      Group.exportGroups().then(
+        (response) => {
+          const blob = response.data
+          const downloadUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a') // 创建一个 a 标签
+          link.href = downloadUrl // 设置 a 标签的 url
+          link.download = 'group.xlsx' // 设置文件名
+          document.body.appendChild(link) // 将 a 标签添加到 DOM
+          link.click() // 模拟点击，开始下载
+          document.body.removeChild(link) // 下载完成后移除 a 标签
+        },
+        (error) => {
+          this.message.error('导出组队情况失败')
+        }
+      )
     }
   }
 }

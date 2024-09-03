@@ -2,7 +2,7 @@
     <NFlex justify='space-between' align='center' class='editor-top'>
         <input type='text' placeholder='讨论标题' v-model='title' />
         <NFlex align="center">
-            讨论帖类型：<NSelect v-model="discussionType" :options="selectOptions" />
+            讨论帖类型：<NSelect v-model:value="discussionType" :options="selectOptions" />
         </NFlex>
         <!-- <select class='select-type' v-model='discussionType'>
             <option value='' disabled selected hidden>讨论帖类型</option>
@@ -55,7 +55,7 @@ export default {
                 },
                 {
                     label: '其他方面',
-                    value: 5
+                    value: '5'
                 }
             ]
         }

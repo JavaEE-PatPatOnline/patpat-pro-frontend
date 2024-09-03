@@ -5,7 +5,7 @@
       v-if="!(instance.proxy.$route.path.includes('user') || 
       instance.proxy.$route.path.includes('login') || 
       instance.proxy.$route.path.includes('select-course') ||
-      instance.proxy.$route.path === '/')" 
+      instance.proxy.$route.path === '/game')" 
     >
       <NLayout has-sider>
         <NLayoutSider
@@ -53,7 +53,9 @@ import {
   ChatbubbleEllipsesOutline as ChatIcon,
   PeopleOutline as TeamIcon,
   InformationCircleOutline as InfoIcon,
+  FileTrayFullOutline as ResourceIcon,
   HelpCircleOutline as ProblemIcon,
+  PersonCircleOutline as StudentIcon
 } from '@vicons/ionicons5'
 
 import User from './api/User.js'
@@ -225,6 +227,21 @@ watch(() => store.state.isAdmin, (a, b) => {
         label: () => h(
           RouterLink,
           {
+            to: '/resource',
+          },
+          { default: () => '资源管理' }
+        ),
+        key: 'resource',
+        icon: renderIcon(ResourceIcon)
+      }
+    )
+  }
+  if (store.state.isAdmin && menuOptions.value.length < 8) {
+    menuOptions.value.push(
+      {
+        label: () => h(
+          RouterLink,
+          {
             to: '/problem',
           },
           { default: () => '题目列表' }
@@ -233,6 +250,26 @@ watch(() => store.state.isAdmin, (a, b) => {
         icon: renderIcon(ProblemIcon)
       }
     )
+  }
+  if (store.state.isAdmin && menuOptions.value.length < 9) {
+    menuOptions.value.push(
+      {
+        label: () => h(
+          RouterLink,
+          {
+            to: '/student',
+          },
+          { default: () => '学生管理' }
+        ),
+        key: 'student',
+        icon: renderIcon(StudentIcon)
+      }
+    )
+  }
+
+  if (!store.state.isAdmin && menuOptions.value.length === 8) {
+    menuOptions.value.pop()
+    menuOptions.value.pop()
   }
 }, { immediate: true })
 
@@ -280,9 +317,15 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('tutorial')) {
     // 教程
     activeKey.value = 'tutorial'
+  } else if (newPath.includes('resource')) {
+    // 课程资料
+    activeKey.value = 'resource'
   } else if (newPath.includes('problem')) {
     // 题目库
     activeKey.value = 'problem'
+  } else if (newPath.includes('student')) {
+    // 学生管理
+    activeKey.value = 'student'
   }
 }, {
   immediate: true

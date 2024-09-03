@@ -1,5 +1,6 @@
 <template>
-<!-- 下面这个 iter-container 不能删去 -->
+  <button class="styled test-jumper" @click="scrollToTest">去评测</button>
+  <!-- 下面这个 iter-container 不能删去 -->
   <div class="iter-container">
     <NFlex justify="space-between">
       <h3>{{ title }}</h3>
@@ -26,16 +27,19 @@
       <span>结束时间：{{ ddlTime }}</span>
       <span>迟交截止：{{ endTime }}</span>
     </NFlex>
-    <MarkdownDisplayer :content="content" />
+    <div style="width: 95%">
+      <MarkdownDisplayer :content="content" />
+    </div>
     <div class="test-area">
       <NFlex justify="space-between">
         <div class="uploader">
           <span class="upload-hint">仅限上传 .java，.zip 文件</span>
           <button @click="handleUpload">选择文件</button>
           <span v-if="filename !== ''">已选择：{{ filename }}</span>
+          <span v-if="fileSumitted !== ''">已提交：<a @click="downloadCode" class="link">{{ fileSumitted }}</a></span>
           <input type="file" accept=".java,.zip" @change="setFilename" ref="fileInput" style="display: none" />
         </div>
-        <button class="styled" @click="testCode">评测</button>
+        <button class="styled" @click="testCode" id="test-button">评测</button>
       </NFlex>
       <div class="test-result">
         <NFlex justify="center" v-if="waitingTestResult">
@@ -49,7 +53,8 @@
           <b>详细评测结果</b>
           <ol>
             <li v-for="(result, index) in results" :key="index">
-              <span>评测点 {{ index + 1 }}</span>
+              <span v-if="result.flag !== 'CE'">评测点 {{ index + 1 }}</span>
+              <span v-else>编译错误</span>
               <span class="test-flag" :class="{
                 'ac-flag': result.flag === 'AC',
                 'wa-flag': result.flag === 'WA'
@@ -111,7 +116,8 @@ export default {
       ddlTime: '',
       endTime: '',
       problemId: '',
-      ws: null
+      ws: null,
+      fileSumitted: ''
     }
   },
   watch: {
@@ -131,6 +137,12 @@ export default {
     this.setupWebSocket()
   },
   methods: {
+    scrollToTest() {
+      const testButton = document.querySelector('#test-button')
+      if (testButton) {
+          testButton.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    },
     getIterDetail() {
       Iter.getIterDetail(this.id).then(
         (response) => {
@@ -152,6 +164,7 @@ export default {
             Problem.getLatesSubmission(this.problemId).then(
               (response) => {
                 if (response.data.data) {
+                  this.getIterScore()
                   const mostRecentTest = response.data.data
                   if (mostRecentTest.endTime) {
                     this.testResultShouldShow = true
@@ -239,23 +252,62 @@ export default {
         let submission = new FormData()
         submission.append('file', file)
         submission.append('language', '17')
-        Problem.submit(this.problemId, submission).then(
+        Iter.submit(this.id, submission).then(
           (response) => {
             this.testResultShouldShow = false
             this.waitingTestResult = true
-            // this.setupWebSocket()
+            this.filename = ''
           },
           (error) => {
             this.message.error('提交评测失败')
           }
         )
       }
+    },
+    getIterScore() {
+      Iter.getIterScore(this.id).then(
+        (response) => {
+          this.fileSumitted = response.data.data.filename
+        },
+        (error) => {
+          this.message.error('获取代码失败')
+        }
+      )
+    },
+    downloadCode() {
+      Iter.downloadCode(this.id).then(
+        (response) => {
+          const blob = response.data
+          const downloadUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a') // 创建一个 a 标签
+          link.href = downloadUrl // 设置 a 标签的 url
+          link.download = this.fileSumitted // 设置文件名
+          document.body.appendChild(link) // 将 a 标签添加到 DOM
+          link.click() // 模拟点击，开始下载
+          document.body.removeChild(link) // 下载完成后移除 a 标签
+        },
+        (error) => {
+          this.message.error('下载代码失败')
+        }
+      )
     }
   }
 }
 </script>
 
 <style scoped>
+button.test-jumper {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 14px;
+  position: fixed;
+  z-index: 9999;
+  right: 40px;
+  top: 120px;
+}
+
 h3 {
   font-size: 30px;
   font-weight: bold;
@@ -340,5 +392,13 @@ h3 {
 
 .wa-flag {
   color: var(--default-red);
+}
+
+a.link {
+  cursor: pointer;
+}
+
+a.link:hover {
+  text-decoration: underline;
 }
 </style>

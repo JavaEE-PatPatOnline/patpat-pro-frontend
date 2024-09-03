@@ -1,4 +1,5 @@
 <template>
+  <button @click="goBack" class="back-btn">返回</button>
   <!-- 占满全屏的容器 -->
   <NFlex justify="center" align="center" class="user-container">
     <!-- 用户面板 -->
@@ -160,12 +161,21 @@ export default {
           this.message.error('登出失败')
         }
       )
+    },
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
 </script>
 
 <style scoped>
+button.back-btn {
+  position: fixed;
+  left: 20px;
+  top: 70px;
+}
+
 .user-container {
   width: 100%;
   min-height: calc(100% - 60px);

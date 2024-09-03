@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import WelcomeView from '../views/WelcomeView.vue'
+import GameView from '../views/GameView.vue'
 import LoginView from '../views/LoginView.vue'
 import SelectCourseView from '../views/SelectCourseView.vue'
 import NoticeView from '../views/NoticeView.vue'
@@ -12,7 +12,8 @@ import DiscussionDetailView from '../views/DiscussionDetailView.vue'
 import ProblemView from '../views/ProblemView.vue'
 import GroupView from '../views/GroupView.vue'
 import TutorialView from '../views/TutorialView.vue'
-
+import ResourceView from '../views/ResourceView.vue'
+import StudentView from '../views/StudentView.vue'
 
 import VueCookies from 'vue-cookies'
 
@@ -82,6 +83,18 @@ const router = createRouter({
     {
       path: '/tutorial',
       component: TutorialView
+    },
+    {
+      path: '/resource',
+      component: ResourceView
+    },
+    {
+      path: '/game',
+      component: GameView
+    },
+    {
+      path: '/student',
+      component: StudentView
     }
   ]
 })

@@ -13,7 +13,8 @@ const url = {
   submit: '/group/assignment/submit',
   download: '/group/assignment/download',
   updateConfig: '/admin/group/config/update',
-  create: '/group/create'
+  create: '/group/create',
+  'export': '/admin/group/export'
 }
 
 export default class Group {
@@ -97,12 +98,19 @@ export default class Group {
     })
   }
 
-  static createGroup(name) {
+  static async createGroup(name) {
     return service(url.create, {
       method: 'post',
       data: {
         name, description: ''
       }
+    })
+  }
+
+  static async exportGroups() {
+    return service(url.export, {
+      method: 'get',
+      responseType: 'blob'
     })
   }
 }

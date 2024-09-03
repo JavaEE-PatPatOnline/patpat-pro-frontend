@@ -7,8 +7,7 @@ const url = {
   problemDetail: '/admin/problem/query/',
   deleteProblem: '/admin/problem/delete/',
   config: '/admin/problem/download/',
-  latestSubmission: '/submission/query/',
-  submit: '/judge/submit/'
+  latestSubmission: '/submission/query/'
 }
 
 export default class Problem {
@@ -59,13 +58,6 @@ export default class Problem {
   static async getLatesSubmission(id) {
     return service(url.latestSubmission + id, {
       method: 'get'
-    })
-  }
-
-  static async submit(id, submission) {
-    return service(url.submit + id, {
-      method: 'post',
-      data: submission
     })
   }
 }

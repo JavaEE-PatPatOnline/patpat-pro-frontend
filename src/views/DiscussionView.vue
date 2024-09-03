@@ -16,7 +16,7 @@
 import DiscussionList from '../components/discussion/DiscussionList.vue'
 import Discussion from '../api/Discussion.js'
 import DiscussionEditor from '../components/discussion/DiscussionEditor.vue'
-import { NFlex, NPagination } from 'naive-ui'
+import { NFlex, NPagination, useMessage } from 'naive-ui'
 
 export default {
   name: 'DiscussionView',
@@ -28,12 +28,13 @@ export default {
   },
   data() {
     return {
+      message: useMessage(),
       discussions: [],
       isEditingDiscussion: false,
       editingDiscussionId: null,
       page: 1,
       pageSize: 6, // 每页显示的讨论数量
-      totalItems: 0, // 总讨论数量
+      totalItems: 0 // 总讨论数量
     }
   },
   computed: {
@@ -65,10 +66,10 @@ export default {
       Discussion.getDiscussionList(this.page, this.pageSize).then(
         (response) => {
           this.discussions = response.data.data.items
-          this.totalItems = 6
+          this.totalItems = response.data.data.total
         },
         (error) => {
-          console.log('获取讨论列表失败:' + error)
+          this.message.error('获取讨论列表失败')
         }
       )
     }
