@@ -79,11 +79,12 @@ export default {
             }
             Discussion.createDiscussion(this.title, this.content, this.discussionType).then(
                 (response) => {
+                    const id = response.data.data.id
                     this.title = ''
                     this.content = ''
                     this.discussionType = ''
                     this.message.success('讨论发布成功')
-                    this.goBack()
+                    this.$router.push(`/discussion/${id}`)
                 },
                 (error) => {
                     this.message.error('发布讨论失败')

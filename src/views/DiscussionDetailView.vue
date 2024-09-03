@@ -89,7 +89,9 @@ export default {
   mounted() {
     this.fetchDiscussionDetails()
     this.$bus.on('reply-change', () => {
-      this.fetchDiscussionDetails()
+      if (this.route.params.id) {
+        this.fetchDiscussionDetails()
+      }
     })
   },
   methods: {
