@@ -24,8 +24,14 @@ export default class Student {
     })
   }
 
-  static async queryStudents(page, pageSize) {
-    return service(`${url.query}?p=${page}&ps=${pageSize}`, {
+  static async queryStudents(page, pageSize, query=null) {
+    const queryParams = new URLSearchParams({ p: page, ps: pageSize })
+    if (query) {
+      queryParams.append('buaaId', query.buaaId)
+      queryParams.append('name', query.name)
+      queryParams.append('teacherId', query.teacherId)
+    }
+    return service(`${url.query}?${queryParams.toString()}`, {
       method: 'get'
     })
   }

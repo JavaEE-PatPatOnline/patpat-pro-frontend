@@ -4,7 +4,8 @@ const url = {
   login: '/auth/login',
   selectCourse: '/course/select/',
   logout: '/auth/logout',
-  updataAvatar: '/account/avatar'
+  updataAvatar: '/account/avatar',
+  teacher: '/account/teachers'
 }
 
 export default class Account {
@@ -36,6 +37,12 @@ export default class Account {
     return service(url.updataAvatar, {
       method: 'post',
       data
+    })
+  }
+
+  static async getAllTeachers() {
+    return service(url.teacher, {
+      method: 'get'
     })
   }
 }

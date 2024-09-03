@@ -1,15 +1,24 @@
 <template>
-  <NFlex align="center" class="stu-btn">
-    是否删除不存在的学生
-    <input type="radio" id="option1" value="do-not-clean" v-model="clean" />
-    <label for="option1">否</label>
-    <input type="radio" id="option2" value="clean" v-model="clean" />
-    <label for="option2">是</label>
-    <button class="styled" @click="handleSelectFile">导入学生</button>
-    <input 
-      type="file" accept=".xls, .xlsx" 
-      @input="importStudents" ref="fileInput" style="display: none"/>
-    <button class="styled" @click="exportStudents">导出学生</button>
+  <NFlex justify="space-between" align="center" class="stu-header">
+    <NFlex align="center" class="filter">
+      <input type="text" placeholder="学号" v-model="filterBuaaId" />
+      <input type="text" placeholder="姓名" v-model="filterName" />
+      <input type="text" placeholder="教师" v-model="filterTeacherName" />
+      <button class="styled" @click="queryStudents">筛选</button>
+      <button @click="cancelFilter">取消</button>
+    </NFlex>
+    <NFlex align="center">
+      是否删除不存在的学生
+      <input type="radio" id="option1" value="do-not-clean" v-model="clean" />
+      <label for="option1">否</label>
+      <input type="radio" id="option2" value="clean" v-model="clean" />
+      <label for="option2">是</label>
+      <button class="styled" @click="handleSelectFile">导入学生</button>
+      <input 
+        type="file" accept=".xls, .xlsx" 
+        @input="importStudents" ref="fileInput" style="display: none"/>
+      <button class="styled" @click="exportStudents">导出学生</button>
+    </NFlex>
   </NFlex>
   <NDataTable
     :columns="columns"
@@ -17,14 +26,17 @@
     :pagination="false"
     :bordered="false"
     table-layout="fixed"
+    v-if="students.length > 0"
   />
-  <NFlex justify="center" align="center" class="pagination">
+  <NFlex justify="center" align="center" class="pagination" v-if="students.length > 0">
     <NPagination v-model:page="page" :page-count="totalPages" @update:page="queryStudents" />
   </NFlex>
+  <div class="empty-hint" v-if="students.length === 0">暂无学生</div>
 </template>
 
 <script>
 import Student from '../api/Student.js'
+import Account from '../api/Account.js'
 
 import { NFlex, NPagination, NDataTable, useMessage } from 'naive-ui'
 
@@ -63,8 +75,16 @@ export default {
         {
           title: '班级',
           key: 'className'
+        },
+        {
+          title: '教师',
+          key: 'teacherName'
         }
-      ]
+      ],
+      teachers: [],
+      filterBuaaId: '',
+      filterName: '',
+      filterTeacherName: ''
     }
   },
   computed: {
@@ -73,9 +93,20 @@ export default {
     }
   },
   mounted() {
+    this.getAllTeachers()
     this.queryStudents()
   },
   methods: {
+    getAllTeachers() {
+      Account.getAllTeachers().then(
+        (response) => {
+          this.teachers = response.data.data
+        },
+        (error) => {
+          this.message.error('获取教师列表失败')
+        }
+      )
+    },
     handleSelectFile() {
       this.$refs.fileInput.click()
     },
@@ -109,15 +140,44 @@ export default {
       )
     },
     queryStudents() {
-      Student.queryStudents(this.page, this.pageSize).then(
+      let teacherId = null
+      let query = null
+      if (this.filterBuaaId !== '' || this.filterName !== '' || this.filterTeacherName !== '') {
+        if (this.filterTeacherName !== '') {
+          this.teachers.forEach((teacher) => {
+            if (teacher.name === this.filterTeacherName) {
+              teacherId = teacher.id
+            }
+          })
+        }
+        query = {
+          buaaId: this.filterBuaaId,
+          name: this.filterName,
+          teacherId: teacherId
+        }
+      }
+      Student.queryStudents(this.page, this.pageSize, query).then(
         (response) => {
           this.students = response.data.data.items
           this.totalItems = response.data.data.total
+          this.students.forEach((student) => {
+            this.teachers.forEach((teacher) => {
+              if (student.teacherId === teacher.id) {
+                student.teacherName = teacher.name
+              }
+            })
+          })
         },
         (error) => {
           this.message.error('获取学生列表失败')
         }
       )
+    },
+    cancelFilter() {
+      this.filterBuaaId = ''
+      this.filterName = ''
+      this.filterTeacherName = ''
+      this.queryStudents()
     }
   }
 }
@@ -129,12 +189,16 @@ input[type="radio"] {
   height: 15px;
 }
 
-.stu-btn {
+.stu-header {
   margin-bottom: 15px;
 }
 
 .pagination {
   margin-top: 15px;
   padding-bottom: 15px;
+}
+
+.filter input {
+  width: 120px;
 }
 </style>
