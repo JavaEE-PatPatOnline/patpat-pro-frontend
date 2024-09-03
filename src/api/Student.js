@@ -29,7 +29,9 @@ export default class Student {
     if (query) {
       queryParams.append('buaaId', query.buaaId)
       queryParams.append('name', query.name)
-      queryParams.append('teacherId', query.teacherId)
+      if (query.teacherId) {
+        queryParams.append('teacherId', query.teacherId)
+      }
     }
     return service(`${url.query}?${queryParams.toString()}`, {
       method: 'get'

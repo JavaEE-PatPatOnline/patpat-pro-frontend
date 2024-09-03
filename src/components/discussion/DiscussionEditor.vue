@@ -1,15 +1,9 @@
 <template>
     <NFlex justify='space-between' align='center' class='editor-top'>
-        <input type='text' placeholder='讨论标题' v-model='title' />
         <NFlex align="center">
-            讨论帖类型：<NSelect v-model:value="discussionType" :options="selectOptions" />
+            <input type='text' placeholder='讨论标题' v-model='title' />
+            <NSelect placeholder="讨论帖类型" v-model:value="discussionType" :options="selectOptions" />
         </NFlex>
-        <!-- <select class='select-type' v-model='discussionType'>
-            <option value='' disabled selected hidden>讨论帖类型</option>
-            <option value='1'>问题求助</option>
-            <option value='2'>交流分享</option>
-            <option value='3'>学习打卡</option>
-        </select> -->
         <NFlex justify='flex-end' align='center'>
             <button @click='goBack'>取消</button>
             <button class='styled' @click='publishDiscussion'>发布</button>
@@ -35,7 +29,7 @@ export default {
             message: useMessage(),
             title: '',
             content: '',
-            discussionType: '',
+            discussionType: null,
             selectOptions: [
                 {
                     label: '问题求助',
@@ -73,7 +67,7 @@ export default {
                 this.message.error('讨论内容不得为空')
                 return
             }
-            if (this.discussionType === '') {
+            if (!this.discussionType) {
                 this.message.error('未选择讨论帖类型')
                 return
             }

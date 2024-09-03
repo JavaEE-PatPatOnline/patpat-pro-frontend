@@ -3,7 +3,7 @@
     <NFlex align="center" class="filter">
       <input type="text" placeholder="学号" v-model="filterBuaaId" />
       <input type="text" placeholder="姓名" v-model="filterName" />
-      <input type="text" placeholder="教师" v-model="filterTeacherName" />
+      <NSelect v-model:value="filterTeacherId" placeholder="教师" :options="selectOptions" />
       <button class="styled" @click="queryStudents">筛选</button>
       <button @click="cancelFilter">取消</button>
     </NFlex>
@@ -38,14 +38,15 @@
 import Student from '../api/Student.js'
 import Account from '../api/Account.js'
 
-import { NFlex, NPagination, NDataTable, useMessage } from 'naive-ui'
+import { NFlex, NPagination, NDataTable, NSelect, useMessage } from 'naive-ui'
 
 export default {
   name: 'StudentView',
   components: {
     NFlex,
     NPagination,
-    NDataTable
+    NDataTable,
+    NSelect
   },
   data() {
     return {
@@ -84,7 +85,8 @@ export default {
       teachers: [],
       filterBuaaId: '',
       filterName: '',
-      filterTeacherName: ''
+      filterTeacherId: null,
+      selectOptions: []
     }
   },
   computed: {
@@ -101,6 +103,10 @@ export default {
       Account.getAllTeachers().then(
         (response) => {
           this.teachers = response.data.data
+          this.selectOptions = this.teachers.map((teacher) => ({
+            label: teacher.name,
+            value: teacher.id
+          }))
         },
         (error) => {
           this.message.error('获取教师列表失败')
@@ -140,20 +146,12 @@ export default {
       )
     },
     queryStudents() {
-      let teacherId = null
       let query = null
-      if (this.filterBuaaId !== '' || this.filterName !== '' || this.filterTeacherName !== '') {
-        if (this.filterTeacherName !== '') {
-          this.teachers.forEach((teacher) => {
-            if (teacher.name === this.filterTeacherName) {
-              teacherId = teacher.id
-            }
-          })
-        }
+      if (this.filterBuaaId !== '' || this.filterName !== '' || this.filterTeacherId) {
         query = {
           buaaId: this.filterBuaaId,
           name: this.filterName,
-          teacherId: teacherId
+          teacherId: this.filterTeacherId
         }
       }
       Student.queryStudents(this.page, this.pageSize, query).then(
@@ -176,7 +174,7 @@ export default {
     cancelFilter() {
       this.filterBuaaId = ''
       this.filterName = ''
-      this.filterTeacherName = ''
+      this.filterTeacherId = null
       this.queryStudents()
     }
   }

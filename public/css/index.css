@@ -114,10 +114,15 @@ input {
   padding: 5px 10px;
   border-radius: 5px;
   box-sizing: border-box;
-  border: 1px solid var(--default-blue);
+  border: 1px solid var(--default-grey-light);
   background: transparent;
   font-size: 16px;
   caret-color: var(--default-blue);
+}
+
+input:hover,
+input:focus {
+  border: 1px solid var(--default-blue);
 }
 
 div.empty-hint {
@@ -441,7 +446,7 @@ div.n-virtual-list {
 }
 
 div.n-base-select-option:hover::before {
-  background: var(--bg-like) !important;
+  background: var(--default-grey-light) !important;
 }
 
 /* 设置不可点击 svg 的鼠标样式 */
@@ -564,7 +569,12 @@ div.n-input-number i.n-base-icon {
 
 /* n-select 样式 */
 div.n-base-selection-placeholder__inner {
-  display: none !important;
+  color: var(--default-grey) !important;
+  padding-top: 5px !important;
+}
+
+div.n-base-selection-input__content {
+  padding-top: 5px !important;
 }
 
 div.n-select {
@@ -572,6 +582,11 @@ div.n-select {
 }
 
 div.n-base-selection {
+  height: 40px !important;
+}
+
+div.n-base-selection {
+  --n-border: 1px solid var(--default-grey-light) !important;
   --n-border-active: 1px solid var(--default-blue) !important; 
   --n-border-hover: 1px solid var(--default-blue) !important; 
   --n-border-focus: 1px solid var(--default-blue) !important; 
@@ -589,6 +604,19 @@ div.n-base-select-menu.n-select-menu {
   --n-option-color-active-pending: var(--default-grey-transparent) !important;
   --n-option-text-color-active: var(--default-blue) !important;
   --n-option-text-color-pressed: var(--default-blue) !important;
+}
+
+.n-base-selection .n-base-suffix {
+  transform: translateY(-30%) !important;
+}
+
+.n-base-selection__border {
+  border-radius: 5px !important;
+}
+
+/* 筛选学生时，选择教师的 select 宽度减小 */
+.filter div.n-select {
+  width: 120px !important;
 }
 
 /* n-date-table */

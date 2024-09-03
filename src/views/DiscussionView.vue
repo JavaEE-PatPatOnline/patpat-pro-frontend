@@ -110,11 +110,4 @@ export default {
   margin-bottom: 20px;
 }
 
-.search-box input {
-  width: 50%;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 </style>

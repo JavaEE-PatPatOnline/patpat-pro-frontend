@@ -53,13 +53,7 @@
   <MarkdownEditor v-model:value="content" />
 
   <NFlex align="center" class="selector">
-    选择评测题目：
-    <NSelect v-model:value="problem" :options="selectOptions" />
-    <!-- <select v-model="problem">
-      <option v-for="problem in problems" :value="problem.id" :key="problem.id">
-        {{ problem.title }}
-      </option>
-    </select> -->
+    <NSelect placeholder="评测题目" v-model:value="problem" :options="selectOptions" />
   </NFlex>
   
 </template>
