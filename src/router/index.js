@@ -14,6 +14,9 @@ import GroupView from '../views/GroupView.vue'
 import TutorialView from '../views/TutorialView.vue'
 import ResourceView from '../views/ResourceView.vue'
 import StudentView from '../views/StudentView.vue'
+import CourseView from '../views/CourseView.vue'
+import SubmissionView from '../views/SubmissionView.vue'
+import TeachingView from '../views/TeachingView.vue'
 
 import VueCookies from 'vue-cookies'
 
@@ -85,7 +88,7 @@ const router = createRouter({
       component: TutorialView
     },
     {
-      path: '/resource',
+      path: '/admin/resource',
       component: ResourceView
     },
     {
@@ -93,8 +96,20 @@ const router = createRouter({
       component: GameView
     },
     {
-      path: '/student',
+      path: '/admin/student',
       component: StudentView
+    },
+    {
+      path: '/admin/course',
+      component: CourseView
+    },
+    {
+      path: '/admin/submission',
+      component: SubmissionView
+    },
+    {
+      path: '/admin/teaching',
+      component: TeachingView
     }
   ]
 })
@@ -104,9 +119,11 @@ router.beforeEach((to, from, next) => {
     next('/notice')
   } else if (VueCookies.get('jwt') && (!VueCookies.get('course') || VueCookies.get('course') === '') && to.path !== '/select-course') {
     next('/select-course')
-  } else if (VueCookies.get('jwt') && (VueCookies.get('course') && VueCookies.get('course') !== '') && to.path === '/select-course') {
-    next('/notice')
-  } else if (!VueCookies.get('jwt') && to.path !== '/login') {
+  } 
+  // else if (VueCookies.get('jwt') && (VueCookies.get('course') && VueCookies.get('course') !== '') && to.path === '/select-course') {
+  //   next('/notice')
+  // } 
+  else if (!VueCookies.get('jwt') && to.path !== '/login') {
     next('/login')
   } else {
     next()

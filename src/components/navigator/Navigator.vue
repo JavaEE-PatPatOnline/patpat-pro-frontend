@@ -5,7 +5,8 @@
       <Vue3Lottie ref="java" :animationData="javaIcon" :height="50" :width="50" />
       <h1>Patpat Online</h1>
     </NFlex>
-    <NFlex justify="flex-end" align="center">
+    <NFlex justify="flex-end" align="center" class="icon-box">
+      <a v-if="isAdmin" @click="selectCourse">切换课程</a>
       <ColorModeIcon @click="changeColorMode" />
       <div v-if="avatar"
         @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
@@ -19,7 +20,7 @@ import ColorModeIcon from '../svg/ColorModeIcon.vue'
 import javaIcon from '../../assets/icons8-java.json'
 import User from '../../api/User.js'
 
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 import { NFlex, useMessage } from 'naive-ui'
 import { Vue3Lottie } from 'vue3-lottie'
@@ -38,6 +39,9 @@ export default {
       javaIcon,
       isDouble: false
     }
+  },
+  computed: {
+    ...mapState(['isAdmin'])
   },
   created() {
     // 根据 local storage 初始化颜色模式
@@ -146,6 +150,9 @@ export default {
       } else {
         this.avatar = null
       }
+    },
+    selectCourse() {
+      this.$router.push('/select-course')
     }
   }
 }
@@ -183,7 +190,6 @@ export default {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  margin-right: 20px;
   cursor: pointer;
   transition: 1s ease-in-out;
   background-size: cover;
@@ -191,5 +197,19 @@ export default {
 
 .avatar:hover {
   transform: rotate(360deg);
+}
+
+.icon-box>* {
+  margin-right: 10px;
+}
+
+a {
+  font-weight: bold;
+  color: var(--default-blue);
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 </style>

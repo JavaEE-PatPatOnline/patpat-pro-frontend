@@ -68,7 +68,11 @@ export default {
             }
           },
           (error) => {
-            this.message.error('登录失败')
+            if (error.response.data.status === 403 || error.response.data.status === 400) {
+              this.message.error(error.response.data.message)
+            } else {
+              this.message.error('登录失败')
+            }
           }
         )
       }

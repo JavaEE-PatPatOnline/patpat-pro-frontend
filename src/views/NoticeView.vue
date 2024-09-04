@@ -44,7 +44,7 @@ export default {
       this.isEditingNotice = false
     })
     this.fetchNotice()
-    this.$bus.on('updateState', () => {
+    this.$bus.on('update-notice', () => {
       this.fetchNotice()
     })
   },

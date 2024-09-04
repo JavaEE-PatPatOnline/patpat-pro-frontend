@@ -46,7 +46,6 @@ export default {
     }
   },
   methods: {
-
     goBack() {
       this.$bus.emit('endNoticeEditing')
     },
@@ -66,6 +65,7 @@ export default {
             this.title = ''
             this.content = ''
             this.message.success('发布公告成功')
+            this.$bus.emit('update-notice')
           },
           (error) => {
             this.message.error('发布公告失败')
@@ -82,6 +82,7 @@ export default {
               this.title = ''
               this.content = ''
               this.message.success('更新公告成功')
+              this.$bus.emit('update-notice')
             },
             (error) => {
               this.message.error('更新公告失败')

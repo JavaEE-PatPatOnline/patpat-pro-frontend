@@ -134,13 +134,6 @@ export default {
 </script>
 
 <style scoped>
-.full-btn {
-  width: 100%;
-  margin: 0 auto;
-  margin-bottom: 20px;
-  font-size: 20px;
-}
-
 li {
   padding: 10px 0;
   border-bottom: 1px solid var(--default-grey-transparent);
@@ -148,10 +141,6 @@ li {
 
 li:last-child {
   border: 0;
-}
-
-.full-btn:hover {
-  transform: scale(1);
 }
 
 span.filename {

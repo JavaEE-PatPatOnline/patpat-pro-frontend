@@ -5,7 +5,11 @@ const url = {
   selectCourse: '/course/select/',
   logout: '/auth/logout',
   updataAvatar: '/account/avatar',
-  teacher: '/account/teachers'
+  teacher: '/account/teachers',
+  query: '/admin/account/query',
+  reset: '/admin/account/password/reset/',
+  update: '/admin/account/update/',
+  create: '/admin/account/create'
 }
 
 export default class Account {
@@ -43,6 +47,44 @@ export default class Account {
   static async getAllTeachers() {
     return service(url.teacher, {
       method: 'get'
+    })
+  }
+
+  static async queryAccounts(page, pageSize, query=null) {
+    const queryParams = new URLSearchParams({ p: page, ps: pageSize })
+    if (query) {
+      if (query.buaaId) {
+        queryParams.append('buaaId', query.buaaId)
+      }
+      if (query.name) {
+        queryParams.append('name', query.name)
+      }
+      if (query.role) {
+        queryParams.append('role', query.role)
+      }
+    }
+    return service(`${ url.query }?${ queryParams.toString() }`, {
+      method: 'get'
+    })
+  }
+
+  static async resetPassword(id) {
+    return service(url.reset + id, {
+      method: 'put'
+    })
+  }
+
+  static async updateAccount(id, buaaId, name, school, gender, role) {
+    return service(url.update + id, {
+      method: 'put',
+      data: { buaaId, name, school, gender, role }
+    })
+  }
+
+  static async createAccount(buaaId, name, school, gender, teacher, ta) {
+    return service(url.create, {
+      method: 'post',
+      data: { buaaId, name, school, gender, teacher, ta }
     })
   }
 }

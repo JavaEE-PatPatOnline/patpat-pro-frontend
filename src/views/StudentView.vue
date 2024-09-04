@@ -147,10 +147,10 @@ export default {
     },
     queryStudents() {
       let query = null
-      if (this.filterBuaaId !== '' || this.filterName !== '' || this.filterTeacherId) {
+      if (this.filterBuaaId.trim() !== '' || this.filterName.trim() !== '' || this.filterTeacherId) {
         query = {
-          buaaId: this.filterBuaaId,
-          name: this.filterName,
+          buaaId: this.filterBuaaId.trim(),
+          name: this.filterName.trim(),
           teacherId: this.filterTeacherId
         }
       }

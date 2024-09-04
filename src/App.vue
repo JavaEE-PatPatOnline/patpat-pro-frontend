@@ -1,11 +1,12 @@
 <template>
   <NMessageProvider>
-    <Navigator v-if="instance.proxy.$route.path !== '/'" />
+    <Navigator />
     <template 
       v-if="!(instance.proxy.$route.path.includes('user') || 
       instance.proxy.$route.path.includes('login') || 
       instance.proxy.$route.path.includes('select-course') ||
-      instance.proxy.$route.path === '/game')" 
+      instance.proxy.$route.path === '/game' ||
+      instance.proxy.$route.path === '/course')" 
     >
       <NLayout has-sider>
         <NLayoutSider
@@ -13,13 +14,15 @@
           collapse-mode="width"
           :collapsed-width="64"
           :width="250"
-          :collapsed="false"
+          :collapsed="collapsed"
           style="height: calc(100vh - 60px)"
           :native-scrollbar="false"
+          @collapse="collapsed = true"
+          @expand="collapsed = false"
         >
           <NMenu
             v-model:value="activeKey"
-            :collapsed="false"
+            :collapsed="collapsed"
             :collapsed-width="64"
             :icon-size="40"
             :collapsed-icon-size="22"
@@ -53,9 +56,10 @@ import {
   ChatbubbleEllipsesOutline as ChatIcon,
   PeopleOutline as TeamIcon,
   InformationCircleOutline as InfoIcon,
-  FileTrayFullOutline as ResourceIcon,
+  // FileTrayFullOutline as ResourceIcon,
   HelpCircleOutline as ProblemIcon,
-  PersonCircleOutline as StudentIcon
+  // PersonCircleOutline as StudentIcon,
+  SettingsOutline as CourseIcon
 } from '@vicons/ionicons5'
 
 import User from './api/User.js'
@@ -67,6 +71,7 @@ const instance = getCurrentInstance()
 
 // 绑定左侧导航菜单的值
 let activeKey = ref('notice')
+let collapsed = ref(true)
 
 // 渲染导航菜单的图标
 function renderIcon(icon) {
@@ -227,21 +232,6 @@ watch(() => store.state.isAdmin, (a, b) => {
         label: () => h(
           RouterLink,
           {
-            to: '/resource',
-          },
-          { default: () => '资源管理' }
-        ),
-        key: 'resource',
-        icon: renderIcon(ResourceIcon)
-      }
-    )
-  }
-  if (store.state.isAdmin && menuOptions.value.length < 8) {
-    menuOptions.value.push(
-      {
-        label: () => h(
-          RouterLink,
-          {
             to: '/problem',
           },
           { default: () => '题目列表' }
@@ -251,18 +241,64 @@ watch(() => store.state.isAdmin, (a, b) => {
       }
     )
   }
-  if (store.state.isAdmin && menuOptions.value.length < 9) {
+  if (store.state.isAdmin && menuOptions.value.length < 8) {
     menuOptions.value.push(
       {
-        label: () => h(
-          RouterLink,
+        label: '管理菜单',
+        key: 'admin',
+        icon: renderIcon(CourseIcon),
+        children: [
           {
-            to: '/student',
+            label: () => h(
+              RouterLink,
+              {
+                to: '/admin/course'
+              },
+              { default: () => '课程管理' },
+            ),
+            key: 'course'
           },
-          { default: () => '学生管理' }
-        ),
-        key: 'student',
-        icon: renderIcon(StudentIcon)
+          {
+            label: () => h(
+              RouterLink,
+              {
+                to: '/admin/teaching'
+              },
+              { default: () => '教学管理' },
+            ),
+            key: 'teaching'
+          },
+          {
+            label: () => h(
+              RouterLink,
+              {
+                to: '/admin/student',
+              },
+              { default: () => '学生管理' }
+            ),
+            key: 'student'
+          },
+          {
+            label: () => h(
+              RouterLink,
+              {
+                to: '/admin/submission'
+              },
+              { default: () => '成绩管理' }
+            ),
+            key: 'submission'
+          },
+          {
+            label: () => h(
+              RouterLink,
+              {
+                to: '/admin/resource',
+              },
+              { default: () => '资源管理' }
+            ),
+            key: 'resource'
+          }
+        ]
       }
     )
   }
@@ -290,7 +326,6 @@ instance.proxy.$bus.on('update-iter', () => {
 
 // 监听路由变化，设置 activeKey 控制菜单样式
 watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
-  console.log(`路由从 ${oldPath} 变为了 ${newPath}`);
   if (newPath === '/notice') {
     // 公告
     activeKey.value = 'notice'
@@ -317,19 +352,41 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('tutorial')) {
     // 教程
     activeKey.value = 'tutorial'
-  } else if (newPath.includes('resource')) {
-    // 课程资料
-    activeKey.value = 'resource'
   } else if (newPath.includes('problem')) {
     // 题目库
     activeKey.value = 'problem'
   } else if (newPath.includes('student')) {
     // 学生管理
     activeKey.value = 'student'
+  } else if (newPath.includes('course')) {
+    // 课程管理
+    activeKey.value = 'course'
+  } else if (newPath.includes('resource')) {
+    // 资源管理
+    activeKey.value = 'resource'
+  } else if (newPath.includes('submission')) {
+    // 成绩管理
+    activeKey.value = 'submission'
+  } else if (newPath.includes('teaching')) {
+    // 教学管理
+    activeKey.value = 'teaching'
   }
+  nextTick(() => {
+    const menus = document.getElementsByClassName('n-layout-sider')
+    if (menus.length > 0) {
+      const menu = menus[0]
+      menu.addEventListener('mouseenter', function() {
+        collapsed.value = false
+      })
+      menu.addEventListener('mouseleave', function() {
+        collapsed.value = true
+      })
+    }
+  })
 }, {
   immediate: true
 })
+
 
 </script>
 

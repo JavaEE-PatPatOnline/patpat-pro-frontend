@@ -49,11 +49,16 @@ svg.default:hover {
   font-size: 16px;
 }
 
-*:not(body, div.hljs, div.hljs *, .n-message *) {
+*:not(body, div.hljs, div.hljs *, .n-message *, .n-layout-sider, .n-submenu-children) {
   color: var(--font-color);
   transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
     background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
     border 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+/* 左侧菜单 */
+.n-layout-sider, .n-submenu-children {
+  transition-duration: .5s !important;
 }
 
 body {
@@ -62,8 +67,8 @@ body {
 
 button {
   font-weight: bold;
-  height: 35px;
-  padding: 0 20px;
+  height: fit-content;
+  padding: 5px 20px;
   border-radius: 3px;
   box-sizing: border-box;
   color: var(--default-grey) !important;
@@ -106,6 +111,17 @@ button.danger:hover {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+button.full-btn {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+button.full-btn:hover {
+  transform: scale(1);
 }
 
 input {
@@ -635,7 +651,7 @@ div.n-data-table {
   --n-merged-th-color: transparent !important;
   --n-merged-td-color: transparent !important;
   --n-merged-border-color: var(--default-grey-transparent) !important;
-  --n-merged-td-color-hover: var(--default-grey-transparent) !important;
+  --n-merged-td-color-hover: transparent !important;
   /* --n-th-color: transparent !important;
   --n-th-color-hover: transparent !important;
   --n-th-color-modal: transparent !important;

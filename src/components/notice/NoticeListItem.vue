@@ -78,7 +78,7 @@ export default {
           this.notice.content,
           !this.notice.isTopped).then(
             (response) => {
-              this.$bus.emit('updateState')
+              this.$bus.emit('update-notice')
               this.message.success(newTopState ? '置顶成功' : '取消置顶成功')
             },
             (error) => {
@@ -93,7 +93,7 @@ export default {
     deleteNotice() {
       Notice.deleteNotice(this.notice.id).then(
         (response) => {
-          this.$bus.emit('updateState')
+          this.$bus.emit('update-notice')
         },
         (error) => {
           this.message.error('删除公告失败')

@@ -13,6 +13,7 @@
         <NFlex justify="center" align="center" class="list-wrapper">
           <ul>
             <li class="name">{{ name }}</li>
+            <li>性别：{{ gender === 0 ? '未知' : (gender === 1 ? '男' : '女' ) }}</li>
             <li>学工号：{{ buaaId }}</li>
             <li>学院：{{ school }}</li>
             <li v-if="type === '学生'">专业：{{ major }}</li>
@@ -60,12 +61,13 @@ export default {
       message: useMessage(),
       type: '学生', // 用户类型：学生/助教/教师
       name: '', // 用户姓名
-      buaaId: '1', // 学工号
+      buaaId: '', // 学工号
       school: '', // 学院
       major: '', // 专业
       classId: '', // 小班号
       teacher: '', // 教师名
       avatar: '', // 头像
+      gender: '', // 性别
       changePasswordModalShouldShow: false,
       originPassword: '',
       newPassword: '',
@@ -88,7 +90,8 @@ export default {
         console.log(userData)
         if (userData) {
           this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
-          this.name = userData.name || ''
+          this.name = userData.name
+          this.gender = userData.gender
           this.buaaId = userData.buaaId
           this.school = userData.school
           if (this.avatar === '') {

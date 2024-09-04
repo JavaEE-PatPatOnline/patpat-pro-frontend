@@ -70,8 +70,8 @@ export default {
         page: this.page,
         pageSize: this.pageSize,
       }
-      if (this.searchQuery) {
-        params.query = this.searchQuery
+      if (this.searchQuery.trim() !== '') {
+        params.query = this.searchQuery.trim()
       }
       Discussion.getDiscussionList(params).then(
         (response) => {
