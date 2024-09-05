@@ -17,6 +17,7 @@ import StudentView from '../views/StudentView.vue'
 import CourseView from '../views/CourseView.vue'
 import TestSubmissionView from '../views/TestSubmissionView.vue'
 import TeachingView from '../views/TeachingView.vue'
+import AllSubmissionView from '../views/AllSubmissionView.vue'
 
 import VueCookies from 'vue-cookies'
 
@@ -106,6 +107,10 @@ const router = createRouter({
     {
       path: '/admin/test-submission',
       component: TestSubmissionView
+    },
+    {
+      path: '/admin/all-submission',
+      component: AllSubmissionView
     },
     {
       path: '/admin/teaching',
