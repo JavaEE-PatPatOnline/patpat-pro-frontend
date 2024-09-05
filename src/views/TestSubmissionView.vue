@@ -76,7 +76,7 @@ export default {
       message: useMessage(),
       submissions: [],
       page: 1,
-      pageSize: 10,
+      pageSize: 20,
       totalItems: 0,
       results: [],
       testDetailShouldShow: false,
@@ -228,23 +228,6 @@ export default {
       this.filterMinScore = null
       this.filterMaxScore = null
       this.querySubmissions()
-    },
-    downloadSubmission(row) {
-      Grade.downloadTestSubmission(row.id, row.accountId).then(
-        (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'group.xlsx' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
-        },
-        (error) => {
-          this.message.error('下载提交失败')
-        }
-      )
     },
     showTestDetail(row) {
       Grade.getTestDetail(row.id).then(

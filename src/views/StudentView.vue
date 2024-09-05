@@ -54,7 +54,7 @@ export default {
       clean: 'do-not-clean',
       students: [],
       page: 1,
-      pageSize: 12,
+      pageSize: 20,
       totalItems: 0,
       columns: [
         {

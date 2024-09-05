@@ -301,7 +301,17 @@ watch(() => store.state.isAdmin, (a, b) => {
                   { default: () => '评测记录' }
                 ),
                 key: 'test-submission'
-              }
+              },
+              {
+                label: () => h(
+                  RouterLink,
+                  {
+                    to: '/admin/all-submission',
+                  },
+                  { default: () => '提交汇总' }
+                ),
+                key: 'all-submission'
+              },
             ]
           },
           {
@@ -386,6 +396,9 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('teaching')) {
     // 教学管理
     activeKey.value = 'teaching'
+  } else if (newPath.includes('all-submission')) {
+    // 教学管理
+    activeKey.value = 'all-submission'
   }
   nextTick(() => {
     const menus = document.getElementsByClassName('n-layout-sider')

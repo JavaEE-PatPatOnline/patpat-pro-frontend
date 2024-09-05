@@ -639,16 +639,21 @@ div.n-base-select-menu.n-select-menu {
   border-radius: 5px !important;
 }
 
-/* 筛选学生时，选择教师的 select 宽度减小 */
+/* 不同地方的 n-select 的宽度 */
 .filter div.n-select {
   width: 120px !important;
 }
 
-/* 筛选评测记录时，选择题目的 select 宽度稍大一些 */
 .test-submission-header .filter div.n-select {
   width: 200px !important;
 }
-.test-submission-export div.n-select {
+
+.test-submission-export div.n-select,
+.lab-submission-export div.n-select {
+  width: 120px !important;
+}
+
+table.n-data-table-table div.n-select {
   width: 120px !important;
 }
 
