@@ -15,7 +15,7 @@ import TutorialView from '../views/TutorialView.vue'
 import ResourceView from '../views/ResourceView.vue'
 import StudentView from '../views/StudentView.vue'
 import CourseView from '../views/CourseView.vue'
-import SubmissionView from '../views/SubmissionView.vue'
+import TestSubmissionView from '../views/TestSubmissionView.vue'
 import TeachingView from '../views/TeachingView.vue'
 
 import VueCookies from 'vue-cookies'
@@ -104,8 +104,8 @@ const router = createRouter({
       component: CourseView
     },
     {
-      path: '/admin/submission',
-      component: SubmissionView
+      path: '/admin/test-submission',
+      component: TestSubmissionView
     },
     {
       path: '/admin/teaching',

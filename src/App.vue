@@ -24,11 +24,11 @@
             v-model:value="activeKey"
             :collapsed="collapsed"
             :collapsed-width="64"
-            :icon-size="40"
+            :icon-size="30"
             :collapsed-icon-size="22"
             :options="menuOptions"
-            :indent="48"
-            :root-indent="12"
+            :indent="36"
+            :root-indent="10"
           />
         </NLayoutSider>
         <NLayoutContent>
@@ -278,15 +278,31 @@ watch(() => store.state.isAdmin, (a, b) => {
             ),
             key: 'student'
           },
+          // {
+          //   label: () => h(
+          //     RouterLink,
+          //     {
+          //       to: '/admin/submission'
+          //     },
+          //     { default: () => '成绩管理' }
+          //   ),
+          //   key: 'submission'
+          // },
           {
-            label: () => h(
-              RouterLink,
+            label: '成绩管理',
+            key: 'grade',
+            children: [
               {
-                to: '/admin/submission'
-              },
-              { default: () => '成绩管理' }
-            ),
-            key: 'submission'
+                label: () => h(
+                  RouterLink,
+                  {
+                    to: '/admin/test-submission',
+                  },
+                  { default: () => '评测记录' }
+                ),
+                key: 'test-submission'
+              }
+            ]
           },
           {
             label: () => h(
@@ -364,9 +380,9 @@ watch(() => instance.proxy.$route.path, (newPath, oldPath) => {
   } else if (newPath.includes('resource')) {
     // 资源管理
     activeKey.value = 'resource'
-  } else if (newPath.includes('submission')) {
+  } else if (newPath.includes('test-submission')) {
     // 成绩管理
-    activeKey.value = 'submission'
+    activeKey.value = 'test-submission'
   } else if (newPath.includes('teaching')) {
     // 教学管理
     activeKey.value = 'teaching'

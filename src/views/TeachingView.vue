@@ -54,7 +54,7 @@
         <input type="radio" id="option2" value="1" v-model="newRole" />
         <label for="option2">助教</label><br />
       </NFlex>
-      <NFlex align="center" class="radio">
+      <NFlex align="center" class="radio" v-if="!isCreatingAccount">
         <input type="radio" id="option3" value="0" v-model="newRole" />
         <label for="option3">学生</label>
       </NFlex>
@@ -240,7 +240,7 @@ export default {
       this.newName = ''
       this.newSchool = ''
       this.newGender = '0'
-      this.newRole = '0'
+      this.newRole = '1'
     },
     editAccount() {
       console.log(this.rowEditing)
