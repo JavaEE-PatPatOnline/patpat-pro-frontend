@@ -1,6 +1,12 @@
 <template>
-  <!-- <template v-if="enabled"> -->
-    <div class="list-title">团队列表</div>
+    <NFlex justify="space-between" align="center">
+      <NFlex align="center" class="list-title">团队列表</NFlex>
+      <NFlex align="center">
+        <button class="styled" @click="exportAssignments">
+          导出大作业
+        </button>
+      </NFlex>
+    </NFlex>
     <ul v-if="groups.length > 0">
       <li v-for="group in groups" :key="group.id">
         <div class="left-info">
@@ -13,6 +19,7 @@
           <div class="members">
             <span v-for="member in group.members" :key="member.accountId">
               {{ member.name }} ({{ member.buaaId }})
+              <span v-if="isAdmin">(权重：{{ member.weight }})</span>
             </span>
           </div>
         </div>
@@ -23,19 +30,30 @@
             </template>
             确认加入该团队？
           </NPopconfirm>
+          <template v-if="isAdmin">
+            <NFlex align="center" v-if="group.score !== -2">
+              <DownloadIcon @click="downloadProject(group)" />
+              <input type="number" v-model="group.realScore" placeholder="未评分" />
+              <button class="styled" @click="scoreAssignment(group)">评分</button>
+            </NFlex>
+            <NFlex align="center" v-else>
+              暂未提交大作业
+            </NFlex>
+          </template>
         </NFlex>
       </li>
     </ul>
     <div v-else class="empty-hint">
       暂无团队
     </div>
-  <!-- </template> -->
 </template>
 
 <script>
 import PersonAddIcon from '../svg/PersonAddIcon.vue'
+import DownloadIcon from '../svg/DownloadIcon.vue'
 
 import Group from '../../api/Group.js'
+import Grade from '../../api/Grade.js'
 
 import { mapGetters } from 'vuex'
 
@@ -45,6 +63,7 @@ export default {
   name: 'GroupList',
   components: {
     PersonAddIcon,
+    DownloadIcon,
     NFlex,
     NEllipsis,
     NPopconfirm
@@ -54,7 +73,8 @@ export default {
       message: useMessage(),
       groups: [],
       inGroup: false,
-      enabled: false
+      enabled: false,
+      groupScores: []
     }
   },
   computed: {
@@ -75,6 +95,7 @@ export default {
         if (response.data.data) {
           this.inGroup = true
         }
+
       },
       (error) => {
         this.message.error('获取团队信息失败')
@@ -92,7 +113,7 @@ export default {
       Group.getAllGroups().then(
         (response) => {
           this.groups = response.data.data
-          console.log(this.groups)
+          this.getGroupScores()
         },
         (error) => {
           this.message.error('获取团队列表失败')
@@ -107,6 +128,74 @@ export default {
         },
         (error) => {
           this.message.error(error.response.data.message)
+        }
+      )
+    },
+    getGroupScores() {
+      if (this.isAdmin) {
+        Grade.getGroupScores().then(
+          (response) => {
+            this.groupScores = response.data.data
+            console.log(response.data.data)
+            this.groups.forEach((group) => {
+              let score_ = null
+              this.groupScores.forEach((score) => {
+                if (score.groupId === group.id) {
+                  score_ = score.score
+                }
+              })
+              group.score = score_ === null ? -2 : score_
+              group.realScore = group.score >= 0 ? group.score : null
+            })
+          },
+          (error) => {
+            this.message.error('获取大作业提交情况失败')
+          }
+        )
+      }
+    },
+    downloadProject(group) {
+      Grade.downloadGroupAssignment(group.id).then(
+        (response) => {
+          const blob = response.data
+          const downloadUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a') // 创建一个 a 标签
+          link.href = downloadUrl // 设置 a 标签的 url
+          link.download = group.name + '.zip' // 设置文件名
+          document.body.appendChild(link) // 将 a 标签添加到 DOM
+          link.click() // 模拟点击，开始下载
+          document.body.removeChild(link) // 下载完成后移除 a 标签
+        },
+        (error) => {
+          this.message.error('下载小组作业失败')
+        }
+      )
+    },
+    scoreAssignment(group) {
+      Grade.scoreGroup(group.id, group.realScore).then(
+        (response) => {
+          this.message.success('打分成功')
+          this.getAllGroups()
+        },
+        (error) => {
+          this.message.error('打分失败')
+        }
+      )
+    },
+    exportAssignments() {
+      Grade.getAllAssignments().then(
+        (response) => {
+          const blob = response.data
+          const downloadUrl = URL.createObjectURL(blob)
+          const link = document.createElement('a') // 创建一个 a 标签
+          link.href = downloadUrl // 设置 a 标签的 url
+          link.download = 'assignments.zip' // 设置文件名
+          document.body.appendChild(link) // 将 a 标签添加到 DOM
+          link.click() // 模拟点击，开始下载
+          document.body.removeChild(link) // 下载完成后移除 a 标签
+        },
+        (error) => {
+          this.message.error('导出大作业失败')
         }
       )
     }
@@ -166,5 +255,9 @@ li:last-child {
 
 .members span:first-child {
   font-weight: bold;
+}
+
+input[type="number"] {
+  width: 120px;
 }
 </style>

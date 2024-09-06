@@ -12,7 +12,11 @@ const url = {
   config: '/admin/statistics/config',
   updateConfig: '/admin/statistics/config/update',
   exportAll: '/admin/statistics/export',
-  exportLabSubmissions: '/admin/task/lab/download/'
+  exportLabSubmissions: '/admin/task/lab/download/',
+  groupScores: '/admin/group/query/scores',
+  downloadGroupAssignment: '/admin/group/assignment/download/',
+  scoreGroup: '/admin/group/score/',
+  allAssignments: '/admin/group/assignment/download'
 }
 
 export default class Grade {
@@ -100,6 +104,33 @@ export default class Grade {
 
   static async exportLabSubmissions(id, teacherId) {
     return service(url.exportLabSubmissions + id + '?teacherId=' + teacherId, {
+      method: 'get',
+      responseType: 'blob'
+    })
+  }
+
+  static async getGroupScores() {
+    return service(url.groupScores, {
+      method: 'get'
+    })
+  }
+
+  static async downloadGroupAssignment(id) {
+    return service(url.downloadGroupAssignment + id, {
+      method: 'get',
+      responseType: 'blob'
+    })
+  }
+
+  static async scoreGroup(id, score) {
+    return service(url.scoreGroup + id, {
+      method: 'post',
+      data: { score } 
+    })
+  }
+
+  static async getAllAssignments() {
+    return service(url.allAssignments, {
       method: 'get',
       responseType: 'blob'
     })
