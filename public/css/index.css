@@ -126,7 +126,7 @@ button.full-btn:hover {
 
 input {
   width: 400px;
-  height: 40px;
+  height: 33.5px;
   padding: 5px 10px;
   border-radius: 5px;
   box-sizing: border-box;
@@ -595,11 +595,11 @@ div.n-input-number i.n-base-icon {
 /* n-select 样式 */
 div.n-base-selection-placeholder__inner {
   color: var(--default-grey) !important;
-  padding-top: 5px !important;
+  padding-top: 1px !important;
 }
 
 div.n-base-selection-input__content {
-  padding-top: 5px !important;
+  padding-top: 1px !important;
 }
 
 div.n-select {
@@ -607,7 +607,7 @@ div.n-select {
 }
 
 div.n-base-selection {
-  height: 40px !important;
+  height: 32px !important;
 }
 
 div.n-base-selection {
