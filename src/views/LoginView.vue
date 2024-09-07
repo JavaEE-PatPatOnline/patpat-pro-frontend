@@ -119,10 +119,10 @@ h2 {
 
 .position-wrapper svg {
   position: absolute;
-  width: 35px;
-  height: 35px;
-  top: 3px;
-  right: 5px;
+  width: 30px;
+  height: 30px;
+  top: 1px;
+  right: 3px;
   cursor: pointer;
 }
 </style>

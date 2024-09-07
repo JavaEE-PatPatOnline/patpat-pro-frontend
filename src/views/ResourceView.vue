@@ -12,7 +12,7 @@
         <div>
           <span class="filename" @click="jumpToDetail(material.url)">{{ material.filename }}</span>
           <span class="comment">{{ material.comment }}</span>
-          <div class="url" @click="copyToClipboard(material.url)">{{ material.url }}</div>
+          <div class="url" @click="doCopy(material.url)" >{{ material.url }}</div>
         </div>
         <NPopconfirm positive-text="确认" negative-text="取消"
           :show-icon="false" @positive-click="deleteMaterial(material.id)">
@@ -53,9 +53,16 @@ export default {
     this.getAllMaterials()
   },
   methods: {
-    copyToClipboard(url) {
-      navigator.clipboard.writeText(url)
-      this.message.success('复制 URL 成功')
+    doCopy(url) {
+      const message = this.message
+      this.$copyText(url).then(
+        function(e) {
+          message.success('复制 URL 成功')
+        },
+        function(e) {
+          message.error('复制 URL 失败')
+        }
+      )
     },
     getAllMaterials() {
       Material.getAllMaterials().then(
