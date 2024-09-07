@@ -220,7 +220,6 @@ export default {
           }
 
           this.ws.onmessage = (event) => {
-            console.log(JSON.parse(event.data))
             const testData = JSON.parse(event.data).data
             if (testData && testData.endTime) {
               setTimeout(() => {
@@ -235,6 +234,7 @@ export default {
           this.ws.onerror = (error) => {
             this.message.error('WebSocket 错误')
             console.error('WebSocket 错误:', error)
+            this.setupWebSocket()
           }
           this.ws.onclose = () => {
             console.log('成功关闭 WebSocket 连接')

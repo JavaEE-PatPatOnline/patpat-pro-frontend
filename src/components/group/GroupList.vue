@@ -2,7 +2,7 @@
     <NFlex justify="space-between" align="center">
       <NFlex align="center" class="list-title">团队列表</NFlex>
       <NFlex align="center">
-        <button class="styled" @click="exportAssignments">
+        <button class="styled" @click="exportAssignments" v-if="isAdmin">
           导出大作业
         </button>
       </NFlex>
@@ -136,7 +136,6 @@ export default {
         Grade.getGroupScores().then(
           (response) => {
             this.groupScores = response.data.data
-            console.log(response.data.data)
             this.groups.forEach((group) => {
               let score_ = null
               this.groupScores.forEach((score) => {

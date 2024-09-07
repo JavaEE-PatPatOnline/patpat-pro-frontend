@@ -311,8 +311,9 @@ export default {
       this.gradesToShow = this.grades.slice(startIndex, endIndex + 1)
     },
     filterGrades() {
+      this.grades = this.copiedGrades.map(item => ({ ...item }))
+
       if (this.filterBuaaId.trim() === '' && this.filterName.trim() === '' && !this.filterTeacherId) {
-        this.grades = this.copiedGrades.map(item => ({ ...item }))
         return
       }
       if (this.filterBuaaId.trim() !== '') {

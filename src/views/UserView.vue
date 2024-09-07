@@ -87,7 +87,6 @@ export default {
     User.getUserInfo().then(
       (response) => {
         const userData = response.data.data
-        console.log(userData)
         if (userData) {
           this.type = userData.teacher ? "教师" : (userData.ta ? "助教" : "学生")
           this.name = userData.name
@@ -101,7 +100,6 @@ export default {
       },
       (error) => {
         this.message.error('获取用户信息失败')
-        console.log(error.response.data.status)
       }
     )
     if (!this.isAdmin) {

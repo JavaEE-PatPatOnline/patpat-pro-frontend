@@ -59,7 +59,7 @@ export default class Account {
       if (query.name) {
         queryParams.append('name', query.name)
       }
-      if (query.role) {
+      if (query.role !== null) {
         queryParams.append('role', query.role)
       }
     }

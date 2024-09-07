@@ -144,7 +144,6 @@ export default {
       )
     },
     handleLike() {
-      console.log(this.reply.liked)
       Discussion.likeComment(this.reply.id, !this.reply.liked).then(
         () => {
           this.reply.likeCount += 1

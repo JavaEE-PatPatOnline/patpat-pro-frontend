@@ -187,7 +187,7 @@ export default {
   methods: {
     queryAccounts() {
       let query = null
-      if (this.filterBuaaId.trim() !== '' || this.filterName.trim() !== '' || this.filterRole) {
+      if (this.filterBuaaId.trim() !== '' || this.filterName.trim() !== '' || this.filterRole !== null) {
         query = {
           buaaId: this.filterBuaaId.trim() === '' ? null : this.filterBuaaId.trim(),
           name: this.filterName.trim() === '' ? null : this.filterName.trim(),
@@ -243,7 +243,6 @@ export default {
       this.newRole = '1'
     },
     editAccount() {
-      console.log(this.rowEditing)
       Account.updateAccount(
         this.rowEditing.id,
         this.newBuaaId,

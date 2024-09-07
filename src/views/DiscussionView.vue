@@ -45,6 +45,20 @@ export default {
       return Math.ceil(this.totalItems / this.pageSize)
     }
   },
+  watch: {
+    page: {
+      handler(newValue) {
+        this.$router.push({ path: '/discussion', query: { page: newValue, query: this.searchQuery }})
+      },
+      immediate: true
+    },
+    searchQuery: {
+      handler(newValue) {
+        this.$router.push({ path: '/discussion', query: { page: this.page, query: newValue }})
+      },
+      immediate: true
+    }
+  },
   mounted() {
     this.$bus.on('startDiscussionEditing', (id) => {
       this.editingDiscussionId = id
@@ -55,6 +69,13 @@ export default {
       this.isEditingDiscussion = false
       this.fetchDiscussions()
     })
+    if (this.$route.query.page) {
+      // alert(this.$route.query.page)
+      this.page = parseInt(this.$route.query.page)
+    }
+    if (this.$route.query.query) {
+      this.searchQuery = this.$route.query.query
+    }
     this.fetchDiscussions()
     this.$bus.on('discussion-change', () => {
       this.fetchDiscussions()
