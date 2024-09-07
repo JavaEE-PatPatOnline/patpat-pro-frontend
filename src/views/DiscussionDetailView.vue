@@ -1,4 +1,5 @@
 <template>
+  <button @click="goBack" class="back-btn">返回</button>
   <!-- Discussion Header -->
   <section class="header-container">
     <DiscussionHeader :discussion="discussion" :showContent="false" titleEllipsis :showState="showState"
@@ -103,7 +104,7 @@ export default {
           this.replies = response.data.data.replies
         },
         (error) => {
-          console.log('获取讨论详情失败' + error)
+          this.message.error('获取讨论详情失败')
         }
       )
     },
@@ -138,11 +139,18 @@ export default {
       this.isEditingReply = false
       this.replyContent = ''
     },
+    goBack() {
+      this.$router.go(-1)
+    }
   }
 }
 </script>
 
 <style scoped>
+.back-btn {
+  margin-bottom: 10px;
+}
+
 .discussion-container {
   max-width: 800px;
   margin: 0 auto;

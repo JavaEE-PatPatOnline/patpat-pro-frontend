@@ -1,6 +1,6 @@
 <template>
   <div class="game-wrapper">
-    <iframe src="http://8.130.103.241/game/index.html" width="100%" height="125%"></iframe>
+    <iframe src="http://8.130.103.241/game/index.html" width="100%" height="80%"></iframe>
   </div>
 </template>
 
@@ -13,8 +13,8 @@ div.game-wrapper {
 
 iframe {
   border: none; 
-  scale: 0.75; 
+  scale: 0.8; 
   position: absolute;
-  top: -120px;
+  /* top: -60px; */
 }
 </style>

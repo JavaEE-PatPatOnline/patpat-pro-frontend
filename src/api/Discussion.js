@@ -21,7 +21,6 @@ export default class Discussion {
     })
   }
   static async likeDiscussion(id, state) {
-    console.log('点赞状态:', state)
     return service(url.like + '/' + id + '?liked=' + state, {
       method: 'PUT',
     })

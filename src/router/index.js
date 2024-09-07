@@ -70,7 +70,7 @@ const router = createRouter({
     },
     {
       path: '/discussion',
-      component: DiscussionView
+      component: DiscussionView,
     },
     {
       path: '/discussion/:id',

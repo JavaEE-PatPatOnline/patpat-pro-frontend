@@ -109,10 +109,6 @@ export default {
   },
   computed: {
     ...mapGetters(['isAdmin']),
-    // debugShowState() {
-    //   console.log('showState:', this.showState)
-    //   return this.showState
-    // }
   },
   data() {
     return {
@@ -161,7 +157,6 @@ export default {
     handleLike() {
       // if (this.editable) {
       //都能点赞吧
-      console.log(this.discussion)
       const newLikedState = !this.discussion.liked
       Discussion.likeDiscussion(this.discussion.id, newLikedState)
         .then(response => {

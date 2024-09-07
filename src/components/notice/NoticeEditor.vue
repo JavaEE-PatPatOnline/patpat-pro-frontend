@@ -50,7 +50,6 @@ export default {
       this.$bus.emit('endNoticeEditing')
     },
     publishNotice() {
-      console.log(this.content)
       if (this.title === '') {
         this.message.error('公告标题不得为空')
         return

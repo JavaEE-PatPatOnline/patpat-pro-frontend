@@ -165,10 +165,8 @@ export default {
     getCurrentGroup() {
       Group.getCurrentGroup().then(
         (response) => {
-          console.log('group', response.data)
           if (response.data.data) {
             const group = response.data.data.group
-            console.log(group)
             this.id = group.id
             this.groupName = group.name
             this.newGroupName = group.name
@@ -411,7 +409,7 @@ li {
   margin: 10px;
   position: relative;
   width: 330px;
-  margin-right: 50px;
+  margin-right: 80px;
 }
 
 .avatar {
