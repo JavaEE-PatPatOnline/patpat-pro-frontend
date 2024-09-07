@@ -12,7 +12,7 @@
         <div>
           <span class="filename" @click="jumpToDetail(material.url)">{{ material.filename }}</span>
           <span class="comment">{{ material.comment }}</span>
-          <div class="url">{{ material.url }}</div>
+          <div class="url" @click="copyToClipboard(material.url)">{{ material.url }}</div>
         </div>
         <NPopconfirm positive-text="确认" negative-text="取消"
           :show-icon="false" @positive-click="deleteMaterial(material.id)">
@@ -53,6 +53,10 @@ export default {
     this.getAllMaterials()
   },
   methods: {
+    copyToClipboard(url) {
+      navigator.clipboard.writeText(url)
+      this.message.success('复制 URL 成功')
+    },
     getAllMaterials() {
       Material.getAllMaterials().then(
         (response) => {
@@ -162,5 +166,6 @@ span.comment {
 div.url {
   font-size: 12px;
   color: var(--default-grey);
+  cursor: pointer;
 }
 </style>
