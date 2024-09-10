@@ -68,6 +68,8 @@ import DeleteIcon from '../components/svg/DeleteIcon.vue'
 
 import Problem from '../api/Problem.js'
 
+import download from '../components/utils/download.js'
+
 import { NCollapse, NCollapseItem, NFlex, NPopconfirm, useMessage } from 'naive-ui'
 
 export default {
@@ -178,14 +180,7 @@ export default {
     handleDownload(id) {
       Problem.getConfig(id).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'sample.zip' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, 'sample.zip')
         },
         (error) => {
           this.message.error('获取配置文件失败')

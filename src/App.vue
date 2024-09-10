@@ -224,8 +224,10 @@ function getAllIters(isAdmin) {
 }
 
 watch(() => store.state.isAdmin, (a, b) => {
-  getAllLabs(store.state.isAdmin)
-  getAllIters(store.state.isAdmin)
+  if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course'))  {
+     getAllLabs(store.state.isAdmin)
+    getAllIters(store.state.isAdmin)
+  }
   if (store.state.isAdmin && menuOptions.value.length < 7) {
     menuOptions.value.push(
       {
@@ -278,16 +280,6 @@ watch(() => store.state.isAdmin, (a, b) => {
             ),
             key: 'student'
           },
-          // {
-          //   label: () => h(
-          //     RouterLink,
-          //     {
-          //       to: '/admin/submission'
-          //     },
-          //     { default: () => '成绩管理' }
-          //   ),
-          //   key: 'submission'
-          // },
           {
             label: '成绩管理',
             key: 'grade',

@@ -2,9 +2,9 @@
   <NFlex justify="space-between" align="center" class="all-submission-header">
     <NFlex align="center">
       <span class="title">评分配置</span>
-      <input type="number" placeholder="实验分数" v-model="labScore" />
-      <input type="number" placeholder="迭代分数" v-model="iterScore" />
-      <input type="number" placeholder="大作业分数" v-model="projScore" />
+      实验分数 <input type="number" v-model="labScore" />
+      迭代分数 <input type="number" v-model="iterScore" />
+      大作业分数 <input type="number" v-model="projScore" />
       <button class="styled" @click="updateScoreConfig">修改</button>
       <button class="styled" @click="exportAll">导出所有成绩</button>
     </NFlex>
@@ -44,6 +44,8 @@
 <script>
 import Grade from '../api/Grade.js'
 import Account from '../api/Account.js'
+
+import download from '../components/utils/download.js'
 
 import { h } from 'vue'
 
@@ -291,14 +293,7 @@ export default {
     downloadReport(row, lab) {
       Grade.downloadReport(lab, row.accountId).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'report.pdf' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, 'report.pdf')
         },
         (error) => {
           this.message.error('下载实验报告失败')
@@ -345,14 +340,7 @@ export default {
     exportAll() {
       Grade.exportAll().then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'grades.xlsx' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, '成绩汇总.xlsx')
         },
         (error) => {
           this.message.error('导出成绩失败')
@@ -362,14 +350,9 @@ export default {
     exportLab() {
       Grade.exportLabSubmissions(this.labToExport, this.teacher).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'submissions.zip' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, 'submissions.zip')
+          this.labToExport = null
+          this.teacher = null
         },
         (error) => {
           this.message.error('下载实验提交失败')

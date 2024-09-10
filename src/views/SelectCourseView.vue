@@ -14,8 +14,9 @@
 <script>
 import Course from '../api/Course.js'
 import { NFlex } from 'naive-ui'
-
 import { useMessage } from 'naive-ui'
+
+import { mapState } from 'vuex'
 
 export default {
   name: 'SelectCourseView',
@@ -27,6 +28,9 @@ export default {
       message: useMessage(),
       courses: [] 
     }
+  },
+  computed: {
+    ...mapState(['isAdmin'])
   },
   mounted() {
     Course.getAllCourses().then(

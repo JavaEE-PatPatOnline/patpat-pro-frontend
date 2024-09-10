@@ -55,6 +55,8 @@ import DownloadIcon from '../svg/DownloadIcon.vue'
 import Group from '../../api/Group.js'
 import Grade from '../../api/Grade.js'
 
+import download from '../utils/download.js'
+
 import { mapGetters } from 'vuex'
 
 import { NFlex, NEllipsis, NPopconfirm, useMessage } from 'naive-ui'
@@ -156,14 +158,7 @@ export default {
     downloadProject(group) {
       Grade.downloadGroupAssignment(group.id).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = group.name + '.zip' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, group.name + '.zip')
         },
         (error) => {
           this.message.error('下载小组作业失败')
@@ -184,14 +179,7 @@ export default {
     exportAssignments() {
       Grade.getAllAssignments().then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'assignments.zip' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, '大作业汇总.zip')
         },
         (error) => {
           this.message.error('导出大作业失败')

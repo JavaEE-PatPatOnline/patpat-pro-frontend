@@ -51,14 +51,14 @@ svg.default:hover {
 
 *:not(body, div.hljs, div.hljs *, .n-message *, .n-layout-sider, .n-submenu-children) {
   color: var(--font-color);
-  transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-    background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-    border 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: color .6s cubic-bezier(0.075, 0.82, 0.165, 1),
+    background .6s cubic-bezier(0.075, 0.82, 0.165, 1),
+    border .6s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 /* 左侧菜单 */
 .n-layout-sider, .n-submenu-children {
-  transition-duration: .5s !important;
+  transition-duration: .6s !important;
 }
 
 body {
@@ -73,10 +73,10 @@ button {
   box-sizing: border-box;
   color: var(--default-grey) !important;
   background: var(--default-grey-transparent);
-  transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-              background 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-              border 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-              transform .5s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  transition: color .6s cubic-bezier(0.075, 0.82, 0.165, 1),
+              background .6s cubic-bezier(0.075, 0.82, 0.165, 1),
+              border .6s cubic-bezier(0.075, 0.82, 0.165, 1),
+              transform .6s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
   cursor: pointer;
 }
 
@@ -277,7 +277,7 @@ div.op-image div.dropdown-item:last-child {
 }
 /* markdown 底部一处过渡样式不对 */
 div.v-note-edit.divarea-wrapper.scroll-style.transition {
-  transition: 1s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  transition: .6s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
 }
 /* markdown dropdown 颜色 */
 .markdown-body .popup-dropdown {
@@ -356,7 +356,7 @@ div.n-menu a[href="/lab/create"] {
 /* 菜单右侧分割线 */
 div.n-layout-sider__border {
   background: var(--bg-grey) !important;
-  transition: background-color 1s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  transition: background-color .6s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
 }
 
 .v-binder-follower-container div.n-popover {
@@ -671,4 +671,24 @@ div.n-data-table {
   --n-th-color-hover-modal: transparent !important;
   --n-th-color-popover: transparent !important;
   --n-th-color-hover-popover: transparent !important; */
+}
+
+/* 左侧菜单漂浮 */
+aside.n-layout-sider {
+  position: absolute !important;
+  z-index: 1501 !important;
+  left: 0 !important;
+  background: var(--bg-color) !important;
+}
+
+div.n-menu {
+  margin-bottom: 100px !important;
+}
+
+div.n-layout-content {
+  margin-left: 64px !important;
+}
+
+aside.n-layout-sider, aside.n-layout-sider * {
+  transition: all .6s, color .6s cubic-bezier(0.075, 0.82, 0.165, 1), background .6s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
 }
