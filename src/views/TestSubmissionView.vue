@@ -57,6 +57,8 @@ import Problem from '../api/Problem.js'
 import Account from '../api/Account.js'
 import Iter from '../api/Iter.js'
 
+import download from '../components/utils/download.js'
+
 import { h } from 'vue'
 
 import { NFlex, NDataTable, NPagination, NModal, NSelect, useMessage } from 'naive-ui'
@@ -247,14 +249,7 @@ export default {
       }
       Grade.downloadTestSubmission(this.iterToExport, this.teacher).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'submission.zip' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, 'submission.zip')
           this.iterToExport = null
           this.teacher = null
         },
@@ -288,6 +283,7 @@ export default {
   border-radius: 5px;
   padding: 10px 20px;
   padding-top: 0;
+  overflow: auto;
 }
 
 .result-wrapper b {

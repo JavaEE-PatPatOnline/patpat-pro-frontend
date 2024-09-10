@@ -37,7 +37,7 @@
     </NFlex>
 
     <NFlex align="center" :wrap="false">
-      <span class="time-text">迟交截止</span>
+      <span class="time-text">补交截止</span>
       <DatePicker 
         ref="end" v-model="endTime" locale="zh-CN" 
         format="yyyy-MM-dd HH:mm:ss" model-type="yyyy-MM-dd HH:mm:ss"
