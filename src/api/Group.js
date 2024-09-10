@@ -14,7 +14,8 @@ const url = {
   download: '/group/assignment/download',
   updateConfig: '/admin/group/config/update',
   create: '/group/create',
-  'export': '/admin/group/export'
+  'export': '/admin/group/export',
+  rogue: '/admin/group/query/rogue'
 }
 
 export default class Group {
@@ -111,6 +112,12 @@ export default class Group {
     return service(url.export, {
       method: 'get',
       responseType: 'blob'
+    })
+  }
+
+  static async getRogueStudents() {
+    return service(url.rogue, {
+      method: 'get'
     })
   }
 }

@@ -48,6 +48,18 @@
     <div v-else class="empty-hint">
       暂无团队
     </div>
+    <div v-if="isAdmin" class="rogue">
+      <h3>未组队学生</h3>
+      <NDataTable
+        :columns="columns"
+        :data="rogueStudents"
+        :pagination="false"
+        :bordered="false"
+        table-layout="fixed"
+        v-if="rogueStudents.length > 0"
+      />
+      <div class="empty-hint" v-else>无未组队学生</div>
+    </div>
 </template>
 
 <script>
@@ -56,12 +68,13 @@ import DownloadIcon from '../svg/DownloadIcon.vue'
 
 import Group from '../../api/Group.js'
 import Grade from '../../api/Grade.js'
+import Account from '../../api/Account.js'
 
 import download from '../utils/download.js'
 
 import { mapGetters } from 'vuex'
 
-import { NFlex, NEllipsis, NPopconfirm, useMessage } from 'naive-ui'
+import { NFlex, NEllipsis, NPopconfirm, NDataTable, useMessage } from 'naive-ui'
 
 export default {
   name: 'GroupList',
@@ -70,7 +83,8 @@ export default {
     DownloadIcon,
     NFlex,
     NEllipsis,
-    NPopconfirm
+    NPopconfirm,
+    NDataTable
   },
   data() {
     return {
@@ -78,11 +92,33 @@ export default {
       groups: [],
       inGroup: false,
       enabled: false,
-      groupScores: []
+      groupScores: [],
+      rogueStudents: [],
+      columns: [
+        {
+          title: '学号',
+          key: 'buaaId'
+        },
+        {
+          title: '姓名',
+          key: 'name'
+        },
+        {
+          title: '教师',
+          key: 'teacherName'
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters(['isAdmin'])
+  },
+  watch: {
+    isAdmin(newValue) {
+      if (newValue) {
+        this.getAllGroups()
+      }
+    }
   },
   mounted() {
     Group.getGroupConfig().then(
@@ -123,6 +159,32 @@ export default {
           this.message.error('获取团队列表失败')
         }
       )
+      if (this.isAdmin) {
+        Account.getAllTeachers().then(
+          (response) => {
+            let teachers = response.data.data
+            Group.getRogueStudents().then(
+              (response) => {
+                this.rogueStudents = response.data.data
+                this.rogueStudents.forEach((student) => {
+                  teachers.forEach((teacher) => {
+                    if (teacher.id === student.teacherId) {
+                      student.teacherName = teacher.name
+                    }
+                  })
+                })
+              },
+              (error) => {
+                this.message.error('获取未组队学生失败')
+              }
+            )
+          },
+          (error) => {
+            this.message.error('获取教师列表失败')
+          }
+        )
+        
+      }
     },
     joinGroup(id) {
       Group.joinGroup(id).then(
@@ -248,5 +310,16 @@ li:last-child {
 
 input[type="number"] {
   width: 120px;
+}
+
+.rogue {
+  margin-top: 20px;
+}
+
+.rogue h3 {
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--default-blue);
+  margin-bottom: 10px;
 }
 </style>
