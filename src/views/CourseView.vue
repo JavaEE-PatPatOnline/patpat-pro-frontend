@@ -146,7 +146,7 @@ export default {
     },
     editCourse() {
       Course.updateCourse(
-        this.newCode, this.newName, this.newSemester, 
+        this.courseIdEditing, this.newCode, this.newName, this.newSemester, 
         this.newActiveState === 'active' ? true : false).then(
           (response) => {
             this.message.success('修改课程成功')

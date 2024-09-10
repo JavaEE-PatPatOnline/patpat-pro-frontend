@@ -37,7 +37,7 @@
     <NFlex justify="space-between" class="times">
       <span>开始时间：{{ startTime }}</span>
       <span>结束时间：{{ ddlTime }}</span>
-      <span>迟交截止：{{ endTime }}</span>
+      <span>补交截止：{{ endTime }}</span>
     </NFlex>
     <MarkdownDisplayer :content="content" />
   </div>
@@ -51,6 +51,8 @@ import UploadIcon from '../svg/UploadIcon.vue'
 import CrossIcon from '../svg/CrossIcon.vue'
 
 import Lab from '../../api/Lab.js'
+
+import download from '../utils/download.js'
 
 import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 
@@ -169,14 +171,7 @@ export default {
     downloadReport() {
       Lab.getReport(this.id).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = this.filename // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, this.filename)
         },
         (error) => {
           this.message.error('下载实验报告失败')

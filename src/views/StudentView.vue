@@ -38,6 +38,8 @@
 import Student from '../api/Student.js'
 import Account from '../api/Account.js'
 
+import download from '../components/utils/download.js'
+
 import { NFlex, NPagination, NDataTable, NSelect, useMessage } from 'naive-ui'
 
 export default {
@@ -131,14 +133,7 @@ export default {
     exportStudents() {
       Student.exportStudents().then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = 'students.xlsx' // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, 'students.xlsx')
         },
         (error) => {
           this.message.error('导出学生失败')

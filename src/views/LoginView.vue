@@ -56,15 +56,22 @@ export default {
             if (response.data.status === 200) {
               User.getUserInfo().then(
                 (response) => {
-                  this.setIsAdmin(response.data.data.ta | response.data.data.teacher)
+                  this.setIsAdmin(response.data.data.ta || response.data.data.teacher)
                   this.setUserBuaaId(response.data.data.id)
+                  this.$bus.emit('update-navigator')
+                  if (response.data.data.ta || response.data.data.teacher) {
+                    this.$router.push('/select-course')
+                  } else {
+                    this.message.success('选择课程成功')
+                    this.$router.push('/notice')
+                    this.$bus.emit('update-lab')
+                    this.$bus.emit('update-iter')
+                  }
                 },
                 (error) => {
                   this.message.error('获取用户信息失败')
                 }
               )
-              this.$bus.emit('update-navigator')
-              this.$router.push('/select-course')
             }
           },
           (error) => {
@@ -119,9 +126,9 @@ h2 {
 
 .position-wrapper svg {
   position: absolute;
-  width: 35px;
-  height: 35px;
-  top: 3px;
+  width: 30px;
+  height: 30px;
+  top: 1px;
   right: 5px;
   cursor: pointer;
 }

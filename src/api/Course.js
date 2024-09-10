@@ -3,7 +3,7 @@ import service from '../http'
 const url = {
   allCourses: '/course/all',
   selectCourse: '/course/select/',
-  update: '/admin/course/update',
+  update: '/admin/course/update/',
   delete: '/admin/course/delete/',
   create: '/admin/course/create'
 }
@@ -21,8 +21,8 @@ export default class Course {
     })
   }
 
-  static async updateCourse(code, name, semester, active) {
-    return service(url.update, {
+  static async updateCourse(id, code, name, semester, active) {
+    return service(url.update + id, {
       method: 'put',
       data: {
         code, name, semester, active

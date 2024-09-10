@@ -25,7 +25,7 @@
     <NFlex justify="space-between" class="times">
       <span>开始时间：{{ startTime }}</span>
       <span>结束时间：{{ ddlTime }}</span>
-      <span>迟交截止：{{ endTime }}</span>
+      <span>补交截止：{{ endTime }}</span>
     </NFlex>
     <div style="width: 95%">
       <MarkdownDisplayer :content="content" />
@@ -36,7 +36,7 @@
           <span class="upload-hint">仅限上传 .java，.zip 文件</span>
           <button @click="handleUpload">选择文件</button>
           <span v-if="filename !== ''">已选择：{{ filename }}</span>
-          <span v-if="fileSumitted !== ''">已提交：<a @click="downloadCode" class="link">{{ fileSumitted }}</a></span>
+          <span v-else-if="fileSumitted !== ''">已提交：<a @click="downloadCode" class="link">{{ fileSumitted }}</a></span>
           <input type="file" accept=".java,.zip" @change="setFilename" ref="fileInput" style="display: none" />
         </div>
         <button class="styled" @click="testCode" id="test-button">评测</button>
@@ -80,6 +80,8 @@ import DeleteIcon from '../svg/DeleteIcon.vue'
 import { NFlex, NPopconfirm, useMessage } from 'naive-ui'
 import { Vue3Lottie } from 'vue3-lottie'
 import javaIcon from '../../assets/icons8-java.json'
+
+import download from '../utils/download.js'
 
 import Iter from '../../api/Iter.js'
 import Problem from '../../api/Problem.js'
@@ -246,6 +248,17 @@ export default {
       )
     },
     testCode() {
+      const ddl = new Date(this.ddlTime)
+      const currentTime = new Date()
+      if (ddl < currentTime) {
+        if (confirm('已过迭代结束时间，确认补交？')) {
+          this.doTest()
+        }
+      } else {
+        this.doTest()
+      }
+    },
+    doTest() {
       const input = this.$refs.fileInput
       if (input && input.files && input.files.length > 0) {
         const file = input.files[0]
@@ -277,14 +290,7 @@ export default {
     downloadCode() {
       Iter.downloadCode(this.id).then(
         (response) => {
-          const blob = response.data
-          const downloadUrl = URL.createObjectURL(blob)
-          const link = document.createElement('a') // 创建一个 a 标签
-          link.href = downloadUrl // 设置 a 标签的 url
-          link.download = this.fileSumitted // 设置文件名
-          document.body.appendChild(link) // 将 a 标签添加到 DOM
-          link.click() // 模拟点击，开始下载
-          document.body.removeChild(link) // 下载完成后移除 a 标签
+          download(response, this.fileSumitted)
         },
         (error) => {
           this.message.error('下载代码失败')
@@ -303,7 +309,7 @@ button.test-jumper {
   border-radius: 50%;
   font-size: 14px;
   position: fixed;
-  z-index: 9999;
+  z-index: 999;
   right: 40px;
   top: 120px;
 }
@@ -358,6 +364,7 @@ h3 {
   box-shadow: 0 0 5px var(--shadow-color);
   border-radius: 5px;
   padding: 10px 20px;
+  overflow: auto;
 }
 
 .result-wrapper b {
