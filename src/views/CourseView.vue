@@ -1,5 +1,5 @@
 <template>
-  <button class="styled full-btn" @click="startCreateCourse">+</button>
+  <button class="styled full-btn" @click="startCreateCourse" title="创建课程">+</button>
   <NFlex align="center" class="create-course" v-if="createCourseShouldShow">
     <input type="text" v-model="newCode" placeholder="课程代码" />
     <input type="text" v-model="newName" placeholder="课程名称" />
@@ -21,11 +21,15 @@
           <span class="active">{{ course.active ? '开放' : '未开放' }}</span>
         </NFlex>
         <NFlex align="center">
-          <EditIcon @click="startEditCourse(course)" />
+          <NFlex align="center" title="编辑课程">
+            <EditIcon @click="startEditCourse(course)" />
+          </NFlex>
           <NPopconfirm positive-text="确认" negative-text="取消"
             :show-icon="false" @positive-click="deleteCourse(course.id)">
             <template #trigger>
-              <DeleteIcon />
+              <NFlex align="center" title="删除课程">
+                <DeleteIcon />
+              </NFlex>
             </template>
             确认删除该课程？
           </NPopconfirm>

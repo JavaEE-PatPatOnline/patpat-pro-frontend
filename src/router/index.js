@@ -120,17 +120,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (VueCookies.get('jwt') && to.path === '/login') {
+  const isLoggedIn = VueCookies.get('jwt') && VueCookies.get('jwt') !== ''
+  
+  if (isLoggedIn && to.path === '/login') {
     next('/notice')
-  } else if (VueCookies.get('jwt') && (!VueCookies.get('course') || VueCookies.get('course') === '') && to.path !== '/select-course') {
-    next('/select-course')
-  } 
-  // else if (VueCookies.get('jwt') && (VueCookies.get('course') && VueCookies.get('course') !== '') && to.path === '/select-course') {
-  //   next('/notice')
-  // } 
-  else if (!VueCookies.get('jwt') && to.path !== '/login') {
+  } else if (!isLoggedIn && !(to.path === '/login' || to.path === '/game')) {
     next('/login')
-  } else {
+  } else { 
     next()
   }
 })

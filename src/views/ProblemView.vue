@@ -1,8 +1,8 @@
 <template>
-  <button class="styled full-btn" @click="newProblemShouldShow = true">+</button>
+  <button class="styled full-btn" @click="newProblemShouldShow = true" title="创建题目">+</button>
   <NFlex justify="space-between" align="center" class="new-problem" v-if="newProblemShouldShow">
     <div>
-      新建评测题：
+      新建评测题&nbsp;&nbsp;&nbsp;
       <input type="text" v-model="title" placeholder="评测题标题" />
       <input ref="newProblemInput" type="file" style="display: none" accept=".zip" @input="changeConfigFile" />
       <button @click="uploadConfig">上传配置文件</button>
@@ -31,10 +31,14 @@
       <template #header-extra>
         <NFlex align="center">
           <!-- 上传评测文件 -->
-          <UploadIcon @click="handleUpload(problem.id)" />
+          <NFlex align="center" title="上传配置文件">
+            <UploadIcon @click="handleUpload(problem.id)" />
+          </NFlex>
           <input :ref="'fileInput' + problem.id" @input="uploadFile($event, problem.id)" type="file" accept=".zip" style="display: none"/>
           <!-- 下载评测文件 -->
-          <DownloadIcon @click="handleDownload(problem.id)" />
+          <NFlex align="center" title="下载配置文件">
+            <DownloadIcon @click="handleDownload(problem.id)" />
+          </NFlex>
           <!-- 删除评测题 -->
           <NPopconfirm
             positive-text="确认"
@@ -43,7 +47,9 @@
             @positive-click="deleteProblem(problem.id)"
           >
             <template #trigger>
-              <DeleteIcon />
+              <NFlex align="center" title="删除评测题">
+                <DeleteIcon />
+              </NFlex>
             </template>
             确认删除评测题？
           </NPopconfirm>

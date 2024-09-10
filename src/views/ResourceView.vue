@@ -1,5 +1,5 @@
 <template>
-  <button class="styled full-btn" @click="uploadShouldShow = true">+</button>
+  <button class="styled full-btn" @click="uploadShouldShow = true" title="上传资料">+</button>
   <NFlex v-if="uploadShouldShow">
     <input type="file" @input="getFile" />
     <input type="text" v-model="comment" placeholder="备注" />
@@ -17,7 +17,9 @@
         <NPopconfirm positive-text="确认" negative-text="取消"
           :show-icon="false" @positive-click="deleteMaterial(material.id)">
           <template #trigger>
-            <DeleteIcon />
+            <NFlex align="center" title="删除资料">
+              <DeleteIcon />
+            </NFlex>
           </template>
           确认删除该资料？
         </NPopconfirm>
@@ -174,5 +176,9 @@ div.url {
   font-size: 12px;
   color: var(--default-grey);
   cursor: pointer;
+}
+
+input[type="file"] {
+  font-size: 12px;
 }
 </style>

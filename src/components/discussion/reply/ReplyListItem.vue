@@ -39,7 +39,7 @@
         <NPopconfirm v-if="isAdmin || reply.author.buaaId == userBuaaId" positive-text="确认" negative-text="取消"
           :show-icon="false" @positive-click="deleteReply">
           <template #trigger>
-            <DeleteIcon small />
+            <NFlex align="center" title="删除回复"><DeleteIcon small /></NFlex>
           </template>
           确认删除回复？
         </NPopconfirm>
@@ -111,17 +111,16 @@ export default {
       }
       const newVerifiedStatus = !this.reply.verified
       const action = newVerifiedStatus ? "认证" : "取消认证"
-      if (confirm(`确定要${action}这条回复吗？`)) {
-        Discussion.verify(this.reply.id, newVerifiedStatus).then(
-          (response) => {
-            this.reply.verified = newVerifiedStatus
-            this.$bus.emit("reply-change")
-          },
-          (error) => {
-            this.message.error(`${action}失败`)
-          }
-        )
-      }
+      Discussion.verify(this.reply.id, newVerifiedStatus).then(
+        (response) => {
+          this.reply.verified = newVerifiedStatus
+          this.$bus.emit("reply-change")
+          this.message.success(`${ action }成功`)
+        },
+        (error) => {
+          this.message.error(`${action}失败`)
+        }
+      )
     },
     cancelReply() {
       this.isEditingReply = false

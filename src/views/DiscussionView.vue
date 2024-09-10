@@ -1,7 +1,7 @@
 <template>
   <NFlex align="center" v-if="!isEditingDiscussion" class="search-box">
     <input v-model="searchQuery" @input="handleSearch" placeholder="检索讨论帖" />
-    <button class="styled add-btn" @click="newDiscussion">+</button>
+    <button class="styled add-btn" @click="newDiscussion" title="创建讨论帖">+</button>
   </NFlex>
   <DiscussionEditor v-else :id="editingDiscussionId" />
   <template v-if="!isEditingDiscussion">

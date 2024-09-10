@@ -32,7 +32,9 @@
           </NPopconfirm>
           <template v-if="isAdmin">
             <NFlex align="center" v-if="group.score !== -2">
-              <DownloadIcon @click="downloadProject(group)" />
+              <NFlex align="center" title="下载提交">
+                <DownloadIcon @click="downloadProject(group)" />
+              </NFlex>
               <input type="number" v-model="group.realScore" placeholder="未评分" />
               <button class="styled" @click="scoreAssignment(group)">评分</button>
             </NFlex>

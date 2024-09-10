@@ -6,8 +6,12 @@
     <div v-if="id !== ''">
       <h3 v-if="!isEditingName">
         <span @click="startEditingName">{{ groupName }}</span>
-        <LockIcon @click="changeLockState" v-if="isLocked" />
-        <UnlockIcon @click="changeLockState" v-else />
+        <NFlex align="center" v-if="isLocked" title="解锁团队">
+          <LockIcon @click="changeLockState"  />
+        </NFlex>
+        <NFlex align="center" v-else title="锁定团队">
+          <UnlockIcon @click="changeLockState" />
+        </NFlex>
       </h3>
       <div class="name-editor" v-else>
         <input class="name-input" v-model="newGroupName" />

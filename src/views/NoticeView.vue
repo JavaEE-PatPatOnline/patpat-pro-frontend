@@ -1,7 +1,7 @@
 <template>
   <NFlex justify="space-between" align="center" class="notice-top" v-if="!isEditingNotice">
     <h3>公告列表</h3>
-    <button class="styled add-btn" @click="newNotice" v-if="isAdmin">+</button>
+    <button title="新建公告" class="styled add-btn" @click="newNotice" v-if="isAdmin">+</button>
   </NFlex>
   <NoticeList v-if="!isEditingNotice" :notices="notices" />
   <NoticeEditor v-else :id="editingNoticeId" />

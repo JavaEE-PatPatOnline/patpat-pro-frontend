@@ -1,13 +1,14 @@
 <template>
   <NFlex justify="space-between" align="center" class="header">
-    <NFlex justify="center" align="center" class="banner" @click="jumpToHome" @dblclick="jumpToGame" @mouseenter="$refs.java.play()"
+    <NFlex title="双击有惊喜哦"
+    justify="center" align="center" class="banner" @click="jumpToHome" @dblclick="jumpToGame" @mouseenter="$refs.java.play()"
       @mouseleave="$refs.java.pause()">
       <Vue3Lottie ref="java" :animationData="javaIcon" :height="50" :width="50" />
       <h1>Patpat Online</h1>
     </NFlex>
     <NFlex justify="flex-end" align="center" class="icon-box">
       <a v-if="isAdmin" @click="selectCourse">切换课程</a>
-      <ColorModeIcon @click="changeColorMode" />
+      <NFlex align="center" title="切换白天/黑夜模式"><ColorModeIcon @click="changeColorMode" /></NFlex>
       <div v-if="avatar"
         @click="jumpToUser" class="avatar" :style="{ 'backgroundImage': `url('${avatar}')` }">
       </div>

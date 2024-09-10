@@ -18,7 +18,9 @@
         <input ref="fileInput" style="display: none" type="file" 
           @input="handleFileChange" accept=".pdf, .zip"/>
         <!-- 编辑按钮 -->
-        <EditIcon @click="startEditingLab" v-if="isAdmin" />
+        <NFlex align="center" title="编辑实验">
+          <EditIcon @click="startEditingLab" v-if="isAdmin" />
+        </NFlex>
         <!-- 删除按钮 -->
         <NPopconfirm
           positive-text="确认"
@@ -28,7 +30,7 @@
           v-if="isAdmin"
         >
           <template #trigger>
-            <DeleteIcon />
+            <NFlex align="center" title="删除实验"><DeleteIcon /></NFlex>
           </template>
           确认删除实验？
         </NPopconfirm>

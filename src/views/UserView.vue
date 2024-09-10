@@ -7,7 +7,7 @@
       <!-- 上方信息区 -->
       <NFlex justify="space-evenly" align="center" class="user-info">
         <!-- 头像 -->
-        <div class="avatar" :style="{ backgroundImage: `url('${avatar}')` }" @click="handleUpload"></div>
+        <div title="修改头像" class="avatar" :style="{ backgroundImage: `url('${avatar}')` }" @click="handleUpload"></div>
         <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="handleFileChange" />
         <!-- 文字信息 -->
         <NFlex justify="center" align="center" class="list-wrapper">
@@ -118,7 +118,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setUserAvatar']),
+    ...mapMutations(['setUserAvatar', 'setIsAdmin']),
     handleUpload() {
       this.$refs.fileInput.click()
     },
@@ -157,6 +157,7 @@ export default {
         (response) => {
           this.$router.push('/login')
           this.$bus.emit('update-navigator')
+          this.setIsAdmin(false)
         },
         (error) => {
           this.message.error('登出失败')

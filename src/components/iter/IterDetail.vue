@@ -6,7 +6,9 @@
       <h3>{{ title }}</h3>
       <NFlex align="center" class="iter-btn">
         <!-- 编辑按钮 -->
-        <EditIcon @click="startEditingIter" v-if="isAdmin" />
+        <NFlex align="center" title="编辑迭代">
+          <EditIcon @click="startEditingIter" v-if="isAdmin" />
+        </NFlex>
         <!-- 删除按钮 -->
         <NPopconfirm
           positive-text="确认"
@@ -16,7 +18,7 @@
           v-if="isAdmin"
         >
           <template #trigger>
-            <DeleteIcon />
+            <NFlex align="center" title="删除迭代"><DeleteIcon /></NFlex>
           </template>
           确认删除迭代？
         </NPopconfirm>
@@ -309,7 +311,7 @@ button.test-jumper {
   border-radius: 50%;
   font-size: 14px;
   position: fixed;
-  z-index: 999;
+  z-index: 9999;
   right: 40px;
   top: 120px;
 }

@@ -13,12 +13,12 @@
               置顶
             </span>
             <!-- 编辑按钮 -->
-            <EditIcon @click="jumpToEdit" v-if="isAdmin" />
+            <NFlex align="center" title="编辑公告"><EditIcon @click="jumpToEdit" v-if="isAdmin" /></NFlex>
             <!-- 删除按钮 -->
             <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteNotice"
               v-if="isAdmin">
               <template #trigger>
-                <DeleteIcon />
+                <NFlex align="center" title="删除公告"><DeleteIcon /></NFlex>
               </template>
               确认删除公告？
             </NPopconfirm>
