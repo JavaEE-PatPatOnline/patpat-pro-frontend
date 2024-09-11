@@ -1,6 +1,8 @@
 <template>
   <div class="game-wrapper">
-    <iframe src="/game/index.html" width="1000px" height="630px"></iframe>
+    <div class="game-frame">
+      <iframe src="/game/index.html" width="1000px" height="630px"></iframe>
+    </div>
   </div>
 </template>
 
@@ -12,6 +14,21 @@ div.game-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+div.game-wrapper .game-frame {
+  width: 700px;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+div.game-wrapper .game-frame iframe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* iframe {
