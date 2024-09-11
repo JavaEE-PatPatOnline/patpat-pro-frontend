@@ -22,17 +22,17 @@ export default class Discussion {
   }
   static async likeDiscussion(id, state) {
     return service(url.like + '/' + id + '?liked=' + state, {
-      method: 'PUT',
+      method: 'POST',
     })
   }
   static async setTopState(id, state) {
     return service(url.setTopState + '/' + id + '?topped=' + state, {
-      method: 'PUT',
+      method: 'POST',
     })
   }
   static async setStarState(id, state) {
     return service(url.setStarState + '/' + id + '?starred=' + state, {
-      method: 'PUT',
+      method: 'POST',
     })
   }
   static async createComment(discussionId, content, toId) {
@@ -45,12 +45,12 @@ export default class Discussion {
 
   static async deleteComment(id) {
     return service(url.deleteComment + '/' + id, {
-      method: 'DELETE',
+      method: 'POST',
     })
   }
   static async likeComment(id, state) {
     return service(url.likeComment + '/' + id + '?liked=' + state, {
-      method: 'PUT',
+      method: 'POST',
     })
   }
 
@@ -74,13 +74,13 @@ export default class Discussion {
 
   static async deleteDiscussion(id) {
     return service(url.delete + '/' + id, {
-      method: 'DELETE',
+      method: 'POST',
     })
   }
 
   static async verify(id, verified) {
     return service(`${url.verify}${id}?verified=${verified}`, {
-      method: 'PUT',
+      method: 'POST',
     })
   }
 }

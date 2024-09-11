@@ -13,13 +13,13 @@ const url = {
 export default class Problem {
   static async getAllProblems() {
     return service(url.allProblems, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async updateProblem(id, problemData) {
     return service(url.updateProblem + id, {
-      method: 'put',
+      method: 'POST',
       data: problemData
     })
   }
@@ -31,33 +31,33 @@ export default class Problem {
     formData.append('hidden', false)
     formData.append('file', file)
     return service(url.createProblem, {
-      method: 'post',
+      method: 'POST',
       data: formData
     })
   }
 
   static async getProblemDetail(id) {
     return service(url.problemDetail + id, {
-      method: 'get',
+      method: 'GET',
     })
   }
 
   static async deleteProblem(id) {
     return service(url.deleteProblem + id, {
-      method: 'delete'
+      method: 'POST'
     })
   }
 
   static async getConfig(id) {
     return service(url.config + id, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async getLatesSubmission(id) {
     return service(url.latestSubmission + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 }

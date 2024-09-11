@@ -40,98 +40,98 @@ export default class Grade {
       }
     }
     return service(`${ url.query }?${ queryParams.toString() }`, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async downloadTestSubmission(iterId, teacherId) {
     return service(url.downloadTestSubmission + iterId + '?teacherId=' + teacherId, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async getTestDetail(id) {
     return service(url.testDetail + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getAllStudents() {
     return service(url.students, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getAllTasks() {
     return service(url.tasks, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getScoreList(id) {
     return service(url.score + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async downloadReport(id, studentId) {
     return service(url.downloadReport + id + '/' + studentId, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async getScoreConfig() {
     return service(url.config, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async updateConfig(labScore, iterScore, projScore) {
     return service(url.updateConfig, {
-      method: 'put',
+      method: 'POST',
       data: { labScore, iterScore, projScore }
     })
   }
 
   static async exportAll() {
     return service(url.exportAll, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async exportLabSubmissions(id, teacherId) {
     return service(url.exportLabSubmissions + id + '?teacherId=' + teacherId, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async getGroupScores() {
     return service(url.groupScores, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async downloadGroupAssignment(id) {
     return service(url.downloadGroupAssignment + id, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async scoreGroup(id, score) {
     return service(url.scoreGroup + id, {
-      method: 'post',
+      method: 'POST',
       data: { score } 
     })
   }
 
   static async getAllAssignments() {
     return service(url.allAssignments, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }

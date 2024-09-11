@@ -10,13 +10,13 @@ const url = {
 export default class User {
   static async getUserInfo() {
     return service(url.info, {
-      method: 'get',
+      method: 'GET',
     })
   }
 
   static async getStuInfo() {
     return service(url.stuInfo, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
@@ -24,14 +24,14 @@ export default class User {
     let data = new FormData()
     data.append('file', avatar)
     return service(url.uploadAvatar, {
-      method: 'post',
+      method: 'POST',
       data,
     })
   }
 
   static async changePassword(oldPassword, newPassword) {
     return service(url.pwd, {
-      method: 'put',
+      method: 'POST',
       data: {
         'old': oldPassword,
         'new': newPassword

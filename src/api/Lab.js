@@ -23,39 +23,39 @@ export default class Lab {
 
   static async getAllLabs() {
     return service(url.allLabs, {
-      method: 'get'
+      method: 'GET'
     })
   }
   
   static async getAllVisibleLabs() {
     return service(url.allVisibleLabs, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getLabDetail(id) {
     return service(url.labDetail + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async updateLab(id, labData) {
     return service(url.updateLab + id, {
-      method: 'put',
+      method: 'POST',
       data: labData
     })
   }
 
   static async createLab(labData) {
     return service(url.createLab, {
-      method: 'post',
+      method: 'POST',
       data: labData
     })
   }
 
   static async deleteLab(id) {
     return service(url.deleteLab + id, {
-      method: 'delete'
+      method: 'POST'
     })
   }
 
@@ -64,20 +64,20 @@ export default class Lab {
     data.append('file', file)
 
     return service(url.submit + id, {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
 
   static async getScore(id) {
     return service(url.score + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getReport(id) {
     return service(url.report + id, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }

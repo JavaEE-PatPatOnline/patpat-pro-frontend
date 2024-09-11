@@ -12,32 +12,32 @@ const url = {
 export default class Notice {
   static async getOneNotice(id) {
     return service(url.one + id, {
-      method: 'get',
+      method: 'GET',
     })
   }
   static async getNoticeList() {
     return service(url.all, {
-      method: 'get',
+      method: 'GET',
     })
   }
 
   static async createNotice(title, content) {
     const data = { title, content, toppd: false }
     return service(url.create, {
-      method: 'post',
+      method: 'POST',
       data,
     })
   }
 
   static async deleteNotice(id) {
     return service(url.delete + id, {
-      method: 'delete',
+      method: 'POST',
     })
   }
 
   // static async setTopState(id, state) {
   //   return service(url.setTopState + id, {
-  //     method: 'put',
+  //     method: 'POST',
   //     params: {
   //       isTopped: state,
   //     },
@@ -47,7 +47,7 @@ export default class Notice {
   static async updateNotice(id, title, content, topped) {
     const data = { title, content, topped }
     return service(url.update + id, {
-      method: 'put',
+      method: 'POST',
       data,
     })
   }

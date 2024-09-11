@@ -25,72 +25,72 @@ export default class Iter {
 
   static async getAllIters() {
     return service(url.allIters, {
-      method: 'get'
+      method: 'GET'
     })
   }
   
   static async getAllVisibleIters() {
     return service(url.allVisibleIters, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getIterDetail(id) {
     return service(url.iterDetail + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async updateIter(id, iterData) {
     return service(url.updateIter + id, {
-      method: 'put',
+      method: 'POST',
       data: iterData
     })
   }
 
   static async createIter(iterData) {
     return service(url.createIter, {
-      method: 'post',
+      method: 'POST',
       data: iterData
     })
   }
 
   static async deleteIter(id) {
     return service(url.deleteIter + id, {
-      method: 'delete'
+      method: 'POST'
     })
   }
 
   static async getLinkedProblem(id) {
     return service(url.linkedProblem + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async linkProblem(id, problemId) {
     const data = { problemId }
     return service(url.linkProblem + id, {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
 
   static async getIterScore(id) {
     return service(url.score + id, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async submit(id, submission) {
     return service(url.submit + id, {
-      method: 'post',
+      method: 'POST',
       data: submission
     })
   }
 
   static async downloadCode(id) {
     return service(url.download + id, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }

@@ -6,7 +6,7 @@ export default class Bucket {
     data.append('file', file)
 
     return service('/bucket/upload/public', {
-      method: 'post',
+      method: 'POST',
       data
     })
   }

@@ -21,50 +21,50 @@ const url = {
 export default class Group {
   static async getCurrentGroup() {
     return service(url.currentGroup, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async getAllGroups() {
     return service(url.allGroups, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async joinGroup(id) {
     return service(url.joinGroup + id, {
-      method: 'post'
+      method: 'POST'
     })
   }
 
   static async getGroupConfig() {
     return service(url.config, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async updateWeight(id, weight) {
     return service(url.weight + id, {
-      method: 'post',
+      method: 'POST',
       data: { weight }
     })
   }
 
   static async kickMember(id) {
     return service(url.kickMember + id, {
-      method: 'post'
+      method: 'POST'
     })
   }
 
   static async dismissGroup() {
     return service(url.dismiss, {
-      method: 'delete'
+      method: 'POST'
     })
   }
 
   static async quitGroup() {
     return service(url.quit, {
-      method: 'post'
+      method: 'POST'
     })
   }
 
@@ -73,35 +73,35 @@ export default class Group {
       name, locked, description: ''
     }
     return service(url.update, {
-      method: 'put',
+      method: 'POST',
       data: groupData
     })
   }
 
   static async submitAssignment(data) {
     return service(url.submit, {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
 
   static async downloadAssignment() {
     return service(url.download, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async updateGroupConfig(configData) {
     return service(url.updateConfig, {
-      method: 'put',
+      method: 'POST',
       data: configData
     })
   }
 
   static async createGroup(name) {
     return service(url.create, {
-      method: 'post',
+      method: 'POST',
       data: {
         name, description: ''
       }
@@ -110,14 +110,14 @@ export default class Group {
 
   static async exportGroups() {
     return service(url.export, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
 
   static async getRogueStudents() {
     return service(url.rogue, {
-      method: 'get'
+      method: 'GET'
     })
   }
 }

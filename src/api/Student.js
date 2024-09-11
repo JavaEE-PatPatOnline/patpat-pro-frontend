@@ -12,14 +12,14 @@ export default class Student {
     data.append('file', file)
     data.append('clean', clean)
     return service(url.import , {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
 
   static async exportStudents() {
     return service(url.export, {
-      method: 'get',
+      method: 'GET',
       responseType: 'blob'
     })
   }
@@ -34,7 +34,7 @@ export default class Student {
       }
     }
     return service(`${url.query}?${queryParams.toString()}`, {
-      method: 'get'
+      method: 'GET'
     })
   }
 }

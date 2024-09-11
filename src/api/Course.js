@@ -11,19 +11,19 @@ const url = {
 export default class Course {
   static async getAllCourses() {
     return service(url.allCourses, {
-      method: 'get'
+      method: 'GET'
     })
   }
   
   static async selectCourse(id) {
     return service(url.selectCourse + id, {
-      method: 'post'
+      method: 'POST'
     })
   }
 
   static async updateCourse(id, code, name, semester, active) {
     return service(url.update + id, {
-      method: 'put',
+      method: 'POST',
       data: {
         code, name, semester, active
       }
@@ -32,13 +32,13 @@ export default class Course {
 
   static async deleteCourse(id) {
     return service(url.delete + id, {
-      method: 'delete'
+      method: 'POST'
     })
   }
 
   static async createCourse(code, name, semester, active) {
     return service(url.create, {
-      method: 'post',
+      method: 'POST',
       data: {
         code, name, semester, active
       }

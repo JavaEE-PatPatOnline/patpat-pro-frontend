@@ -10,7 +10,7 @@ const url = {
 export default class Material {
   static async getAllMaterials() {
     return service(url.all, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
@@ -19,7 +19,7 @@ export default class Material {
     data.append('file', file)
     data.append('comment', comment)
     return service(url.upload, {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
@@ -29,14 +29,14 @@ export default class Material {
     data.append('file', file)
     data.append('comment', comment)
     return service(url.update + id, {
-      method: 'put',
+      method: 'POST',
       data
     })
   }
 
   static async deleteMaterial(id) {
     return service(url.delete + id, {
-      method: 'delete'
+      method: 'POST'
     })
   }
   

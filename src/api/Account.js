@@ -19,19 +19,19 @@ export default class Account {
       password: pwd,
     }
     return service(url.login, {
-      method: 'post',
+      method: 'POST',
       data,
     })
   }
   static async selectCourse(id) {
     return service(url.selectCourse + id, {
-      method: 'post',
+      method: 'POST',
     })
   }
 
   static async logout() {
     return service(url.logout, {
-      method: 'post'
+      method: 'POST'
     })
   }
 
@@ -39,14 +39,14 @@ export default class Account {
     let data = new FormData()
     data.append('file', file)
     return service(url.updataAvatar, {
-      method: 'post',
+      method: 'POST',
       data
     })
   }
 
   static async getAllTeachers() {
     return service(url.teacher, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
@@ -64,26 +64,26 @@ export default class Account {
       }
     }
     return service(`${ url.query }?${ queryParams.toString() }`, {
-      method: 'get'
+      method: 'GET'
     })
   }
 
   static async resetPassword(id) {
     return service(url.reset + id, {
-      method: 'put'
+      method: 'POST'
     })
   }
 
   static async updateAccount(id, buaaId, name, school, gender, role) {
     return service(url.update + id, {
-      method: 'put',
+      method: 'POST',
       data: { buaaId, name, school, gender, role }
     })
   }
 
   static async createAccount(buaaId, name, school, gender, teacher, ta) {
     return service(url.create, {
-      method: 'post',
+      method: 'POST',
       data: { buaaId, name, school, gender, teacher, ta }
     })
   }
