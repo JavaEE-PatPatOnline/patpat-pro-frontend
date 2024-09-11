@@ -94,7 +94,7 @@ export default {
           this.buaaId = userData.buaaId
           this.school = userData.school
           if (this.avatar === '') {
-            this.avatar = userData.avatar || 'http://8.130.103.241/public/boy.svg'
+            this.avatar = userData.avatar || '/public/boy.svg'
           }
         }
       },
