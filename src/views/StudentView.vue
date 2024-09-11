@@ -123,10 +123,17 @@ export default {
                              this.clean === 'do-not-clean' ? false : true)
       .then(
         (response) => {
-          this.message.success('成功导入：' + event.target.files[0].name)
+          let created = response.data.data.created
+          let updated = response.data.data.updated
+          let deleted = response.data.data.deleted
+          this.message.success(`导入成功，新增 ${created} 个学生，更新 ${updated} 个学生，删除 ${deleted} 个学生`)
         },
         (error) => {
-          this.message.error(error.response.data.message)
+          if (response.data.data.message) {
+            this.message.error(response.data.data.message)
+          } else {
+            this.message.error('导入学生失败')
+          }
         }
       )
     },

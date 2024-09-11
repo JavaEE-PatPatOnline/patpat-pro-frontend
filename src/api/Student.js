@@ -1,7 +1,7 @@
 import service from '../http'
 
 const url = {
-  'import': '/admin/student/import/sync',
+  'import': '/admin/student/import',
   'export': '/admin/student/export',
   query: '/admin/student/query'
 }
