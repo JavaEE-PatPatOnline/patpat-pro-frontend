@@ -11,7 +11,7 @@
     <NFlex align="center" class="lab-submission-export">
       <NSelect v-model:value="labToExport" placeholder="实验" :options="labSelectOptions" />
       <NSelect v-model:value="teacher" placeholder="教师" :options="teacherSelectOptions" />
-      <button class="styled" @click="exportLab">导出</button>
+      <button class="styled" @click="exportLab">{{ exportText }}</button>
     </NFlex>
   </NFlex>
 
@@ -25,14 +25,8 @@
     </NFlex>
   </NFlex>
 
-  <NDataTable
-    :columns="columns"
-    :data="gradesToShow"
-    :pagination="false"
-    :bordered="false"
-    table-layout="fixed"
-    v-if="gradesToShow.length > 0"
-  />
+  <NDataTable :columns="columns" :data="gradesToShow" :pagination="false" :bordered="false" table-layout="fixed"
+    v-if="gradesToShow.length > 0" />
 
   <NFlex justify="center" align="center" class="pagination" v-if="gradesToShow.length > 0">
     <NPagination v-model:page="page" :page-count="totalPages" @update:page="updateGradesToShow" />
@@ -95,7 +89,14 @@ export default {
       projScore: 0,
       labToExport: null,
       teacher: null,
-      labSelectOptions: []
+      labSelectOptions: [],
+      // >>> download variables
+      exporting: false,
+      exportText: '导出 Lab 提交', // Stupid vue binding
+      progress: 0,    // 0 ~ 100
+      loaded: 0,      // bytes
+      speed: 0,       // MB/s
+      // <<< download variables
     }
   },
   computed: {
@@ -348,7 +349,20 @@ export default {
       )
     },
     exportLab() {
-      Grade.exportLabSubmissions(this.labToExport, this.teacher).then(
+      if (this.exporting) {
+        this.message.error('正在导出中，请稍后再试')
+        return
+      }
+      if (!this.labToExport || !this.teacher) {
+        this.message.error('请选择实验和教师')
+        return
+      }
+      this.exporting = true
+      this.exportText = '打包中...'
+      this.progress = -1
+      this.loaded = 0
+      this.speed = 0
+      Grade.exportLabSubmissions(this.labToExport, this.teacher, this.onProgressCallback).then(
         (response) => {
           download(response, 'submissions.zip')
           this.labToExport = null
@@ -357,7 +371,18 @@ export default {
         (error) => {
           this.message.error('下载实验提交失败')
         }
-      )
+      ).finally(() => {
+        this.exporting = false
+        this.exportText = '导出 Lab 提交'
+      })
+    },
+    onProgressCallback(progressEvent) {
+      if (progressEvent.lengthComputable) {
+        this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.speed = (progressEvent.loaded - this.loaded) / 1024 / 1024
+        this.loaded = progressEvent.loaded
+        this.exportText = `导出中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
+      }
     }
   }
 }

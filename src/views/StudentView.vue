@@ -126,7 +126,7 @@ export default {
           this.message.success('成功导入：' + event.target.files[0].name)
         },
         (error) => {
-          this.message.error('导入学生失败')
+          this.message.error(error.response.data.message)
         }
       )
     },
@@ -136,7 +136,7 @@ export default {
           download(response, 'students.xlsx')
         },
         (error) => {
-          this.message.error('导出学生失败')
+          this.message.error(error.response.data.message)
         }
       )
     },

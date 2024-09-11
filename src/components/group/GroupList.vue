@@ -1,65 +1,59 @@
 <template>
-    <NFlex justify="space-between" align="center">
-      <NFlex align="center" class="list-title">团队列表</NFlex>
-      <NFlex align="center">
-        <button class="styled" @click="exportAssignments" v-if="isAdmin">
-          导出大作业
-        </button>
-      </NFlex>
+  <NFlex justify="space-between" align="center">
+    <NFlex align="center" class="list-title">团队列表</NFlex>
+    <NFlex align="center">
+      <button class="styled" @click="exportAssignments" v-if="isAdmin">
+        {{ exportText }}
+      </button>
     </NFlex>
-    <ul v-if="groups.length > 0">
-      <li v-for="group in groups" :key="group.id">
-        <div class="left-info">
-          <div class="name">
-            <NEllipsis style="max-width: 240px">
-              {{ group.name }}
-            </NEllipsis>
-            ({{ group.memberCount }}/{{ group.maxSize }})
-          </div>
-          <div class="members">
-            <span v-for="member in group.members" :key="member.accountId">
-              {{ member.name }} ({{ member.buaaId }})
-              <span v-if="isAdmin">(权重：{{ member.weight }})</span>
-            </span>
-          </div>
+  </NFlex>
+  <ul v-if="groups.length > 0">
+    <li v-for="group in groups" :key="group.id">
+      <div class="left-info">
+        <div class="name">
+          <NEllipsis style="max-width: 240px">
+            {{ group.name }}
+          </NEllipsis>
+          ({{ group.memberCount }}/{{ group.maxSize }})
         </div>
-        <NFlex justify="center">
-          <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="joinGroup(group.id)">
-            <template #trigger>
-              <PersonAddIcon small v-show="!isAdmin && !inGroup" />
-            </template>
-            确认加入该团队？
-          </NPopconfirm>
-          <template v-if="isAdmin">
-            <NFlex align="center" v-if="group.score !== -2">
-              <NFlex align="center" title="下载提交">
-                <DownloadIcon @click="downloadProject(group)" />
-              </NFlex>
-              <input type="number" v-model="group.realScore" placeholder="未评分" />
-              <button class="styled" @click="scoreAssignment(group)">评分</button>
-            </NFlex>
-            <NFlex align="center" v-else>
-              暂未提交大作业
-            </NFlex>
+        <div class="members">
+          <span v-for="member in group.members" :key="member.accountId">
+            {{ member.name }} ({{ member.buaaId }})
+            <span v-if="isAdmin">(权重：{{ member.weight }})</span>
+          </span>
+        </div>
+      </div>
+      <NFlex justify="center">
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="joinGroup(group.id)">
+          <template #trigger>
+            <PersonAddIcon small v-show="!isAdmin && !inGroup" />
           </template>
-        </NFlex>
-      </li>
-    </ul>
-    <div v-else class="empty-hint">
-      暂无团队
-    </div>
-    <div v-if="isAdmin" class="rogue">
-      <h3>未组队学生</h3>
-      <NDataTable
-        :columns="columns"
-        :data="rogueStudents"
-        :pagination="false"
-        :bordered="false"
-        table-layout="fixed"
-        v-if="rogueStudents.length > 0"
-      />
-      <div class="empty-hint" v-else>无未组队学生</div>
-    </div>
+          确认加入该团队？
+        </NPopconfirm>
+        <template v-if="isAdmin">
+          <NFlex align="center" v-if="group.score !== -2">
+            <NFlex align="center" title="下载提交">
+              <DownloadIcon @click="downloadProject(group)" />
+            </NFlex>
+            <input type="number" v-model="group.realScore" placeholder="未评分" />
+            <button class="styled" @click="scoreAssignment(group)">评分</button>
+          </NFlex>
+          <NFlex align="center" v-else>
+            暂未提交大作业
+          </NFlex>
+        </template>
+      </NFlex>
+    </li>
+  </ul>
+  <div v-else class="empty-hint">
+    暂无团队
+  </div>
+  <div v-if="isAdmin" class="rogue">
+    <h3>未组队学生</h3>
+    <NDataTable :columns="columns" :data="rogueStudents" :pagination="false" :bordered="false" table-layout="fixed"
+      v-if="rogueStudents.length > 0" />
+    <div class="empty-hint" v-else>无未组队学生</div>
+  </div>
 </template>
 
 <script>
@@ -94,6 +88,13 @@ export default {
       enabled: false,
       groupScores: [],
       rogueStudents: [],
+      // >>> download variables
+      exporting: false,
+      exportText: '导出大作业', // Stupid vue binding
+      progress: 0,    // 0 ~ 100
+      loaded: 0,      // bytes
+      speed: 0,       // MB/s
+      // <<< download variables
       columns: [
         {
           title: '学号',
@@ -183,7 +184,7 @@ export default {
             this.message.error('获取教师列表失败')
           }
         )
-        
+
       }
     },
     joinGroup(id) {
@@ -241,14 +242,34 @@ export default {
       )
     },
     exportAssignments() {
-      Grade.getAllAssignments().then(
+      if (this.exporting) {
+        this.message.error('正在导出中，请稍后再试')
+        return
+      }
+      this.exporting = true
+      this.exportText = '打包中...'
+      this.progress = -1
+      this.loaded = 0
+      this.speed = 0
+      Grade.getAllAssignments(this.onProgressCallback).then(
         (response) => {
           download(response, '大作业汇总.zip')
         },
         (error) => {
           this.message.error('导出大作业失败')
         }
-      )
+      ).finally(() => {
+        this.exporting = false
+        this.exportText = '导出大作业'
+      })
+    },
+    onProgressCallback(progressEvent) {
+      if (progressEvent.lengthComputable) {
+        this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.speed = (progressEvent.loaded - this.loaded) / 1024 / 1024
+        this.loaded = progressEvent.loaded
+        this.exportText = `导出中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
+      }
     }
   }
 }

@@ -12,18 +12,12 @@
     <NFlex align="center" class="test-submission-export">
       <NSelect v-model:value="iterToExport" placeholder="迭代" :options="iterSelectOptions" />
       <NSelect v-model:value="teacher" placeholder="教师" :options="teacherSelectOptions" />
-      <button class="styled" @click="exportTestSubmissions">导出</button>
+      <button class="styled" @click="exportTestSubmissions">{{ exportText }}</button>
       <!-- <button class="styled" @click="startCreateAccount">创建账号</button> -->
     </NFlex>
   </NFlex>
-  <NDataTable
-    :columns="columns"
-    :data="submissions"
-    :pagination="false"
-    :bordered="false"
-    table-layout="fixed"
-    v-if="submissions.length > 0"
-  />
+  <NDataTable :columns="columns" :data="submissions" :pagination="false" :bordered="false" table-layout="fixed"
+    v-if="submissions.length > 0" />
 
   <NFlex justify="center" align="center" class="pagination" v-if="submissions.length > 0">
     <NPagination v-model:page="page" :page-count="totalPages" @update:page="querySubmissions" />
@@ -120,7 +114,14 @@ export default {
       iterToExport: null,
       teacher: null,
       iterSelectOptions: [],
-      teacherSelectOptions: []
+      teacherSelectOptions: [],
+      // >>> download variables
+      exporting: false,
+      exportText: '导出迭代提交', // Stupid vue binding
+      progress: 0,    // 0 ~ 100
+      loaded: 0,      // bytes
+      speed: 0,       // MB/s
+      // <<< download variables
     }
   },
   computed: {
@@ -202,8 +203,8 @@ export default {
     },
     querySubmissions() {
       let query = null
-      if (this.filterBuaaId.trim() !== '' || this.filterName.trim() !== '' || this.filterProblemId || 
-          this.filterMaxScore || this.filterMinScore) {
+      if (this.filterBuaaId.trim() !== '' || this.filterName.trim() !== '' || this.filterProblemId ||
+        this.filterMaxScore || this.filterMinScore) {
         query = {
           buaaId: this.filterBuaaId.trim() !== '' ? this.filterBuaaId.trim() : null,
           name: this.filterName.trim() !== '' ? this.filterName.trim() : null,
@@ -243,10 +244,19 @@ export default {
       )
     },
     exportTestSubmissions() {
-      if (!this.iterToExport || !this.teacher) {
-        this.message.error('应同时选择迭代和教师')
+      if (this.exporting) {
+        this.message.error('正在导出中，请稍后再试')
         return
       }
+      if (!this.iterToExport || !this.teacher) {
+        this.message.error('请选择实验和教师')
+        return
+      }
+      this.exporting = true
+      this.exportText = '打包中...'
+      this.progress = -1
+      this.loaded = 0
+      this.speed = 0
       Grade.downloadTestSubmission(this.iterToExport, this.teacher).then(
         (response) => {
           download(response, 'submission.zip')
@@ -256,7 +266,18 @@ export default {
         (error) => {
           this.message.error('打包迭代提交失败')
         }
-      )
+      ).finally(() => {
+        this.exporting = false
+        this.exportText = '导出迭代提交'
+      })
+    },
+    onProgressCallback(progressEvent) {
+      if (progressEvent.lengthComputable) {
+        this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.speed = (progressEvent.loaded - this.loaded) / 1024 / 1024
+        this.loaded = progressEvent.loaded
+        this.exportText = `导出中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
+      }
     }
   }
 }

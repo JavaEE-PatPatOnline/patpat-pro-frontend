@@ -20,7 +20,7 @@ const url = {
 }
 
 export default class Grade {
-  static async querySubmissions(page, pageSize, query=null) {
+  static async querySubmissions(page, pageSize, query = null) {
     const queryParams = new URLSearchParams({ p: page, ps: pageSize })
     if (query) {
       if (query.buaaId) {
@@ -39,7 +39,7 @@ export default class Grade {
         queryParams.append('maxScore', query.maxScore)
       }
     }
-    return service(`${ url.query }?${ queryParams.toString() }`, {
+    return service(`${url.query}?${queryParams.toString()}`, {
       method: 'GET'
     })
   }
@@ -102,10 +102,11 @@ export default class Grade {
     })
   }
 
-  static async exportLabSubmissions(id, teacherId) {
+  static async exportLabSubmissions(id, teacherId, progressCallback) {
     return service(url.exportLabSubmissions + id + '?teacherId=' + teacherId, {
       method: 'GET',
-      responseType: 'blob'
+      responseType: 'blob',
+      onDownloadProgress: progressCallback
     })
   }
 
@@ -125,14 +126,15 @@ export default class Grade {
   static async scoreGroup(id, score) {
     return service(url.scoreGroup + id, {
       method: 'POST',
-      data: { score } 
+      data: { score }
     })
   }
 
-  static async getAllAssignments() {
+  static async getAllAssignments(progressCallback) {
     return service(url.allAssignments, {
       method: 'GET',
-      responseType: 'blob'
+      responseType: 'blob',
+      onDownloadProgress: progressCallback
     })
   }
 }
