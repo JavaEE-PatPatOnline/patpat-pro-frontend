@@ -274,7 +274,11 @@ export default {
             this.filename = ''
           },
           (error) => {
-            this.message.error('提交评测失败')
+            if (error.response.data.message) {
+              this.message.error(error.response.data.message)
+            } else {
+              this.message.error('提交评测失败')
+            }
           }
         )
       }
