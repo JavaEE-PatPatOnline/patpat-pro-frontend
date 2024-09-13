@@ -160,7 +160,11 @@ export default {
             this.message.success('提交实验报告成功')
           },
           (error) => {
-            this.message.error('提交实验报告失败')
+            if (error.response.data.message) {
+              this.message.error(error.response.data.message)
+            } else {
+              this.message.error('提交实验报告失败')
+            }
           }
         )
       }

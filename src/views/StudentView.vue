@@ -129,8 +129,8 @@ export default {
           this.message.success(`导入成功，新增 ${created} 个学生，更新 ${updated} 个学生，删除 ${deleted} 个学生`)
         },
         (error) => {
-          if (response.data.data.message) {
-            this.message.error(response.data.data.message)
+          if (error.response.data.data.message) {
+            this.message.error(error.response.data.data.message)
           } else {
             this.message.error('导入学生失败')
           }
