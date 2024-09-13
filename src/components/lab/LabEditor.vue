@@ -1,6 +1,6 @@
 <template>
   <NFlex justify="space-between" align="center" class="editor-top">
-    <input type="text" placeholder="实验标题" v-model="title"/>
+    <input type="text" placeholder="实验标题" v-model="title" />
     <NFlex justify="flex-end" align="center">
       <input type="radio" id="option1" value="invisible" v-model="visibility" />
       <label for="option1">不可见</label>
@@ -14,37 +14,31 @@
   <NFlex justify="flex-start" align="center" class="date-pickers">
     <NFlex justify="flex-start" align="center" :wrap="false">
       <span class="time-text">开始时间</span>
-      <DatePicker 
-        ref="start" v-model="startTime" locale="zh-CN" 
-        format="yyyy-MM-dd HH:mm:SS" model-type="yyyy-MM-dd HH:mm:SS"
-      >
+      <DatePicker ref="start" v-model="startTime" locale="zh-CN" format="yyyy-MM-dd HH:mm:SS"
+        model-type="yyyy-MM-dd HH:mm:SS">
         <template #action-buttons>
           <button class="styled" @click="selectStartTime">选择</button>
-        </template>  
+        </template>
       </DatePicker>
     </NFlex>
 
     <NFlex align="center" :wrap="false">
       <span class="time-text">结束时间</span>
-      <DatePicker 
-        ref="ddl" v-model="ddlTime" locale="zh-CN" 
-        format="yyyy-MM-dd HH:mm:ss" model-type="yyyy-MM-dd HH:mm:ss"
-      >
+      <DatePicker ref="ddl" v-model="ddlTime" locale="zh-CN" format="yyyy-MM-dd HH:mm:ss"
+        model-type="yyyy-MM-dd HH:mm:ss">
         <template #action-buttons>
           <button class="styled" @click="selectDdlTime">选择</button>
-        </template>  
+        </template>
       </DatePicker>
     </NFlex>
 
     <NFlex align="center" :wrap="false">
       <span class="time-text">补交截止</span>
-      <DatePicker 
-        ref="end" v-model="endTime" locale="zh-CN" 
-        format="yyyy-MM-dd HH:mm:ss" model-type="yyyy-MM-dd HH:mm:ss"
-      >
+      <DatePicker ref="end" v-model="endTime" locale="zh-CN" format="yyyy-MM-dd HH:mm:ss"
+        model-type="yyyy-MM-dd HH:mm:ss">
         <template #action-buttons>
           <button class="styled" @click="selectEndTime">选择</button>
-        </template>  
+        </template>
       </DatePicker>
     </NFlex>
 
@@ -60,6 +54,8 @@ import Lab from '../../api/Lab.js'
 import { NFlex, useMessage } from 'naive-ui'
 import DatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+
+import { btoaUTF8 } from 'bestbase64utf8'
 
 export default {
   name: 'LabEditor',
@@ -133,7 +129,7 @@ export default {
 
       const labData = {
         title: this.title,
-        content: this.content,
+        content: btoaUTF8(this.content),
         visible: this.visibility === 'visible' ? true : false,
         startTime: this.startTime,
         deadlineTime: this.ddlTime,
@@ -166,7 +162,7 @@ export default {
           }
         )
       }
-      
+
     },
     selectStartTime() {
       this.$refs.start.selectDate()
