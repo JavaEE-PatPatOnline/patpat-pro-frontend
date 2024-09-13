@@ -1,12 +1,13 @@
 <template>
-<!-- 下面这个 lab-container 不能删去 -->
+  <!-- 下面这个 lab-container 不能删去 -->
   <div class="lab-container">
     <NFlex justify="space-between">
       <h3>{{ title }}</h3>
       <NFlex align="center" class="lab-btn">
         <!-- 提交按钮 -->
         <!-- <UploadIcon @click="selectFile" /> -->
-        <button class="styled" @click="selectFile">{{ filename === '' ? '提交报告' : '重新提交' }}</button>
+        <button class="styled" @click="selectFile">{{ submitText === '' ? (filename === '' ? '提交报告' : '重新提交') :
+          submitText }}</button>
         <template v-if="filename !== ''">
           <span>已提交：
             <a @click="downloadReport">
@@ -15,22 +16,18 @@
           </span>
           <!-- <CrossIcon v-if="fileToSubmit" @click="removeFile" /> -->
         </template>
-        <input ref="fileInput" style="display: none" type="file" 
-          @input="handleFileChange" accept=".pdf, .zip"/>
+        <input ref="fileInput" style="display: none" type="file" @input="handleFileChange" accept=".pdf, .zip" />
         <!-- 编辑按钮 -->
         <NFlex align="center" title="编辑实验">
           <EditIcon @click="startEditingLab" v-if="isAdmin" />
         </NFlex>
         <!-- 删除按钮 -->
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="deleteLab"
-          v-if="isAdmin"
-        >
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteLab"
+          v-if="isAdmin">
           <template #trigger>
-            <NFlex align="center" title="删除实验"><DeleteIcon /></NFlex>
+            <NFlex align="center" title="删除实验">
+              <DeleteIcon />
+            </NFlex>
           </template>
           确认删除实验？
         </NPopconfirm>
@@ -82,7 +79,14 @@ export default {
       content: 'hhs',
       startTime: '',
       ddlTime: '',
-      endTime: ''
+      endTime: '',
+      // >>> submit variables
+      submitting: false,
+      submitText: '', // Stupid vue binding
+      progress: 0,    // 0 ~ 100
+      loaded: 0,      // bytes
+      speed: 0,       // MB/s
+      // <<< submit variables
     }
   },
   computed: {
@@ -153,8 +157,20 @@ export default {
       if (event.target.files && event.target.files.length > 0) {
         this.fileToSubmit = event.target.files[0]
         // this.fileURL = URL.createObjectURL(this.fileToSubmit)
-        // todo： 提交
-        Lab.submitReport(this.id, this.fileToSubmit).then(
+        // check if file size is larger than 32 MB
+        if (this.fileToSubmit.size > 32 * 1024 * 1024) {
+          this.message.error('文件大小不能超过 32 MB')
+          // clear file input
+          this.$refs.fileInput.value = ''
+          return;
+        }
+        this.submitting = true
+        this.submitText = '准备中...'
+        this.progress = 0
+        this.loaded = 0
+        this.speed = 0
+
+        Lab.submitReport(this.id, this.fileToSubmit, this.onProgressCallback).then(
           (response) => {
             this.filename = this.fileToSubmit.name
             this.message.success('提交实验报告成功')
@@ -166,7 +182,11 @@ export default {
               this.message.error('提交实验报告失败')
             }
           }
-        )
+        ).finally(() => {
+          this.submitText = ''
+          // clear file input
+          this.$refs.fileInput.value = ''
+        })
       }
     },
     removeFile() {
@@ -183,7 +203,14 @@ export default {
           this.message.error('下载实验报告失败')
         }
       )
-      
+    },
+    onProgressCallback(progressEvent) {
+      if (progressEvent.lengthComputable) {
+        this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.speed = (progressEvent.loaded - this.loaded) / 1024 / 1024
+        this.loaded = progressEvent.loaded
+        this.submitText = `上传中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
+      }
     }
   }
 }
@@ -216,6 +243,7 @@ h3 {
 .lab-btn a {
   cursor: pointer;
 }
+
 .lab-btn a:hover {
   text-decoration: underline;
 }

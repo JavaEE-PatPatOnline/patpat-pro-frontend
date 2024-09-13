@@ -26,7 +26,7 @@ export default class Lab {
       method: 'GET'
     })
   }
-  
+
   static async getAllVisibleLabs() {
     return service(url.allVisibleLabs, {
       method: 'GET'
@@ -59,13 +59,14 @@ export default class Lab {
     })
   }
 
-  static async submitReport(id, file) {
+  static async submitReport(id, file, progressCallback) {
     let data = new FormData()
     data.append('file', file)
 
     return service(url.submit + id, {
       method: 'POST',
-      data
+      data,
+      onUploadProgress: progressCallback
     })
   }
 
