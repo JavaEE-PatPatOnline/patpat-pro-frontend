@@ -78,10 +78,11 @@ export default class Group {
     })
   }
 
-  static async submitAssignment(data) {
+  static async submitAssignment(data, progressCallback) {
     return service(url.submit, {
       method: 'POST',
-      data
+      data,
+      onUploadProgress: progressCallback
     })
   }
 

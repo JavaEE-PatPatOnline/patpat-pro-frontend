@@ -10,15 +10,12 @@
           <EditIcon @click="startEditingIter" v-if="isAdmin" />
         </NFlex>
         <!-- 删除按钮 -->
-        <NPopconfirm
-          positive-text="确认"
-          negative-text="取消"
-          :show-icon="false"
-          @positive-click="deleteIter"
-          v-if="isAdmin"
-        >
+        <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="deleteIter"
+          v-if="isAdmin">
           <template #trigger>
-            <NFlex align="center" title="删除迭代"><DeleteIcon /></NFlex>
+            <NFlex align="center" title="删除迭代">
+              <DeleteIcon />
+            </NFlex>
           </template>
           确认删除迭代？
         </NPopconfirm>
@@ -144,7 +141,7 @@ export default {
     scrollToTest() {
       const testButton = document.querySelector('#test-button')
       if (testButton) {
-          testButton.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        testButton.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     },
     getIterDetail() {
@@ -179,7 +176,7 @@ export default {
                     // 刷新后还在评测
                     this.waitingTestResult = true
                   }
-            }
+                }
               },
               (error) => {
                 this.message.error('获取评测记录失败')
@@ -264,6 +261,11 @@ export default {
       const input = this.$refs.fileInput
       if (input && input.files && input.files.length > 0) {
         const file = input.files[0]
+        // check if file size is larger than 1 MB
+        if (file.size > 1 * 1024 * 1024) {
+          this.message.error('文件大小不能超过 1 MB')
+          return
+        }
         let submission = new FormData()
         submission.append('file', file)
         submission.append('language', '17')
@@ -346,6 +348,7 @@ h3 {
 .iter-btn a {
   cursor: pointer;
 }
+
 .iter-btn a:hover {
   text-decoration: underline;
 }

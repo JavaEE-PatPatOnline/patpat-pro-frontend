@@ -7,7 +7,7 @@
       <h3 v-if="!isEditingName">
         <span @click="startEditingName">{{ groupName }}</span>
         <NFlex align="center" v-if="isLocked" title="解锁团队">
-          <LockIcon @click="changeLockState"  />
+          <LockIcon @click="changeLockState" />
         </NFlex>
         <NFlex align="center" v-else title="锁定团队">
           <UnlockIcon @click="changeLockState" />
@@ -48,7 +48,7 @@
       <NFlex justify="flex-end" align="center">
         <span v-if="assignment !== ''">已提交：<a class="download-link" @click="downloadAssignment">{{ assignment
             }}</a></span>
-        <button class="styled" v-if="isLeader" @click="handleSubmit">提交作业</button>
+        <button class="styled" v-if="isLeader" @click="handleSubmit">{{ submitText }}</button>
         <input type="file" accept=".zip" ref="fileInput" @input="submitAssignment" v-if="isLeader"
           style="display: none" />
         <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="dismissGroup"
@@ -138,7 +138,14 @@ export default {
       newMaxWeight: null,
       newMinWeight: null,
       isCreatingGroup: false,
-      groupNameToCreate: ''
+      groupNameToCreate: '',
+      // >>> submit variables
+      submitting: false,
+      submitText: '提交大作业', // Stupid vue binding
+      progress: 0,    // 0 ~ 100
+      loaded: 0,      // bytes
+      speed: 0,       // MB/s
+      // <<< submit variables
     }
   },
   computed: {
@@ -292,10 +299,16 @@ export default {
     },
     submitAssignment(event) {
       if (event.target.files && event.target.files.length > 0) {
+        this.submitting = true
+        this.submitText = '准备上传...'
+        this.progress = 0
+        this.loaded = 0
+        this.speed = 0
+
         const file = event.target.files[0]
         let data = new FormData()
         data.append('file', file)
-        Group.submitAssignment(data).then(
+        Group.submitAssignment(data, this.onProgressCallback).then(
           (response) => {
             this.message.success('提交大作业成功：' + file.name)
             this.assignment = file.name
@@ -303,7 +316,10 @@ export default {
           (error) => {
             this.message.error('提交大作业失败')
           }
-        )
+        ).finally(() => {
+          this.submitting = false
+          this.submitText = '提交大作业'
+        })
       }
     },
     downloadAssignment() {
@@ -358,6 +374,14 @@ export default {
           this.message.error('导出组队情况失败')
         }
       )
+    },
+    onProgressCallback(progressEvent) {
+      if (progressEvent.lengthComputable) {
+        this.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.speed = (progressEvent.loaded - this.loaded) / 1024 / 1024
+        this.loaded = progressEvent.loaded
+        this.submitText = `上传中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
+      }
     }
   }
 }
