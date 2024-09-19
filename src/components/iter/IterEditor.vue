@@ -62,8 +62,6 @@ import { NFlex, NSelect, useMessage } from 'naive-ui'
 import DatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-import { btoaUTF8 } from 'bestbase64utf8'
-
 export default {
   name: 'LabEditor',
   components: {
@@ -168,7 +166,7 @@ export default {
 
       const iterData = {
         title: this.title,
-        content: btoaUTF8(this.content),
+        content: this.content,
         visible: this.visibility === 'visible' ? true : false,
         startTime: this.startTime,
         deadlineTime: this.ddlTime,

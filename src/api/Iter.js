@@ -1,4 +1,5 @@
 import service from '../http'
+import { btoaUTF8 } from 'bestbase64utf8'
 
 const url = {
   allIters: '/admin/task/iter/query',
@@ -28,7 +29,7 @@ export default class Iter {
       method: 'GET'
     })
   }
-  
+
   static async getAllVisibleIters() {
     return service(url.allVisibleIters, {
       method: 'GET'
@@ -49,6 +50,7 @@ export default class Iter {
   }
 
   static async createIter(iterData) {
+    iterData.content = btoaUTF8(iterData.content)
     return service(url.createIter, {
       method: 'POST',
       data: iterData

@@ -1,4 +1,5 @@
 import service from '../http'
+import { btoaUTF8 } from 'bestbase64utf8'
 
 const url = {
   all: '/discussion/query',
@@ -36,7 +37,7 @@ export default class Discussion {
     })
   }
   static async createComment(discussionId, content, toId) {
-    const data = { discussionId, content, toId }
+    const data = { discussionId, content: btoaUTF8(content), toId }
     return service(url.createComment, {
       method: 'POST',
       data,
@@ -65,7 +66,7 @@ export default class Discussion {
   }
 
   static async createDiscussion(title, content, type) {
-    const data = { title, content, type }
+    const data = { title, content: btoaUTF8(content), type }
     return service(url.create, {
       method: 'POST',
       data,

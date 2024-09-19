@@ -1,4 +1,5 @@
 import service from '../http'
+import { btoaUTF8 } from 'bestbase64utf8'
 
 const url = {
   allLabs: '/admin/task/lab/query',
@@ -47,6 +48,7 @@ export default class Lab {
   }
 
   static async createLab(labData) {
+    labData.content = btoaUTF8(labData.content)
     return service(url.createLab, {
       method: 'POST',
       data: labData
