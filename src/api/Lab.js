@@ -41,6 +41,7 @@ export default class Lab {
   }
 
   static async updateLab(id, labData) {
+    labData.content = btoaUTF8(labData.content)
     return service(url.updateLab + id, {
       method: 'POST',
       data: labData

@@ -43,6 +43,7 @@ export default class Iter {
   }
 
   static async updateIter(id, iterData) {
+    iterData.content = btoaUTF8(iterData.content)
     return service(url.updateIter + id, {
       method: 'POST',
       data: iterData
