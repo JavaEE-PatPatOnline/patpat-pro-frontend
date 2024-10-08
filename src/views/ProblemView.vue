@@ -157,7 +157,11 @@ export default {
             this.getProblemList()
           },
           (error) => {
-            this.message.error('上传配置文件失败')
+            if (error.response.data.message) {
+              this.message.error(error.response.data.message)
+            } else {
+              this.message.error('上传配置文件失败')
+            }
           }
         )
       }
@@ -179,7 +183,11 @@ export default {
           this.getProblemList()
         },
         (error) => {
-          this.message.error('新建题目失败')
+          if (error.response.data.message) {
+            this.message.error(error.response.data.message)
+          } else {
+            this.message.error('新建题目失败')
+          }
         }
       )
     },
