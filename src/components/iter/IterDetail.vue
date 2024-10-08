@@ -176,6 +176,11 @@ export default {
                     // 刷新后还在评测
                     this.waitingTestResult = true
                   }
+                } else {
+                  this.testResultShouldShow = false
+                  this.waitingTestResult = false
+                  this.results = []
+                  this.fileSumitted = ''
                 }
               },
               (error) => {
@@ -217,7 +222,7 @@ export default {
           wsUrl = response.data.data
           this.ws = new WebSocket(wsUrl)
           this.ws.onopen = () => {
-            console.log('成功建立 WebSocket 连接')
+            // console.log('成功建立 WebSocket 连接')
           }
 
           this.ws.onmessage = (event) => {
@@ -247,6 +252,11 @@ export default {
       )
     },
     testCode() {
+      const input = this.$refs.fileInput
+      if (!(input && input.files && input.files.length > 0)) {
+        this.message.error('请选择文件')
+        return
+      }
       const ddl = new Date(this.ddlTime)
       const currentTime = new Date()
       if (ddl < currentTime) {
