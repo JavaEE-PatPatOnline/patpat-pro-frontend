@@ -18,8 +18,13 @@
 #
 
 # Build Vue
-Write-Host "Building Vue project"
-npm run build
+# If first parameter is "-b" or "--build", then build the project
+if ($args[0] -eq "-b" -or $args[0] -eq "--build") {
+    Write-Host "Building Vue project"
+    npm run build
+} else {
+    Write-Host "Skipping build"
+}
 
 # Pack public files into tar.gz
 Write-Host "Packing public into tar.gz"
