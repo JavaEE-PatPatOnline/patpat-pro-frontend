@@ -55,11 +55,19 @@
           </NPopconfirm>
         </NFlex>
       </template>
-      <ul>
-        <li v-for="(case_, index) in problem.cases" :key="case_.id" class="test-case">
-          测试点 {{ index + 1 }}：{{ case_.description }}({{ case_.score }})
-        </li>
-      </ul>
+      <div class="problem">
+        <span>题目名称：{{ problem.name }}</span><br/>
+        <span>评测模式：{{ problem.mode === "advanced" ? "高级" : "普通" }}</span><br/>
+        <span>时间限制：{{ problem.timeLimit + "ms" }}</span><br/>
+        <span>Main Class：{{ problem.mainClass }}</span><br/>
+        <span>是否需要初始化：{{ problem.init ? "是" : "否" }}</span><br/>
+        <span>测试点：</span>
+        <ul>
+          <li v-for="(case_, index) in problem.cases" :key="case_.id" class="test-case">
+            测试点 {{ index + 1 }}：{{ case_.description }}（{{ case_.score + " 分" }}）
+          </li>
+        </ul>
+      </div>
     </NCollapseItem>
   </NCollapse>
   <div class="empty-hint" v-else>
@@ -112,6 +120,11 @@ export default {
           this.problems.forEach((problem) => {
             Problem.getProblemDetail(problem.id).then(
               (response) => {
+                problem.name = response.data.data.descriptor.name
+                problem.init = response.data.data.descriptor.init
+                problem.mode = response.data.data.descriptor.mode
+                problem.mainClass = response.data.data.descriptor.mainClass
+                problem.timeLimit = response.data.data.descriptor.timeLimit
                 problem.cases = response.data.data.descriptor.cases
               },
               (error) => {
@@ -242,8 +255,17 @@ export default {
   text-decoration: underline;
 }
 
-li.test-case {
+.problem {
+  padding-left: 25px;
+}
+
+.problem span {
+  font-size: 14px;
+}
+
+.problem li.test-case {
   margin-left: 25px;
   font-size: 14px;
 }
+
 </style>
