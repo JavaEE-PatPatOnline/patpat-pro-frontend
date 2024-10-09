@@ -1,9 +1,10 @@
 <template>
-  <button class="styled test-jumper" @click="scrollToTest">去评测</button>
+  <button class="styled jumper top-jumper" @click="scrollToTop">回顶部</button>
+  <button class="styled jumper test-jumper" @click="scrollToTest">去评测</button>
   <!-- 下面这个 iter-container 不能删去 -->
   <div class="iter-container">
     <NFlex justify="space-between">
-      <h3>{{ title }}</h3>
+      <h3 id="title">{{ title }}</h3>
       <NFlex align="center" class="iter-btn">
         <!-- 编辑按钮 -->
         <NFlex align="center" title="编辑迭代">
@@ -140,6 +141,12 @@ export default {
   methods: {
     scrollToTest() {
       const testButton = document.querySelector('#test-button')
+      if (testButton) {
+        testButton.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    },
+    scrollToTop() {
+      const testButton = document.querySelector('#title')
       if (testButton) {
         testButton.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
@@ -320,7 +327,8 @@ export default {
 </script>
 
 <style scoped>
-button.test-jumper {
+
+button.jumper {
   width: 60px;
   height: 60px;
   padding: 0;
@@ -329,7 +337,14 @@ button.test-jumper {
   position: fixed;
   z-index: 9999;
   right: 40px;
+}
+
+button.jumper.top-jumper {
   top: 120px;
+}
+
+button.jumper.test-jumper {
+  top: 200px;
 }
 
 h3 {
