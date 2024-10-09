@@ -224,7 +224,7 @@ function getAllIters(isAdmin) {
 }
 
 watch(() => store.state.isAdmin, (a, b) => {
-  if (instance.proxy.$cookies.get('jwt') && instance.proxy.$cookies.get('course'))  {
+  if (instance.proxy.$cookies.get('refresh') && instance.proxy.$cookies.get('course'))  {
      getAllLabs(store.state.isAdmin)
     getAllIters(store.state.isAdmin)
   }

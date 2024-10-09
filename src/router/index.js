@@ -120,7 +120,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = VueCookies.get('jwt') && VueCookies.get('jwt') !== ''
+  const isLoggedIn = VueCookies.get('refresh') && VueCookies.get('refresh') !== ''
   
   if (isLoggedIn && to.path === '/login') {
     next('/notice')
