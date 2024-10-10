@@ -135,7 +135,7 @@ export default {
       }
     },
     getUserAvatar() {
-      if (this.$cookies.get('jwt')) {
+      if (this.$cookies.get('refresh')) {
         User.getUserInfo().then(
           (response) => {
             const user = response.data.data
