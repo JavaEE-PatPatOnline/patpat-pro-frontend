@@ -218,6 +218,11 @@ export default {
         (response) => {
           this.submissions = response.data.data.items
           this.totalItems = response.data.data.total
+          this.submissions.forEach((submission) => {
+            if (submission.endTime === null) {
+              submission.endTime = '评测中'
+            }
+          })
         },
         (error) => {
           this.message.error('获取评测记录失败')
@@ -235,6 +240,10 @@ export default {
     showTestDetail(row) {
       Grade.getTestDetail(row.id).then(
         (response) => {
+          if (response.data.data.result === null) {
+            this.message.warning('正在评测中，请稍后再试')
+            return
+          }
           this.results = response.data.data.result.results
           this.testDetailShouldShow = true
         },
