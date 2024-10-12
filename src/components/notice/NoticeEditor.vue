@@ -29,7 +29,7 @@ export default {
       message: useMessage(),
       title: '',
       content: '',
-      state: false
+      topped: false
     }
   },
   mounted() {
@@ -38,6 +38,7 @@ export default {
         (response) => {
           this.title = response.data.data.title
           this.content = response.data.data.content
+          this.topped = response.data.data.topped
         },
         (error) => {
           this.message.error('公告不存在')
@@ -75,7 +76,7 @@ export default {
         Notice.updateNotice(this.id,
           this.title,
           this.content,
-          this.state)
+          this.topped)
           .then(
             (response) => {
               this.title = ''
