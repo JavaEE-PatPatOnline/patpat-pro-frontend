@@ -151,7 +151,7 @@ export default {
                       // 实验
                       this.columns.push(
                         {
-                          title: '实验' + labCnt,
+                          title: task.title,
                           key: 'lab' + labCnt
                         }
                       )
@@ -166,10 +166,11 @@ export default {
                       // 迭代
                       this.columns.push(
                         {
-                          title: '迭代' + iterCnt,
+                          title: task.title,
                           key: 'iter' + iterCnt
                         }
                       )
+                      iterCnt++
                     }
                   })
                   this.columns.push(
