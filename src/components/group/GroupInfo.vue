@@ -458,6 +458,16 @@ export default {
       )
     },
     updateGroupAssigenment() {
+      if (this.assignmentComment === '') {
+        this.message.error('组队作业内容不得为空')
+        return
+      }
+      const start = new Date(this.assignmentStartTime)
+      const end = new Date(this.assignmentEndTime)
+      if (start.getTime() >= end.getTime()) {
+        this.message.error('组队作业开始时间不得晚于结束时间')
+        return
+      }
       Group.updateGroupAssignment(this.assignmentComment, 
                                   this.assignmentVisibility === 'invisible' ? false : true,
                                   this.assignmentStartTime, this.assignmentEndTime
