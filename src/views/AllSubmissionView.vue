@@ -4,7 +4,7 @@
       <span class="title">评分配置</span>
       实验分数 <input type="number" v-model="labScore" />
       迭代分数 <input type="number" v-model="iterScore" />
-      大作业分数 <input type="number" v-model="projScore" />
+      组队作业分数 <input type="number" v-model="projScore" />
       <button class="styled" @click="updateScoreConfig">修改</button>
       <button class="styled" @click="exportAll">导出所有成绩</button>
     </NFlex>
@@ -25,8 +25,15 @@
     </NFlex>
   </NFlex>
 
-  <NDataTable :columns="columns" :data="gradesToShow" :pagination="false" :bordered="false" table-layout="fixed"
-    v-if="gradesToShow.length > 0" />
+  <NDataTable 
+    :columns="columns" 
+    :data="gradesToShow" 
+    :pagination="false" 
+    :bordered="false" 
+    table-layout="fixed"
+    v-if="gradesToShow.length > 0" 
+    @update:sorter="handleSorterChange"
+  />
 
   <NFlex justify="center" align="center" class="pagination" v-if="gradesToShow.length > 0">
     <NPagination v-model:page="page" :page-count="totalPages" @update:page="updateGradesToShow" />
@@ -44,7 +51,6 @@ import download from '../components/utils/download.js'
 import { h } from 'vue'
 
 import { NFlex, NDataTable, NPagination, NSelect, useMessage } from 'naive-ui'
-
 
 export default {
   name: 'AllSubmissionView',
@@ -66,18 +72,30 @@ export default {
       columns: [
         {
           title: '学号',
-          key: 'buaaId'
+          key: 'buaaId',
+          defaultSortOrder: 'ascend',
+          sorter: true
         },
         {
           title: '姓名',
-          key: 'name'
+          key: 'name',
+          defaultSortOrder: 'ascend',
+          sorter: true
         },
         {
           title: '教师',
-          key: 'teacherName'
+          key: 'teacherName',
+          defaultSortOrder: 'ascend',
+          sorter: true
         }
       ],
       grades: [],
+      groupScores: [],
+      columnIsAscending: {
+        buaaId: false,
+        name: false,
+        teacherName: false
+      },
       gradesToShow: [],
       copiedGrades: [],
       filterBuaaId: '',
@@ -113,6 +131,24 @@ export default {
     this.queryAllData()
   },
   methods: {
+    handleSorterChange(sorter) {
+      // console.log(sorter.columnKey)
+      if (this.columnIsAscending[sorter.columnKey]) {
+        // 将整体降序
+        // alert('aaa')
+        this.grades.sort(function(a, b) {
+          return String(b[sorter.columnKey]).localeCompare(String(a[sorter.columnKey]))
+        })
+      } else {
+        // 将整体升序
+        // alert('bbb')
+        this.grades.sort(function(a, b) {
+          return String(a[sorter.columnKey]).localeCompare(String(b[sorter.columnKey]))
+        })
+      }
+      this.updateGradesToShow()
+      this.columnIsAscending[sorter.columnKey] = !this.columnIsAscending[sorter.columnKey]
+    },
     queryAllData() {
       const downloadFunc = this.downloadReport
       // 获取教师列表
@@ -139,83 +175,108 @@ export default {
                   }
                 })
               })
-              // 获取作业列表
-              Grade.getAllTasks().then(
+              // 获取组队作业成绩列表
+              Grade.getAllGroupScores().then(
                 (response) => {
-                  this.tasks = response.data.data
-                  // 为 columns 添加列
-                  let labCnt = 1
-                  let iterCnt = 1
-                  this.tasks.forEach((task) => {
-                    if (task.type === 1) {
-                      // 实验
-                      this.columns.push(
-                        {
-                          title: task.title,
-                          key: 'lab' + labCnt
-                        }
-                      )
-                      this.labSelectOptions.push(
-                        {
-                          label: task.title,
-                          value: task.id
-                        }
-                      )
-                      labCnt++
-                    } else if (task.type === 2) {
-                      // 迭代
-                      this.columns.push(
-                        {
-                          title: task.title,
-                          key: 'iter' + iterCnt
-                        }
-                      )
-                      iterCnt++
-                    }
-                  })
-                  this.columns.push(
-                    {
-                      title: '下载报告',
-                      key: 'report',
-                      render(row) {
-                        return h(
-                          NSelect,
-                          {
-                            class: 'styled',
-                            options: row.selectOptions,
-                            placeholder: '选择实验',
-                            disabled: row.selectOptions.length === 0,
-                            value: row.selectModalValue,
-                            onUpdateValue: (value) => {
-                              downloadFunc(row, value)
+                  this.groupScores = response.data.data
+                  // 获取作业列表
+                  Grade.getAllTasks().then(
+                    (response) => {
+                      this.tasks = response.data.data
+                      // 为 columns 添加列
+                      let labCnt = 1
+                      let iterCnt = 1
+                      this.tasks.forEach((task) => {
+                        if (task.type === 1) {
+                          // 实验
+                          this.columns.push(
+                            {
+                              title: task.title,
+                              key: 'lab' + labCnt,
+                              defaultSortOrder: 'ascend',
+                              sorter: true
                             }
+                          )
+                          this.columnIsAscending['lab' + labCnt] = false
+                          this.labSelectOptions.push(
+                            {
+                              label: task.title,
+                              value: task.id
+                            }
+                          )
+                          labCnt++
+                        } else if (task.type === 2) {
+                          // 迭代
+                          this.columns.push(
+                            {
+                              title: task.title,
+                              key: 'iter' + iterCnt,
+                              defaultSortOrder: 'ascend',
+                              sorter: true
+                            }
+                          )
+                          this.columnIsAscending['iter' + iterCnt] = false
+                          iterCnt++
+                        }
+                      })
+                      this.columns.push(
+                        {
+                          title: '组队作业成绩',
+                          key: 'groupAssignmentScore',
+                          defaultSortOrder: 'ascend',
+                          sorter: true
+                        }
+                      )
+                      this.columnIsAscending.groupAssignmentScore = false
+                      this.columns.push(
+                        {
+                          title: '下载报告',
+                          key: 'report',
+                          render(row) {
+                            return h(
+                              NSelect,
+                              {
+                                class: 'styled',
+                                options: row.selectOptions,
+                                placeholder: '选择实验',
+                                disabled: row.selectOptions.length === 0,
+                                value: row.selectModalValue,
+                                onUpdateValue: (value) => {
+                                  downloadFunc(row, value)
+                                }
+                              }
+                            )
+                          }
+                        }
+                      )
+                      // 获取每一项作业的成绩
+                      let pendingRequests = this.tasks.length
+                      this.tasks.forEach((task) => {
+                        Grade.getScoreList(task.id).then(
+                          (response) => {
+                            pendingRequests--
+                            task.scores = response.data.data
+                            if (pendingRequests === 0) {
+                              this.dataProcessing()
+                            }
+                          },
+                          (error) => {
+                            pendingRequests--
+                            this.message.error('获取成绩失败')
                           }
                         )
-                      }
+                      })
+                    },
+                    (error) => {
+                      this.message.error('获取作业列表失败')
                     }
                   )
-                  // 获取每一项作业的成绩
-                  let pendingRequests = this.tasks.length
-                  this.tasks.forEach((task) => {
-                    Grade.getScoreList(task.id).then(
-                      (response) => {
-                        pendingRequests--
-                        task.scores = response.data.data
-                        if (pendingRequests === 0) {
-                          this.dataProcessing()
-                        }
-                      },
-                      (error) => {
-                        pendingRequests--
-                        this.message.error('获取成绩失败')
-                      }
-                    )
-                  })
                 },
                 (error) => {
-                  this.message.error('获取作业列表失败')
+                  this.message.error('获取组队作业成绩失败')
                 }
               )
+              
             },
             (error) => {
               this.message.error('获取学生列表失败')
@@ -289,6 +350,16 @@ export default {
             }
           }
         })
+      })
+      this.grades.forEach((grade) => {
+        let i = 0
+        grade.groupAssignmentScore = '暂无'
+        for (; i < this.groupScores.length; i++) {
+          if (this.groupScores[i].accountId === grade.accountId) {
+            grade.groupAssignmentScore = this.groupScores[i].score
+            break
+          }
+        }
       })
       this.copiedGrades = this.grades.map(item => ({ ...item }))
     },

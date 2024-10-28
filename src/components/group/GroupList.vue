@@ -39,7 +39,7 @@
             <button class="styled" @click="scoreAssignment(group)">评分</button>
           </NFlex>
           <NFlex align="center" v-else>
-            暂未提交大作业
+            暂未提交组队作业
           </NFlex>
         </template>
       </NFlex>
@@ -90,7 +90,7 @@ export default {
       rogueStudents: [],
       // >>> download variables
       exporting: false,
-      exportText: '导出大作业', // Stupid vue binding
+      exportText: '导出组队作业', // Stupid vue binding
       progress: 0,    // 0 ~ 100
       loaded: 0,      // bytes
       speed: 0,       // MB/s
@@ -215,7 +215,7 @@ export default {
             })
           },
           (error) => {
-            this.message.error('获取大作业提交情况失败')
+            this.message.error('获取组队作业提交情况失败')
           }
         )
       }
@@ -253,14 +253,14 @@ export default {
       this.speed = 0
       Grade.getAllAssignments(this.onProgressCallback).then(
         (response) => {
-          download(response, '大作业汇总.zip')
+          download(response, '组队作业汇总.zip')
         },
         (error) => {
-          this.message.error('导出大作业失败')
+          this.message.error('导出组队作业失败')
         }
       ).finally(() => {
         this.exporting = false
-        this.exportText = '导出大作业'
+        this.exportText = '导出组队作业'
       })
     },
     onProgressCallback(progressEvent) {

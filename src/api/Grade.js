@@ -16,7 +16,8 @@ const url = {
   groupScores: '/admin/group/query/scores',
   downloadGroupAssignment: '/admin/group/assignment/download/',
   scoreGroup: '/admin/group/score/',
-  allAssignments: '/admin/group/assignment/download'
+  allAssignments: '/admin/group/assignment/download',
+  allGroupScores: '/admin/statistics/groups'
 }
 
 export default class Grade {
@@ -135,6 +136,12 @@ export default class Grade {
       method: 'GET',
       responseType: 'blob',
       onDownloadProgress: progressCallback
+    })
+  }
+
+  static async getAllGroupScores() {
+    return service(url.allGroupScores, {
+      method: 'GET'
     })
   }
 }

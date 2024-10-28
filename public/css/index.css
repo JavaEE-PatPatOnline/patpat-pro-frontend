@@ -692,3 +692,8 @@ div.n-layout-content {
 aside.n-layout-sider, aside.n-layout-sider * {
   transition: all .6s, color .6s cubic-bezier(0.075, 0.82, 0.165, 1), background .6s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
 }
+
+/* 表头排序箭头 */
+.n-data-table-sorter {
+  display: none !important;
+}
