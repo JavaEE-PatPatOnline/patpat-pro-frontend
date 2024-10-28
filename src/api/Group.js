@@ -15,7 +15,9 @@ const url = {
   updateConfig: '/admin/group/config/update',
   create: '/group/create',
   'export': '/admin/group/export',
-  rogue: '/admin/group/query/rogue'
+  rogue: '/admin/group/query/rogue',
+  assignment: '/group/assignment',
+  updateAssignment: '/admin/group/assignment/create'
 }
 
 export default class Group {
@@ -119,6 +121,21 @@ export default class Group {
   static async getRogueStudents() {
     return service(url.rogue, {
       method: 'GET'
+    })
+  }
+
+  static async getGroupAssignment() {
+    return service(url.assignment, {
+      method: 'GET'
+    })
+  }
+
+  static async updateGroupAssignment(comment, visible, startTime, endTime) {
+    return service(url.updateAssignment, {
+      method: 'POST',
+      data: {
+        comment, visible, startTime, endTime
+      }
     })
   }
 }

@@ -2,6 +2,39 @@
   <!-- <template v-if="enabled === 'disabled' && !isAdmin">
     <div class="empty-hint">暂未开启组队</div>
   </template> -->
+  <template v-if="isAdmin">
+    <div class="config">组队作业</div>
+    <NFlex justify="space-between" align="center" class="assignment">
+      <NFlex align="center">
+        <input type="text" v-model="assignmentComment" placeholder="组队作业信息" />
+        <NFlex justify="flex-start" align="center" :wrap="false">
+          <span class="time-text">开始时间</span>
+          <DatePicker ref="start" v-model="assignmentStartTime" locale="zh-CN" format="yyyy-MM-dd HH:mm:ss"
+            model-type="yyyy-MM-dd HH:mm:ss">
+            <template #action-buttons>
+              <button class="styled" @click="selectStartTime">选择</button>
+            </template>
+          </DatePicker>
+        </NFlex>
+        <NFlex justify="flex-start" align="center" :wrap="false">
+          <span class="time-text">结束时间</span>
+          <DatePicker ref="end" v-model="assignmentEndTime" locale="zh-CN" format="yyyy-MM-dd HH:mm:ss"
+            model-type="yyyy-MM-dd HH:mm:ss">
+            <template #action-buttons>
+              <button class="styled" @click="selectEndTime">选择</button>
+            </template>
+          </DatePicker>
+        </NFlex>
+        <input type="radio" id="option1" value="invisible" v-model="assignmentVisibility" />
+        <label for="option1">不可见</label>
+        <input type="radio" id="option2" value="visible" v-model="assignmentVisibility" />
+        <label for="option2">可见</label>
+      </NFlex>
+      <NFlex align="center">
+        <button class="styled" @click="updateGroupAssigenment">确认修改</button>
+      </NFlex>
+    </NFlex>
+  </template>
   <template v-if="!isAdmin">
     <div v-if="id !== ''">
       <h3 v-if="!isEditingName">
@@ -46,9 +79,9 @@
         </li>
       </ul>
       <NFlex justify="flex-end" align="center">
-        <span v-if="assignment !== ''">已提交：<a class="download-link" @click="downloadAssignment">{{ assignment
+        <span v-if="assignmentComment !== '' && assignment !== ''">已提交：<a class="download-link" @click="downloadAssignment">{{ assignment
             }}</a></span>
-        <button class="styled" v-if="isLeader" @click="handleSubmit">{{ submitText }}</button>
+        <button class="styled" v-if="assignmentComment !== '' && isLeader" @click="handleSubmit">{{ submitText }}</button>
         <input type="file" accept=".zip" ref="fileInput" @input="submitAssignment" v-if="isLeader"
           style="display: none" />
         <NPopconfirm positive-text="确认" negative-text="取消" :show-icon="false" @positive-click="dismissGroup"
@@ -77,21 +110,33 @@
         <button class="styled" @click="createGroup">确认</button>
       </NFlex>
     </template>
-
+  </template>
+  <template v-if="!isAdmin">
+    <template v-if="assignmentComment !== ''">
+      <div class="config">
+        组队作业&nbsp;&nbsp;&nbsp;
+        <span class="assignment-time">开始时间：{{ assignmentStartTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结束时间：{{ assignmentEndTime }}</span>
+      </div>
+      {{ assignmentComment }}
+    </template>
   </template>
   <template v-if="isAdmin">
     <div class="config">组队配置</div>
-    <NFlex align="center">
-      最大成员数 <input type="number" v-model="newMaxSize" />&nbsp;&nbsp;&nbsp;
-      最低权重 <input type="number" v-model="newMinWeight" />&nbsp;&nbsp;&nbsp;
-      最高权重 <input type="number" v-model="newMaxWeight" />&nbsp;&nbsp;&nbsp;
-      是否开启组队
-      <input type="radio" id="option1" value="disabled" v-model="enabled" />
-      <label for="option1">关闭</label>
-      <input type="radio" id="option2" value="enabled" v-model="enabled" />
-      <label for="option2">开启</label>&nbsp;&nbsp;&nbsp;
-      <button class="styled" @click="changeGroupConfig">修改配置</button>
-      <button @click="exportGroups">导出</button>
+    <NFlex justify="space-between" align="center" class="group-config">
+      <NFlex align="center">
+        最大成员数 <input type="number" v-model="newMaxSize" />&nbsp;&nbsp;&nbsp;
+        最低权重 <input type="number" v-model="newMinWeight" />&nbsp;&nbsp;&nbsp;
+        最高权重 <input type="number" v-model="newMaxWeight" />&nbsp;&nbsp;&nbsp;
+        是否开启组队
+        <input type="radio" id="option1" value="disabled" v-model="enabled" />
+        <label for="option1">关闭</label>
+        <input type="radio" id="option2" value="enabled" v-model="enabled" />
+        <label for="option2">开启</label>&nbsp;&nbsp;&nbsp;
+      </NFlex>
+      <NFlex align="center">
+        <button class="styled" @click="changeGroupConfig">修改配置</button>
+        <button @click="exportGroups">导出</button>
+      </NFlex>
     </NFlex>
   </template>
 </template>
@@ -109,6 +154,8 @@ import { mapGetters } from 'vuex'
 
 import { NFlex, NInputNumber, NPopconfirm, useMessage } from 'naive-ui'
 
+import DatePicker from '@vuepic/vue-datepicker'
+
 export default {
   name: 'GroupInfo',
   components: {
@@ -117,14 +164,15 @@ export default {
     UnlockIcon,
     NFlex,
     NInputNumber,
-    NPopconfirm
+    NPopconfirm,
+    DatePicker
   },
   data() {
     return {
       message: useMessage(),
       id: '',
       isLocked: false,
-      isLeader: false,
+      // isLeader: false,
       groupName: '',
       members: [],
       maxWeight: null,
@@ -141,15 +189,32 @@ export default {
       groupNameToCreate: '',
       // >>> submit variables
       submitting: false,
-      submitText: '提交大作业', // Stupid vue binding
+      submitText: '提交组队作业', // Stupid vue binding
       progress: 0,    // 0 ~ 100
       loaded: 0,      // bytes
       speed: 0,       // MB/s
       // <<< submit variables
+      // >>> assignment variables
+      assignmentComment: '',
+      assignmentVisibility: 'invisible',
+      assignmentStartTime: null,
+      assignmentEndTime: null,
+      // <<< assignment variables
     }
   },
   computed: {
-    ...mapGetters(['userBuaaId', 'isAdmin'])
+    ...mapGetters(['userBuaaId', 'isAdmin']),
+    isLeader() {
+      for (let i = 0; i < this.members.length; i++) {
+        const member = this.members[i]
+        if (member.owner) {
+          if (member.buaaId === this.userBuaaId) {
+            return true
+          }
+        }
+      }
+      return false
+    }
   },
   mounted() {
     this.getCurrentGroup()
@@ -157,6 +222,7 @@ export default {
     this.$bus.on('update-group-info', () => {
       this.getCurrentGroup()
     })
+    this.getGroupAssignment()
   },
   methods: {
     getCurrentConfig() {
@@ -185,20 +251,6 @@ export default {
             this.newGroupName = group.name
             this.members = group.members
             this.isLocked = group.locked
-            let index = 0
-            let leader = null
-            for (let i = 0; i < this.members.length; i++) {
-              const member = this.members[i]
-              if (member.owner) {
-                index = i
-                leader = member
-                if (member.buaaId === this.userBuaaId) {
-                  this.isLeader = true
-                }
-              }
-            }
-            this.members.splice(index, 1)
-            this.members.unshift(leader)
             if (response.data.data.submission) {
               this.assignment = response.data.data.submission.filename
             }
@@ -310,15 +362,15 @@ export default {
         data.append('file', file)
         Group.submitAssignment(data, this.onProgressCallback).then(
           (response) => {
-            this.message.success('提交大作业成功：' + file.name)
+            this.message.success('提交组队作业成功：' + file.name)
             this.assignment = file.name
           },
           (error) => {
-            this.message.error('提交大作业失败')
+            this.message.error('提交组队作业失败')
           }
         ).finally(() => {
           this.submitting = false
-          this.submitText = '提交大作业'
+          this.submitText = '提交组队作业'
         })
       }
     },
@@ -382,6 +434,51 @@ export default {
         this.loaded = progressEvent.loaded
         this.submitText = `上传中... ${this.progress}% (${this.speed.toFixed(2)} MB/s)`
       }
+    },
+    selectStartTime() {
+      this.$refs.start.selectDate()
+    },
+    selectEndTime() {
+      this.$refs.end.selectDate()
+    },
+    getGroupAssignment() {
+      Group.getGroupAssignment().then(
+        (response) => {
+          const assignment = response.data.data
+          if (assignment) {
+            this.assignmentComment = assignment.comment
+            this.assignmentStartTime = assignment.startTime
+            this.assignmentEndTime = assignment.endTime
+            this.assignmentVisibility = assignment.visible ? 'visible' : 'invisible'
+          }
+        },
+        (error) => {
+          this.message.error('获取组队作业失败')
+        }
+      )
+    },
+    updateGroupAssigenment() {
+      if (this.assignmentComment === '') {
+        this.message.error('组队作业内容不得为空')
+        return
+      }
+      const start = new Date(this.assignmentStartTime)
+      const end = new Date(this.assignmentEndTime)
+      if (start.getTime() >= end.getTime()) {
+        this.message.error('组队作业开始时间不得晚于结束时间')
+        return
+      }
+      Group.updateGroupAssignment(this.assignmentComment, 
+                                  this.assignmentVisibility === 'invisible' ? false : true,
+                                  this.assignmentStartTime, this.assignmentEndTime
+      ).then(
+        (response) => {
+          this.message.success('修改组队作业成功')
+        },
+        (error) => {
+          this.message.error('修改组队作业失败')
+        }
+      )
     }
   }
 }
@@ -514,5 +611,30 @@ div.create-btn {
 
 div.create-btn:hover {
   text-decoration: underline;
+}
+
+.assignment {
+  margin-bottom: 10px;
+}
+
+.assignment input[type="text"] {
+  width: 400px;
+}
+
+.time-text {
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+  width: 60px;
+}
+
+.group-config {
+  margin-bottom: 10px;
+}
+
+.assignment-time {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--default-grey);
 }
 </style>
