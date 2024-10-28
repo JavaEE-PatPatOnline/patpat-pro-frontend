@@ -113,7 +113,10 @@
   </template>
   <template v-if="!isAdmin">
     <template v-if="assignmentComment !== ''">
-      <div class="config">组队作业</div>
+      <div class="config">
+        组队作业&nbsp;&nbsp;&nbsp;
+        <span class="assignment-time">开始时间：{{ assignmentStartTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结束时间：{{ assignmentEndTime }}</span>
+      </div>
       {{ assignmentComment }}
     </template>
   </template>
@@ -617,5 +620,11 @@ div.create-btn:hover {
 
 .group-config {
   margin-bottom: 10px;
+}
+
+.assignment-time {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--default-grey);
 }
 </style>
