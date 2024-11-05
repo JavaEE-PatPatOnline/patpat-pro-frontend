@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@vuepic/vue-datepicker": "^9.0.1",
+    "@vuepic/vue-datepicker": "^10.0.0",
     "axios": "^1.7.3",
     "bestbase64utf8": "^1.0.3",
     "mavon-editor": "^3.0.1",
