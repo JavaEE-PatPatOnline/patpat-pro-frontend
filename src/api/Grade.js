@@ -89,10 +89,10 @@ export default class Grade {
     })
   }
 
-  static async updateConfig(labScore, iterScore, projScore) {
+  static async updateConfig(labScore, iterScore, projScore, latePercent) {
     return service(url.updateConfig, {
       method: 'POST',
-      data: { labScore, iterScore, projScore }
+      data: { labScore, iterScore, projScore, latePercent }
     })
   }
 
