@@ -356,10 +356,11 @@ export default {
       })
       this.grades.forEach((grade) => {
         let i = 0
-        grade.groupAssignmentScore = '暂无'
+        grade.groupAssignmentScore = '未提交'
         for (; i < this.groupScores.length; i++) {
           if (this.groupScores[i].accountId === grade.accountId) {
-            grade.groupAssignmentScore = this.groupScores[i].score
+            const score = this.groupScores[i].score
+            grade.groupAssignmentScore = score == -1 ? '未评分' : score;
             break
           }
         }
