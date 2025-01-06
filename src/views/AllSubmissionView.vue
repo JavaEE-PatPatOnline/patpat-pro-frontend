@@ -1,21 +1,22 @@
 <template>
+  <div class="title">评分配置</div>
   <NFlex justify="space-between" align="center" class="all-submission-header">
     <NFlex align="center">
-      <span class="title">评分配置</span>
       实验分数 <input type="number" v-model="labScore" />
       迭代分数 <input type="number" v-model="iterScore" />
       组队作业分数 <input type="number" v-model="projScore" />
+      迟交得分比例 <input type="number" v-model="latePercent" />
       <button class="styled" @click="updateScoreConfig">修改</button>
       <button class="styled" @click="exportAll">导出所有成绩</button>
     </NFlex>
+  </NFlex>
+
+  <NFlex justify="space-between" class="all-submission-header">
     <NFlex align="center" class="lab-submission-export">
       <NSelect v-model:value="labToExport" placeholder="实验" :options="labSelectOptions" />
       <NSelect v-model:value="teacher" placeholder="教师" :options="teacherSelectOptions" />
       <button class="styled" @click="exportLab">{{ exportText }}</button>
     </NFlex>
-  </NFlex>
-
-  <NFlex align="center" class="all-submission-header">
     <NFlex align="center" class="filter">
       <input type="text" placeholder="学号" v-model="filterBuaaId" />
       <input type="text" placeholder="姓名" v-model="filterName" />
@@ -105,6 +106,7 @@ export default {
       labScore: 0,
       iterScore: 0,
       projScore: 0,
+      latePercent: 0,
       labToExport: null,
       teacher: null,
       labSelectOptions: [],
@@ -293,6 +295,7 @@ export default {
           this.labScore = config.labScore
           this.iterScore = config.iterScore
           this.projScore = config.projScore
+          this.latePercent = config.latePercent
         },
         (error) => {
           this.message.error('获取评分配置失败')
@@ -353,10 +356,11 @@ export default {
       })
       this.grades.forEach((grade) => {
         let i = 0
-        grade.groupAssignmentScore = '暂无'
+        grade.groupAssignmentScore = '未提交'
         for (; i < this.groupScores.length; i++) {
           if (this.groupScores[i].accountId === grade.accountId) {
-            grade.groupAssignmentScore = this.groupScores[i].score
+            const score = this.groupScores[i].score
+            grade.groupAssignmentScore = score == -1 ? '未评分' : score;
             break
           }
         }
@@ -401,7 +405,7 @@ export default {
       this.filterGrades()
     },
     updateScoreConfig() {
-      Grade.updateConfig(this.labScore, this.iterScore, this.projScore).then(
+      Grade.updateConfig(this.labScore, this.iterScore, this.projScore, this.latePercent).then(
         (response) => {
           this.message.success('更新评分配置成功')
         },
@@ -477,9 +481,10 @@ export default {
   font-size: 14px;
 }
 
-span.title {
-  font-size: 18px;
+div.title {
+  font-size: 20px;
   font-weight: bold;
+  margin-bottom: 10px;
   color: var(--default-blue);
 }
 
